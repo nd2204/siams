@@ -1,0 +1,21 @@
+{
+  "name": "siams",
+  "version": "1.0.0",
+  "description": "Smart irrigation and monitoring system dashboard for esp32 nodes",
+  "homepage": "https://github.com/nd2204/siams#readme",
+  "bugs": {
+    "url": "https://github.com/nd2204/siams/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nd2204/siams.git"
+  },
+  "license": "MIT",
+  "author": "nd2204",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "(cd siams-be && npm run dev &); (cd siams-fe && npm run dev)",
+    "start": "(cd siams-be && npm run start &); (cd siams-fe && npm run start)",
+    "broker": "(cd siams-mqtt-broker && docker compose up --build)"
+  }
+}

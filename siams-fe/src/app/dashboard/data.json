@@ -1,0 +1,334 @@
+[
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T00:00:00Z",
+    "sensors": {
+      "temperature_c": 22.5,
+      "humidity_percent": 68.3,
+      "soil_moisture_percent": 48,
+      "light_lux": 10
+    },
+    "system": {
+      "cpu_load_percent": 28,
+      "ram_usage_percent": 38,
+      "wifi_rssi_dbm": -72,
+      "uptime_sec": 1200
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T01:00:00Z",
+    "sensors": {
+      "temperature_c": 21.8,
+      "humidity_percent": 70.2,
+      "soil_moisture_percent": 47,
+      "light_lux": 5
+    },
+    "system": {
+      "cpu_load_percent": 30,
+      "ram_usage_percent": 40,
+      "wifi_rssi_dbm": -70,
+      "uptime_sec": 4800
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T02:00:00Z",
+    "sensors": {
+      "temperature_c": 21.2,
+      "humidity_percent": 71.5,
+      "light_lux": 0
+    },
+    "system": {
+      "cpu_load_percent": 25,
+      "ram_usage_percent": 37,
+      "wifi_rssi_dbm": -68,
+      "uptime_sec": 8400
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T03:00:00Z",
+    "sensors": {
+      "temperature_c": 20.9,
+      "humidity_percent": 72.8,
+      "soil_moisture_percent": 46,
+      "light_lux": 0
+    },
+    "system": {
+      "cpu_load_percent": 29,
+      "ram_usage_percent": 39,
+      "wifi_rssi_dbm": -73,
+      "uptime_sec": 12000
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T04:00:00Z",
+    "sensors": {
+      "humidity_percent": 73.4,
+      "soil_moisture_percent": 45,
+      "light_lux": 2
+    },
+    "system": {
+      "cpu_load_percent": 27,
+      "ram_usage_percent": 41,
+      "wifi_rssi_dbm": -71,
+      "uptime_sec": 15600
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T05:00:00Z",
+    "sensors": {
+      "temperature_c": 20.5,
+      "humidity_percent": 74.1,
+      "soil_moisture_percent": 44,
+      "light_lux": 50
+    },
+    "system": {
+      "cpu_load_percent": 31,
+      "ram_usage_percent": 42,
+      "wifi_rssi_dbm": -69,
+      "uptime_sec": 19200
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T06:00:00Z",
+    "sensors": {
+      "temperature_c": 21.0,
+      "humidity_percent": 72.6,
+      "soil_moisture_percent": 43
+    },
+    "system": {
+      "cpu_load_percent": 26,
+      "ram_usage_percent": 36,
+      "wifi_rssi_dbm": -74,
+      "uptime_sec": 22800
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T07:00:00Z",
+    "sensors": {
+      "temperature_c": 22.3,
+      "humidity_percent": 70.9,
+      "soil_moisture_percent": 42,
+      "light_lux": 300
+    },
+    "system": {
+      "cpu_load_percent": 32,
+      "ram_usage_percent": 43,
+      "wifi_rssi_dbm": -67,
+      "uptime_sec": 26400
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T08:00:00Z",
+    "sensors": {
+      "temperature_c": 23.7,
+      "humidity_percent": 68.5,
+      "light_lux": 600
+    },
+    "system": {
+      "cpu_load_percent": 28,
+      "ram_usage_percent": 38,
+      "wifi_rssi_dbm": -72,
+      "uptime_sec": 30000
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T09:00:00Z",
+    "sensors": {
+      "temperature_c": 25.1,
+      "humidity_percent": 65.2,
+      "soil_moisture_percent": 41,
+      "light_lux": 900
+    },
+    "system": {
+      "cpu_load_percent": 30,
+      "ram_usage_percent": 40,
+      "wifi_rssi_dbm": -70,
+      "uptime_sec": 33600
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T10:00:00Z",
+    "sensors": {
+      "temperature_c": 26.4,
+      "humidity_percent": 62.7,
+      "soil_moisture_percent": 40,
+      "light_lux": 1200
+    },
+    "system": {
+      "cpu_load_percent": 33,
+      "ram_usage_percent": 44,
+      "wifi_rssi_dbm": -68,
+      "uptime_sec": 37200
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T11:00:00Z",
+    "sensors": {
+      "temperature_c": 27.2,
+      "soil_moisture_percent": 39,
+      "light_lux": 1400
+    },
+    "system": {
+      "cpu_load_percent": 29,
+      "ram_usage_percent": 39,
+      "wifi_rssi_dbm": -73,
+      "uptime_sec": 40800
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T12:00:00Z",
+    "sensors": {
+      "temperature_c": 28.0,
+      "humidity_percent": 60.1,
+      "soil_moisture_percent": 38,
+      "light_lux": 1500
+    },
+    "system": {
+      "cpu_load_percent": 34,
+      "ram_usage_percent": 45,
+      "wifi_rssi_dbm": -66,
+      "uptime_sec": 44400
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T13:00:00Z",
+    "sensors": {
+      "temperature_c": 28.5,
+      "humidity_percent": 58.9,
+      "soil_moisture_percent": 37
+    },
+    "system": {
+      "cpu_load_percent": 31,
+      "ram_usage_percent": 42,
+      "wifi_rssi_dbm": -71,
+      "uptime_sec": 48000
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T14:00:00Z",
+    "sensors": {
+      "temperature_c": 28.8,
+      "humidity_percent": 57.3,
+      "soil_moisture_percent": 36,
+      "light_lux": 1300
+    },
+    "system": {
+      "cpu_load_percent": 27,
+      "ram_usage_percent": 37,
+      "wifi_rssi_dbm": -69,
+      "uptime_sec": 51600
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T15:00:00Z",
+    "sensors": {
+      "temperature_c": 28.2,
+      "humidity_percent": 59.0,
+      "light_lux": 1100
+    },
+    "system": {
+      "cpu_load_percent": 32,
+      "ram_usage_percent": 43,
+      "wifi_rssi_dbm": -74,
+      "uptime_sec": 55200
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T16:00:00Z",
+    "sensors": {
+      "temperature_c": 27.6,
+      "humidity_percent": 61.4,
+      "soil_moisture_percent": 35,
+      "light_lux": 900
+    },
+    "system": {
+      "cpu_load_percent": 30,
+      "ram_usage_percent": 41,
+      "wifi_rssi_dbm": -67,
+      "uptime_sec": 58800
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T17:00:00Z",
+    "sensors": {
+      "temperature_c": 26.9,
+      "humidity_percent": 63.2,
+      "soil_moisture_percent": 34,
+      "light_lux": 600
+    },
+    "system": {
+      "cpu_load_percent": 28,
+      "ram_usage_percent": 38,
+      "wifi_rssi_dbm": -72,
+      "uptime_sec": 62400
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T18:00:00Z",
+    "sensors": {
+      "humidity_percent": 65.7,
+      "soil_moisture_percent": 33,
+      "light_lux": 300
+    },
+    "system": {
+      "cpu_load_percent": 33,
+      "ram_usage_percent": 44,
+      "wifi_rssi_dbm": -70,
+      "uptime_sec": 66000
+    }
+  },
+  {
+    "device_id": "esp32-node-01",
+    "area": "garden-bed-1",
+    "timestamp": "2025-09-20T19:00:00Z",
+    "sensors": {
+      "temperature_c": 24.8,
+      "humidity_percent": 67.1,
+      "soil_moisture_percent": 32,
+      "light_lux": 100
+    },
+    "system": {
+      "cpu_load_percent": 29,
+      "ram_usage_percent": 39,
+      "wifi_rssi_dbm": -73,
+      "uptime_sec": 69600
+    }
+  }
+]
