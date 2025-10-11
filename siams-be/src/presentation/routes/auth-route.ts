@@ -2,6 +2,6 @@ import { Router } from "express";
 
 const kRoute = Router();
 
-kRoute.get("/", async (req, res) => {});
+kRoute.get("/", async (req, res) => { });
 
 export default kRoute;
