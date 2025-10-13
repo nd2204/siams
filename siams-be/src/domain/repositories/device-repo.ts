@@ -1,4 +1,4 @@
-import type { Device } from "@domain/entities/device.js";
+import { type Device } from "@domain/entities/index";
 
 export interface DeviceRepository {
   getById(deviceId: string): Promise<Device | null>;

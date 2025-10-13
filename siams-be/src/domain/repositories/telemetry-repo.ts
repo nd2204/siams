@@ -1,4 +1,4 @@
-import type { Telemetry } from "@domain/entities/telemetry.js";
+import type { Telemetry } from "@domain/entities";
 
 export interface TelemetryRepository {
   append(t: Telemetry): Promise<void>;

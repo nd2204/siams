@@ -1,11 +1,11 @@
-export class Sensor {
-  constructor(
-    public sensorId: string,
-    public type: string,
-    public unit?: string,
-    public calibration?: { offset?: number; scale?: number },
-    public present = true
-  ) { }
+import Entity from "@shared/entity.js";
+
+export default class Sensor extends Entity<Sensor> {
+  sensorId!: string;
+  type!: string;
+  unit?: string;
+  calibration?: { offset?: number; scale?: number };
+  present = true;
 
   normalize(raw: number): number {
     const s = this.calibration ?? {};

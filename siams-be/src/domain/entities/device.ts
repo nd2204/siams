@@ -1,38 +1,30 @@
-import type { ActuationIntent } from "@domain/services/threshold-evaluator.js";
-import type { Threshold } from "@domain/value-objects/threshold.js";
-
-import type { Actuator } from "./actuator.js";
-import type { Schedule } from "./schedule.js";
-import type { Sensor } from "./sensor.js";
-import type { Telemetry } from "./telemetry.js";
+import { ActuationIntent } from "@domain/services/threshold-evaluator";
+import { Actuator, Sensor, Telemetry } from "@domain/entities";
+import { Threshold, Schedule } from "@domain/value-objects";
+import Entity from "@shared/entity.js";
 
 export type DeviceStatus = 'degraded' | 'offline' | 'online';
 
-export class Device {
-  actuators: Actuator[];
-  readonly deviceId: string;
+export default class Device extends Entity<Device> {
+  readonly deviceId!: string;
+  name!: string;
   farmArea?: string;
-  lastSeen?: Date;
   metadata?: Record<string, string> | undefined;
-  name: string;
-  schedules: Schedule[];
-  sensors: Sensor[];
-  status: DeviceStatus;
-  thresholds: Threshold[];
+  status: DeviceStatus = 'offline';
+  actuators: Actuator[] = [];
+  schedules: Schedule[] = [];
+  sensors: Sensor[] = [];
+  thresholds: Threshold[] = [];
+  lastSeen?: Date;
 
   constructor(deviceId: string, opts?: Partial<Device>) {
+    super(opts);
     this.deviceId = deviceId;
     this.name = opts?.name ?? deviceId;
-    this.sensors = opts?.sensors ?? [];
-    this.actuators = opts?.actuators ?? [];
-    this.thresholds = opts?.thresholds ?? [];
-    this.schedules = opts?.schedules ?? [];
-    this.status = opts?.status ?? 'offline';
-    this.metadata = opts?.metadata;
   }
 
   // Evaluate a single telemetry reading and produce actuation intents (pure domain)
-  evaluate(reading: Telemetry): ActuationIntent[] {
+  evaluate(_reading: Telemetry): ActuationIntent[] {
     // placeholder: real logic lives in ThresholdEvaluatorService
     return [];
   }

@@ -1,4 +1,4 @@
-import type { Alert } from "@domain/entities/alert.js";
+import type { Alert } from "@domain/entities/index.js";
 
 export interface AlertRepository {
   listRecent(deviceId: string, limit?: number): Promise<Alert[]>;

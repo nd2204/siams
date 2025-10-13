@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-base-to-string */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { PinoPretty } from "pino-pretty";
 
 // Map full level -> single character
@@ -26,18 +24,20 @@ function formatTimestamp() {
   return `${YYYY}-${MM}-${DD}`;
 }
 
-export default (opts: any) =>
-  PinoPretty({
+export default (opts?: any) => {
+  return PinoPretty({
     ...opts,
+    colorize: true,
     customPrettifiers: {
-      level: (logLevel: number, key: string, log, { colors }): string =>
+      level: (logLevel: number, _key: string, _log, { colors }): string =>
         getColorizedLogLabel(logLevel, colors),
-      name: (name: string, key: string, log, { colors }) => colors.blue(name),
+      name: (name: string, _key: string, _log, { colors }) => colors.blue(name),
       pid: (pid: string) => pid,
       tag: () => undefined,
       time: (timestamp) => `[${formatTimestamp()}][${timestamp}]`,
     },
-    messageFormat: (log, messageKey, levelLabel, { colors }) => {
+    messageFormat: (log, messageKey, _levelLabel, { colors }) => {
       return `${log.tag ? colors.blue(`|${log.tag}| `) : ""}${log[messageKey]}`;
     },
   });
+}

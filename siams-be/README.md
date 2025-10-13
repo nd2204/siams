@@ -1,13 +1,2 @@
 # Backend Structure (Node.js with Express):
-- `src/`: Source code for the backend application.
-    - `controllers/`: Handle incoming requests and orchestrate responses (e.g., route handlers).
-    - `services/`: Business logic and application-specific operations.
-    - `models/`: Define data structures and interact with the database.
-    - `routes/`: Define API endpoints and link them to controllers.
-    - `config/`: Configuration files for the application, database, and environment variables.
-    - `middlewares/`: Functions that process requests before they reach route handlers (e.g., authentication, logging).
-    - `utils/`: Helper functions.
-    - `app.js`: The main entry point of the backend application. 
-- `db/`: Database-related files (e.g., migrations, seed data).
-- `tests/`: Unit, integration, and end-to-end tests for the backend.
-- `package.json`, requirements.txt, or pom.xml: Defines backend dependencies.
+

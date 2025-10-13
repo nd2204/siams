@@ -3,11 +3,20 @@
   "compilerOptions": {
     "outDir": "./build",
     "rootDir": "./src",
+    "baseUrl": "./",
     "paths": {
-      "@*": ["./src/*"],
+      "@/*": ["./src/*"],
+      "@domain/*": ["./src/domain/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@application/*": ["./src/application/*"],
+      "@adapters/*": ["./src/adapters/*"],
     },
-    "strict": false
+    "strict": false,
+    "esModuleInterop": true,
+    "strictNullChecks": true,
+     // Enables source maps for easier debugging.
+    "sourceMap": true
   },
-  "include": ["**/*.ts"],
+  "include": ["./src/**/*"],
   "exclude": ["build", "dist"]
 }

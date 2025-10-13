@@ -1,11 +1,12 @@
+import Entity from "@shared/entity.js";
+
 export type ActuatorState = 'off' | 'on';
-export class Actuator {
-  constructor(
-    public actuatorId: string,
-    public type: string,
-    public state: ActuatorState = 'off',
-    public lastChanged?: Date
-  ) { }
+
+export default class Actuator extends Entity<Actuator> {
+  actuatorId!: string;
+  type!: string;
+  state: ActuatorState = 'off';
+  lastChanged?: Date;
 
   activate(duration_ms?: number) {
     this.state = 'on';

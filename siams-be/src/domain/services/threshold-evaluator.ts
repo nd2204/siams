@@ -1,10 +1,14 @@
-import type { Device } from "@domain/entities/device.js";
-import type { Telemetry } from "@domain/entities/telemetry.js";
+import Device from "@domain/entities/device.js";
+import Telemetry from "@domain/entities/telemetry.js";
 import type { Operator } from "@domain/value-objects/threshold.js";
 
-import { Alert } from "@domain/entities/alert.js";
+import Alert from "@domain/entities/alert.js";
 
-export interface ActuationIntent { action: { params?: any; type: string; }; actuatorId?: string; reason?: string; }
+export interface ActuationIntent {
+  action: { params?: unknown; type: string; };
+  actuatorId?: string;
+  reason?: string;
+}
 
 export class ThresholdEvaluatorService {
   // Pure function: returns intents and alerts without performing infra actions
@@ -16,8 +20,18 @@ export class ThresholdEvaluatorService {
       const v = telemetry.readings[t.sensorType];
       if (v === undefined) continue;
       if (this.compare(v, t.operator, t.value)) {
-        alerts.push(new Alert(`alert-${Date.now()}`, device.deviceId, t.sensorType, v, t, 'warning'));
-        intents.push({ action: t.action, reason: `threshold ${t.operator} ${t.value}` });
+        alerts.push(new Alert({
+          alertId: `alert-${Date.now().toString()}`,
+          deviceId: device.deviceId,
+          sensorType: t.sensorType,
+          value: v,
+          threshold: t,
+          level: 'warning'
+        }));
+        intents.push({
+          action: t.action,
+          reason: `threshold ${t.operator} ${t.value.toString()}`
+        });
       }
     }
     return { alerts, intents };

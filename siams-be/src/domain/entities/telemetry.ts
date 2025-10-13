@@ -1,10 +1,9 @@
-// domain/entities/telemetry.ts
-export class Telemetry {
-  constructor(
-    public deviceId: string,
-    public timestamp: Date,
-    public readings: Record<string, number>, // sensorType -> value
-    public status?: { [k: string]: any; heapFree?: number;wifiRssi?: number; }
-  ) { }
+import Entity from "@shared/entity.js";
+
+export default class Telemetry extends Entity<Telemetry> {
+  deviceId: string;
+  timestamp: Date;
+  readings: Record<string, number>; // sensorType -> value
+  status?: { [k: string]: unknown; heapFree?: number; wifiRssi?: number; }
 }
 
