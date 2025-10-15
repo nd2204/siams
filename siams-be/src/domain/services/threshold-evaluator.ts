@@ -1,8 +1,5 @@
-import Device from "@domain/entities/device.js";
-import Telemetry from "@domain/entities/telemetry.js";
+import { Device, Telemetry, Alert } from "@domain/entities";
 import type { Operator } from "@domain/value-objects/threshold.js";
-
-import Alert from "@domain/entities/alert.js";
 
 export interface ActuationIntent {
   action: { params?: unknown; type: string; };
@@ -21,8 +18,8 @@ export class ThresholdEvaluatorService {
       if (v === undefined) continue;
       if (this.compare(v, t.operator, t.value)) {
         alerts.push(new Alert({
-          alertId: `alert-${Date.now().toString()}`,
-          deviceId: device.deviceId,
+          id: `alert-${Date.now().toString()}`,
+          deviceId: device.id,
           sensorType: t.sensorType,
           value: v,
           threshold: t,

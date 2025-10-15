@@ -1,7 +1,13 @@
-import User from "@domain/entities/user.js"
+import { User } from "@domain/entities"
+import Entity from "@domain/entity"
 
-export default class AuthUser extends User {
-  password!: string
-  salt!: string
+export class AuthUser extends User {
+  password: string
+  salt: string
   confirmPassword?: string
+
+  constructor(args?: Partial<AuthUser>) {
+    super(args)
+    Object.assign(this, args)
+  }
 }

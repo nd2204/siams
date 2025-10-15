@@ -14,8 +14,14 @@
   "author": "nd2204",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "(cd siams-be && npm run dev &); (cd siams-fe && npm run dev)",
-    "start": "(cd siams-be && npm run start &); (cd siams-fe && npm run start)",
+    "be:prod": "cd siams-be && npm run start:prod",
+    "fe:prod": "cd siams-fe && npm run start:prod",
+    "be:dev": "cd siams-be && npm run start:dev",
+    "fe:dev": "cd siams-fe && npm run start:dev",
+    "all:dev": "(npm run be:dev &); (npm run fe:dev)",
+    "all:prod": "(npm run be:prod &); (npm run fe:prod)",
+    "dev": "npm run all:dev",
+    "start": "npm run all:prod",
     "broker": "(cd siams-mqtt-broker && docker compose up --build)"
   }
 }

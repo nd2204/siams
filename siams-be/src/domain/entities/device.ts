@@ -1,12 +1,11 @@
 import { ActuationIntent } from "@domain/services/threshold-evaluator";
 import { Actuator, Sensor, Telemetry } from "@domain/entities";
 import { Threshold, Schedule } from "@domain/value-objects";
-import Entity from "@shared/entity.js";
+import Entity from "@domain/entity";
 
 export type DeviceStatus = 'degraded' | 'offline' | 'online';
 
-export default class Device extends Entity<Device> {
-  readonly deviceId!: string;
+export class Device extends Entity<Device, string> {
   name!: string;
   farmArea?: string;
   metadata?: Record<string, string> | undefined;
@@ -19,7 +18,7 @@ export default class Device extends Entity<Device> {
 
   constructor(deviceId: string, opts?: Partial<Device>) {
     super(opts);
-    this.deviceId = deviceId;
+    this.id = deviceId;
     this.name = opts?.name ?? deviceId;
   }
 

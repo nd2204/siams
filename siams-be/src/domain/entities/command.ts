@@ -1,9 +1,8 @@
-import Entity from "@shared/entity.js";
+import Entity from "@domain/entity";
 
 export type CommandStatus = 'acked' | 'expired' | 'failed' | 'pending' | 'sent';
 
-export default class Command extends Entity<Command> {
-  public commandId!: string;
+export class Command extends Entity<Command, string> {
   public deviceId!: string;
   public issuedBy?: null | string;
   public commandType!: string;

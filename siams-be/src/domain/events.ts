@@ -1,5 +1,7 @@
-import type { Telemetry } from "@domain/entities/index.ts";
-import type { Threshold } from "@domain/value-objects/index.ts";
+/* WIP */
+
+import type { Telemetry } from "@domain/entities";
+import type { Threshold } from "@domain/value-objects";
 
 export interface CommandAckedEvent {
   commandId: string;

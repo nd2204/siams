@@ -1,9 +1,8 @@
-import Entity from "@shared/entity.js";
+import Entity from "@domain/entity";
 
 export type ActuatorState = 'off' | 'on';
 
-export default class Actuator extends Entity<Actuator> {
-  actuatorId!: string;
+export class Actuator extends Entity<Actuator, string> {
   type!: string;
   state: ActuatorState = 'off';
   lastChanged?: Date;

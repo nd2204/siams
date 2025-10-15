@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    ports:
+      - '5432:5432'
+    env_file:
+      - ./siams-be/.env
+    environments:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # Ensure the container restarts on failure or host reboot
+    restart: unless-stopped
+    # Essential for production readiness
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  be:
+    build:
+      context: ./siams-be
+      dockerfile: Dockerfile
+    container_name: siams-be
+    depends_on:
+      - db
+    env_file:
+      ./siams-be/.env
+
+  # redis-fe:
+  #   image: redis:latest
+  #   container_name: siams-redis-fe
+  #   ports:
+  #     - 6379
+
+  # fe:
+  #   build:
+  #     context: ./siams-fe
+  #     dockerfile: Dockerfile
+  #   container_name: siams-fe
+  #   ports:
+  #     - '80:80'
+  #   depends_on:
+  #     - be
+  #     - redis-fe
+
+volumes:
+  postgres_data:

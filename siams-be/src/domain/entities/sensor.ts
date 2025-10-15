@@ -1,7 +1,6 @@
-import Entity from "@shared/entity.js";
+import Entity from "@domain/entity";
 
-export default class Sensor extends Entity<Sensor> {
-  sensorId!: string;
+export class Sensor extends Entity<Sensor, string> {
   type!: string;
   unit?: string;
   calibration?: { offset?: number; scale?: number };

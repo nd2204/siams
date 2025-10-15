@@ -4,10 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start:dev": "vite",
+    "start:prod": "vite",
+    "dev": "npm run start:dev",
+    "start": "npm run start:prod"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

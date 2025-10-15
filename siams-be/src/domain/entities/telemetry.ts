@@ -1,6 +1,6 @@
-import Entity from "@shared/entity.js";
+import Entity from "@domain/entity";
 
-export default class Telemetry extends Entity<Telemetry> {
+export class Telemetry extends Entity<Telemetry, number> {
   deviceId: string;
   timestamp: Date;
   readings: Record<string, number>; // sensorType -> value
