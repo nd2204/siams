@@ -1,6 +1,6 @@
 export interface IValidationResult<T> {
-  errors?: { field: string, message: string }[]
   value: T
+  errors?: { field: string, message: string }[]
 }
 
 export interface IValidator<T> {

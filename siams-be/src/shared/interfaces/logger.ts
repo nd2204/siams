@@ -1,9 +1,10 @@
+export type LogInfo = { msg?: string, obj?: any, tag?: string };
+
 export interface ILogger {
-  info(msg: any, tag?: string): void
-  debug(msg: any, tag?: string): void
-  error(msg: any, tag?: string): void
-  fatal(msg: any, tag?: string): void
-  info(msg: any, tag?: string): void
-  trace(msg: any, tag?: string): void
-  warn(msg: any, tag?: string): void
+  info(logInfo: LogInfo): void
+  debug(logInfo: LogInfo): void
+  error(logInfo: LogInfo): void
+  fatal(logInfo: LogInfo): void
+  trace(logInfo: LogInfo): void
+  warn(logInfo: LogInfo): void
 }

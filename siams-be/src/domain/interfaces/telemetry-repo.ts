@@ -1,6 +1,7 @@
-import type { Telemetry } from "@domain/entities";
+import { IRepository } from "@/shared/interfaces";
+import type { SensorTelemetry } from "@domain/entities";
 
-export interface ITelemetryRepository {
-  append(t: Telemetry): Promise<void>;
-  query(deviceId: string, from: Date, to: Date): Promise<Telemetry[]>;
+export interface ITelemetryRepository extends IRepository<SensorTelemetry> {
+  append(t: SensorTelemetry): Promise<void>;
+  query(deviceId: string, from: Date, to: Date): Promise<SensorTelemetry[]>;
 }

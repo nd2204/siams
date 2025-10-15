@@ -1,7 +1,7 @@
 // logger.js
 import { pino } from "pino";
 import stream from "./sm_logger_transport"
-import { ILogger } from "../interfaces/logger";
+import { ILogger, LogInfo } from "@shared/interfaces/logger";
 
 // Base pino instance
 const logger = pino({
@@ -9,33 +9,33 @@ const logger = pino({
   timestamp: pino.stdTimeFunctions.epochTime,
 }, stream());
 
-export function sm_debug(msg: any, tag?: string) {
-  logger.debug({ tag }, msg);
+export function sm_debug(logInfo: LogInfo) {
+  logger.debug({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
 }
-export function sm_error(msg: any, tag?: string) {
-  logger.error({ tag }, msg);
+export function sm_error(logInfo: LogInfo) {
+  logger.error({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
 }
-export function sm_fatal(msg: any, tag?: string) {
-  logger.fatal({ tag }, msg);
+export function sm_fatal(logInfo: LogInfo) {
+  logger.fatal({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
 }
-export function sm_info(msg: any, tag?: string) {
-  logger.info({ tag }, msg);
+export function sm_info(logInfo: LogInfo) {
+  logger.info({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
 }
-export function sm_trace(msg: any, tag?: string) {
-  logger.trace({ tag }, msg);
+export function sm_trace(logInfo: LogInfo) {
+  logger.trace({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
 }
-export function sm_warn(msg: any, tag?: string) {
-  logger.warn({ tag }, msg);
+export function sm_warn(logInfo: LogInfo) {
+  logger.warn({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
 }
 
 export class SMLogger implements ILogger {
+  info(logInfo: LogInfo): void { sm_info(logInfo) }
+  debug(logInfo: LogInfo): void { sm_debug(logInfo) }
+  error(logInfo: LogInfo): void { sm_error(logInfo) }
+  fatal(logInfo: LogInfo): void { sm_fatal(logInfo) }
+  trace(logInfo: LogInfo): void { sm_trace(logInfo) }
+  warn(logInfo: LogInfo): void { sm_warn(logInfo) }
   // Export wrapper API
-  debug(msg: any, tag?: string) { sm_debug(msg, tag) }
-  error(msg: any, tag?: string) { sm_error(msg, tag); }
-  fatal(msg: any, tag?: string) { sm_fatal(msg, tag); }
-  info(msg: any, tag?: string) { sm_info(msg, tag); }
-  trace(msg: any, tag?: string) { sm_trace(msg, tag); }
-  warn(msg: any, tag?: string) { sm_warn(msg, tag); }
 }
 
 export const sm_logger_internal = logger;

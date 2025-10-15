@@ -5,20 +5,25 @@
     "rootDir": "./src",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"],
       "@domain/*": ["./src/domain/*"],
       "@shared/*": ["./src/shared/*"],
       "@adapters/*": ["./src/adapters/*"],
       "@feature/*": ["./src/feature/*"],
       "@config/*": ["./src/config/*"],
       "@infra/*": ["./src/infra/*"],
+      "@/*": ["./src/*"]
     },
     "strict": false,
     "esModuleInterop": true,
     "strictNullChecks": true,
-     // Enables source maps for easier debugging.
+    // Enables source maps for easier debugging.
     "sourceMap": true
   },
-  "include": ["./src/**/*"],
-  "exclude": ["build", "dist"]
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "build",
+    "dist"
+  ]
 }

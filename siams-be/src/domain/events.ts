@@ -1,6 +1,6 @@
 /* WIP */
 
-import type { Telemetry } from "@domain/entities";
+// import type { Telemetry } from "@domain/entities";
 import type { Threshold } from "@domain/value-objects";
 
 export interface CommandAckedEvent {
@@ -10,7 +10,7 @@ export interface CommandAckedEvent {
 
 export interface TelemetryReceivedEvent {
   deviceId: string;
-  telemetry: Telemetry;
+  // telemetry: Telemetry;
 }
 
 export interface ThresholdBreachedEvent {

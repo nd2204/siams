@@ -1,11 +1,18 @@
-import { sm_info } from "@shared/logger";
+import { sm_error, sm_info } from "@shared/logger";
 import { createServer } from "http";
 import config from "@/config"
 import app from "@infra/api/express"
 
-const server = createServer(app);
-const port: number = config.app.port;
+async function main() {
+  const server = createServer(app);
+  const port: number = config.app.port;
 
-server.listen(port, () => {
-  sm_info(`server is running at http://localhost:${port.toString()}`, "app")
+  server.listen(port, () => {
+    sm_info({ msg: `server is running at http://localhost:${port.toString()}`, tag: "app" })
+  });
+}
+
+main().catch(err => {
+  sm_error({ obj: err, tag: "app" });
+  process.exit(1);
 });

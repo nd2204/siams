@@ -4,8 +4,9 @@ import { Actuator } from "./actuator";
 import { Alert } from "./alert";
 import { Command } from "./command";
 import { Sensor } from "./sensor";
-import { Telemetry } from "./telemetry";
+import { SensorTelemetry, DeviceTelemetry } from "./telemetry";
 import { Device } from "./device";
+import { Cluster } from "./cluster";
 
 export {
   User,
@@ -14,6 +15,8 @@ export {
   Alert,
   Command,
   Sensor,
-  Telemetry,
-  Device
+  SensorTelemetry,
+  DeviceTelemetry,
+  Device,
+  Cluster
 } 

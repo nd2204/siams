@@ -31,12 +31,12 @@ if (!config.app.isProduction()) {
 
 routes.attach(app)
 
-// app.use((req: express.Request, res: express.Response) => {
-//   res.status(404).send({
-//     error: 'NotFound',
-//     message: `Cannot ${req.method} /${req.baseUrl}`,
-//   })
-// })
+app.use((req: express.Request, res: express.Response) => {
+  res.status(404).send({
+    error: 'NotFound',
+    message: `Cannot ${req.method} /${req.baseUrl}`,
+  })
+})
 
 app.use(methodOverride())
 app.use((err: IError, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

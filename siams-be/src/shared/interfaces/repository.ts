@@ -2,7 +2,7 @@ import type Entity from "@/domain/entity";
 import { IPaginated } from "./paginated";
 
 export interface IRepository<T> {
-  findOneBy(filters: Partial<T>): Promise<T>
+  findOneBy(filters: Partial<T>): Promise<T | undefined>
   findAllBy(filters: Partial<T>): Promise<T[]>
   listBy(filters: Partial<T>, page: number, perPage: number): Promise<IPaginated<T>>
   create(payload: Partial<T>): Promise<T>
