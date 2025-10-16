@@ -9,7 +9,7 @@ import {
 import { ThemeProvider } from "@/components/theme-provider"
 import { SensorChartWidget } from "@/components/dashboard/widgets/sensor-chart"
 
-export default function Page() {
+export default function DashboardLayout() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <SidebarProvider
@@ -30,9 +30,6 @@ export default function Page() {
                 <SectionCards />
                 <div className="px-4 lg:px-6">
                   <ChartAreaInteractive />
-                </div>
-                <div className="px-4 lg:px-6">
-                  <SensorChartWidget />
                 </div>
               </div>
             </div>
