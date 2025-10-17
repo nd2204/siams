@@ -1,6 +1,7 @@
 import mqtt from "mqtt";
+import { v4 as uuidv4 } from "uuid"
 
-const tempId = "temp-" + Math.floor(Math.random() * 10000); // ID tạm
+const tempId = "temp-" + uuidv4(); // ID tạm
 const clusterId = "cluster-123";
 
 let deviceId: string | null = null;
@@ -16,7 +17,7 @@ client.on("connect", () => {
   // Gửi registration message
   const regPayload = {
     tempId,
-    model: "device-simulator",
+    name: "device-simulator",
     sensors: ["soil-moisture", "temperature"]
   };
   client.publish(`org/siams/cluster/${clusterId}/register`, JSON.stringify(regPayload));
@@ -60,3 +61,6 @@ function startTelemetry() {
   // Subscribe command channel
   client.subscribe(`org/demo/cluster/${clusterId}/node/${deviceId}/command`);
 }
+
+
+console.log(`[${tempId}] waiting for broker`);

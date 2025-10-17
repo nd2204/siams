@@ -1,13 +1,14 @@
-import Entity from "@domain/entity";
+import Entity from "@domain/interfaces/entity";
 
 export type SensorType = 'temp' | 'humi' | 'soil-moist' | 'illuminace'
 
 export class Sensor extends Entity<Sensor, string> {
-  device_id: string
-  name: string
-  type: SensorType;
-  unit: string;
-  created_at: Date;
+  declare device_id: string;
+  declare local_id: string;
+  declare name: string;
+  declare type: SensorType;
+  declare unit: string;
+  declare created_at: Date;
   calibration?: { offset?: number; scale?: number };
 
   normalize(raw: number): number {

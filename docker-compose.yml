@@ -6,8 +6,6 @@ services:
     container_name: siams-be
     depends_on:
       - db
-    env_file:
-      ./siams-be/.env
 
   fe:
     build:
@@ -42,8 +40,6 @@ services:
       # - ./siams-mqtt-broker/config:/opt/emqx/etc:rw
       - emqx_data:/opt/emqx/data:rw
       - emqx_log:/opt/emqx/log:rw
-    env_file:
-      - "./siams-be/.env"
     environment:
       - EMQX_NAME=emqx
       - EMQX_NODE__NAME=emqx@127.0.0.1
@@ -58,8 +54,6 @@ services:
     container_name: postgres_db
     ports:
       - '5432:5432'
-    env_file:
-      - ./siams-be/.env
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_USER=${DB_USER}

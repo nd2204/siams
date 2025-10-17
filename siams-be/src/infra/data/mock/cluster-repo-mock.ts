@@ -1,10 +1,11 @@
 import { Cluster } from "@domain/entities";
-import { IClusterRepository } from "@domain/interfaces";
+import { IClusterRepository } from "@domain/repositories";
 import { IPaginated } from "@shared/interfaces";
 
 const clusters: Cluster[] = []
 
 export class ClusterRepositoryMock implements IClusterRepository {
+
   constructor() { }
 
   addDevice(deviceId: string, clusterId: string): Promise<boolean> {
@@ -19,7 +20,7 @@ export class ClusterRepositoryMock implements IClusterRepository {
         filters.id ? (c.id === filters.id) : true &&
           filters.name ? (c.name === filters.name) : true &&
             filters.location ? (c.location === filters.location) : true &&
-              filters.ownerId ? (c.ownerId === filters.ownerId) : true
+              filters.orgId ? (c.orgId === filters.orgId) : true
     )))
   }
   findAllBy(filters: Partial<Cluster>): Promise<Cluster[]> {

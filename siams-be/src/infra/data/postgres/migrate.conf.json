@@ -1,23 +1,19 @@
 {
   "dev": {
-    "driver": "sqlite3",
-    "filename": "~/dev.db"
-  },
-  "prod": {
     "host": {
-      "ENV": "POSTGRES_HOST"
+      "ENV": "DB_HOST"
     },
     "port": {
-      "ENV": "POSTGRES_PORT"
+      "ENV": "DB_PORT"
     },
     "user": {
-      "ENV": "POSTGRES_USER"
+      "ENV": "DB_USER"
     },
     "password": {
-      "ENV": "POSTGRES_PASS"
+      "ENV": "DB_PASSWORD"
     },
     "database": {
-      "ENV": "POSTGRES_DB"
+      "ENV": "DB_NAME"
     },
     "driver": "pg",
     "multipleStatements": true

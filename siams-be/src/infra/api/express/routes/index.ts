@@ -1,9 +1,10 @@
 import { Application } from 'express'
-import { authRouter } from './auth'
-import { deviceRouter } from './device'
-import { userRouter } from './user'
-import { adminRouter } from './admin'
-import { clusterRouter } from './cluster'
+import { authRouter } from './auth-router'
+import { deviceRouter } from './device-router'
+import { userRouter } from './user-router'
+import { adminRouter } from './admin-router'
+import { clusterRouter } from './cluster-router'
+import { organizationRouter } from './organization-router'
 
 const version = "v1"
 
@@ -14,5 +15,6 @@ export default {
     app.use(`/api/${version}/admin`, adminRouter())
     app.use(`/api/${version}/devices`, deviceRouter())
     app.use(`/api/${version}/clusters`, clusterRouter())
+    app.use(`/api/${version}/organizations`, organizationRouter())
   },
 }

@@ -1,5 +1,5 @@
 import { Device } from "@/domain/entities";
-import { IDeviceRepository } from "@/domain/interfaces";
+import { IDeviceRepository } from "@domain/repositories";
 import { ValidationError } from "@/shared/errors";
 import { IUseCase, IValidator } from "@/shared/interfaces";
 

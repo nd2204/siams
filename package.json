@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Smart irrigation and monitoring system dashboard for esp32 nodes",
   "homepage": "https://github.com/nd2204/siams#readme",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/nd2204/siams/issues"
   },
@@ -23,5 +24,8 @@
     "dev": "npm run all:dev",
     "start": "npm run all:prod",
     "broker": "(cd siams-mqtt-broker && docker compose up --build)"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3"
   }
 }

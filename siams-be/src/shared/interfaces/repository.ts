@@ -1,4 +1,4 @@
-import type Entity from "@/domain/entity";
+import type Entity from "@domain/interfaces/entity";
 import { IPaginated } from "./paginated";
 
 export interface IRepository<T> {

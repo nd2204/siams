@@ -1,28 +1,48 @@
-import { ClusterRepositoryMock } from '@infra/data/mock/cluster-repo-mock'
-import { DeviceRepositoryMock } from '@infra/data/mock/device-repo-mock'
-import { UserRepositoryMock } from '@infra/data/mock/user-repo-mock'
+import { SMLogger } from "@shared/logger"
 
+import { OrganizationRepositoryPg } from '@infra/data/postgres/organization-repo-pg'
+import { DeviceRepositoryPg } from '@infra/data/postgres/device-repo-pg'
+import { UserRepositoryPg } from '@infra/data/postgres/user-repo-pg'
+import { ClusterRepositoryPg } from '@infra/data/postgres/cluster-repo-pg'
+import { ClusterCredentialRepositoryPg } from "@infra/data/postgres/cluster-crendential-repo-pg"
+
+import { pool } from '@infra/data/postgres/pool-pg'
 import { encryptPassword, issueToken, comparePasswords, verifyToken } from '@infra/utils/auth'
 import * as validators from '@infra/validation/joi'
-import { SMLogger } from "@shared/logger"
+
+const orgRepo = new OrganizationRepositoryPg(pool)
+const deviceRepo = new DeviceRepositoryPg(pool)
+const userRepo = new UserRepositoryPg(pool)
+const clusterRepo = new ClusterRepositoryPg(pool)
+const clusterCredRepo = new ClusterCredentialRepositoryPg(pool)
+const logger = new SMLogger()
 
 export default {
   device: {
+    repository: deviceRepo,
     validators: validators.device,
-    repository: new DeviceRepositoryMock(),
   },
   user: {
-    repository: new UserRepositoryMock(encryptPassword, new SMLogger()),
+    repository: userRepo,
+    validators: validators.user
   },
   cluster: {
-    repository: new ClusterRepositoryMock(),
+    repository: clusterRepo,
     validators: validators.cluster
+  },
+  clusterCredential: {
+    repository: clusterCredRepo,
+    validators: null
+  },
+  organization: {
+    repository: orgRepo,
+    validators: validators.organization
   },
   utils: {
     encryptPassword,
     issueToken,
     verifyToken,
     comparePasswords,
-    logger: new SMLogger
+    logger: logger
   },
 }

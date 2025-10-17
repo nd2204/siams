@@ -1,11 +1,11 @@
-import Entity from "@domain/entity";
+import { Entity } from "@domain/interfaces";
 
 export type ActuatorState = 'off' | 'on';
 
 export class Actuator extends Entity<Actuator, string> {
-  type!: string;
+  declare type: string;
   state: ActuatorState = 'off';
-  lastChanged?: Date;
+  declare lastChanged?: Date;
 
   activate(duration_ms?: number) {
     this.state = 'on';

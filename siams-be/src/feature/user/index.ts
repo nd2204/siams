@@ -1,6 +1,15 @@
-export { UserProfileUC } from "./profile";
-export { AuthorizeUserUC } from "./authorize";
-export { AuthorizeAdminUC } from "./authorize-admin";
-export { LoginUserUC } from "./login";
-export { RegisterUserUC } from "./register";
-export { UpdateUserUC } from "./update";
+import { UserProfileUC } from "./get-user-profile";
+import { AuthorizeUserUC } from "./authorize-user";
+import { AuthorizeAdminUC } from "./authorize-admin";
+import { LoginUserUC } from "./login-user";
+import { RegisterUserUC } from "./register-user";
+import { UpdateUserUC } from "./update-user";
+
+export {
+  UserProfileUC,
+  AuthorizeUserUC,
+  AuthorizeAdminUC,
+  LoginUserUC,
+  RegisterUserUC,
+  UpdateUserUC
+}

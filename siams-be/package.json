@@ -7,8 +7,8 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:prod": "node --env-file .env build",
-    "start:dev": "node --env-file .env build",
+    "start:prod": "node --env-file ../.env build",
+    "start:dev": "node --env-file ../.env build",
     "start": "npm run build && npm run start:prod",
     "dev": "nodemon --watch ./src --exec \"npm run build && npm run start:dev\"",
     "build": "npm run clean && tsc && tsc-alias",
@@ -26,7 +26,8 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "db-migrate": "^0.11.14",
-    "db-migrate-postgres": "^1.2.3",
+    "db-migrate-pg": "^1.5.2",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "joi": "^18.0.1",
     "jsonwebtoken": "^9.0.2",

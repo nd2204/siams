@@ -1,4 +1,4 @@
-import { IClusterRepository } from "@domain/interfaces";
+import { IClusterRepository } from "@domain/repositories";
 import { ValidationError } from "@shared/errors";
 import { IUseCase } from "@shared/interfaces";
 

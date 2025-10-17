@@ -1,7 +1,7 @@
 // import { ActuationIntent, ThresholdEvaluatorService } from "@domain/services/threshold-evaluator";
 import { Actuator, Sensor } from "@domain/entities";
 // import { Threshold, Schedule } from "@domain/value-objects";
-import Entity from "@domain/entity";
+import { Entity } from "@domain/interfaces";
 
 export type DeviceStatus = 'offline' | 'online' | 'unregistered';
 

@@ -1,6 +1,5 @@
-export { IAlertRepository } from "./alert-repo"
-export { ICommandRepository } from "./command-repo"
-export { IDeviceRepository } from "./device-repo"
-export { ITelemetryRepository } from "./telemetry-repo"
-export { IUserRepository } from "./user-repo"
-export { IClusterRepository } from "./cluster-repo"
+import Entity from "./entity";
+
+export {
+  Entity,
+}

@@ -1,4 +1,4 @@
-import Entity from "@domain/entity";
+import { Entity } from "@domain/interfaces";
 
 export type CommandStatus = 'acked' | 'expired' | 'failed' | 'pending' | 'sent';
 

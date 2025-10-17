@@ -1,5 +1,5 @@
 import { type Threshold } from "@domain/value-objects";
-import Entity from "@domain/entity";
+import { Entity } from "@domain/interfaces";
 
 export type AlertLevel = 'critical' | 'info' | 'warning';
 

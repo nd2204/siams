@@ -1,5 +1,5 @@
 import { Cluster } from "@domain/entities";
-import { IClusterRepository } from "@domain/interfaces";
+import { IClusterRepository } from "@domain/repositories";
 import { NotFoundError, ValidationError } from "@shared/errors";
 import { IUseCase } from "@shared/interfaces";
 

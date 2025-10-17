@@ -1,8 +1,8 @@
 import { ClusterAddDeviceUC } from "./add-device";
-import { CreateClusterUC } from "./create";
+import { CreateClusterUC } from "./create-cluster";
 import { GetClusterByIdUC } from "./get-by-id";
-import { ListClusterUC } from "./list";
-import { QueryClusterUC } from "./query";
+import { ListClusterUC } from "./list-cluster";
+import { QueryClusterUC } from "./query-cluster";
 import { ClusterRemoveDeviceUC } from "./remove-device";
 
 export {
