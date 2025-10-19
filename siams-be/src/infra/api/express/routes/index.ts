@@ -3,8 +3,8 @@ import { authRouter } from './auth-router'
 import { deviceRouter } from './device-router'
 import { userRouter } from './user-router'
 import { adminRouter } from './admin-router'
-import { clusterRouter } from './cluster-router'
 import { organizationRouter } from './organization-router'
+import { clusterRouter } from './cluster-router'
 
 const version = "v1"
 
@@ -14,7 +14,7 @@ export default {
     app.use(`/api/${version}/users`, userRouter())
     app.use(`/api/${version}/admin`, adminRouter())
     app.use(`/api/${version}/devices`, deviceRouter())
+    app.use(`/api/${version}/orgs`, organizationRouter())
     app.use(`/api/${version}/clusters`, clusterRouter())
-    app.use(`/api/${version}/organizations`, organizationRouter())
   },
 }

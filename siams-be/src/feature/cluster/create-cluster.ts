@@ -42,9 +42,9 @@ export class CreateClusterUC implements IUseCase<CreateClusterResponse> {
 
     await this.credRepo.create(cred)
 
-    return new CreateClusterResponse(savedCluster, {
-      loginId: loginId,
-      password: passwordRaw
-    })
+    return new CreateClusterResponse(
+      savedCluster,
+      { loginId: loginId, password: passwordRaw }
+    )
   }
 }

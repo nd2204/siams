@@ -1,32 +1,26 @@
-import ClusterController from "@/adapters/http/v1/controllers/cluster-controller";
-import services from "@/config/services";
-import { CreateClusterUC, GetClusterByIdUC, ListClusterUC } from "@feature/cluster";
-import { NextFunction, Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
+import { getAuthToken } from "../get-auth-token";
+import ClusterController from "@adapters/http/v1/controllers/cluster-controller";
+import { GetClusterByIdUC } from "@feature/cluster";
+import services from "@config/services";
 
 const controller = new ClusterController(
-  new CreateClusterUC(
-    services.cluster.repository,
-    services.clusterCredential.repository,
-    services.cluster.validators.createClusterRequestValidator,
-    services.utils.encryptPassword
-  ),
-  new GetClusterByIdUC(services.cluster.repository),
-  new ListClusterUC(services.cluster.repository)
+  new GetClusterByIdUC(services.cluster.repository)
 )
 
-export function clusterRouter(): Router {
-  const router = Router();
+export function clusterRouter() {
+  const router = Router()
 
-  router.post("/", async (
+  router.get("/:id", async (
     req: Request,
     res: Response,
     next: NextFunction
   ) => {
     try {
-      const token = [...(req.headers['authorization']?.split(' ') || [])].pop() || ''
-      const result = await controller.create({
+      const token = getAuthToken(req)
+      const result = await controller.getById({
         token: token,
-        body: req.body
+        params: req.params
       })
       res.send(result)
     } catch (err) {
@@ -34,5 +28,5 @@ export function clusterRouter(): Router {
     }
   })
 
-  return router;
+  return router
 }

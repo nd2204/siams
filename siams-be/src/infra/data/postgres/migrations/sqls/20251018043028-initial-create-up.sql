@@ -22,9 +22,9 @@ CREATE TABLE users (
 );
 
 CREATE TABLE roles (
-  id uuid primary key,
-  name text unique,       -- "admin", "operator", "viewer"
-  description text
+  id          UUID PRIMARY KEY,
+  name        TEXT UNIQUE,       -- "admin", "operator", "viewer"
+  description TEXT
 );
 
 CREATE TABLE user_org_roles (

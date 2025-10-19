@@ -3,6 +3,5 @@ export class CreateOrganizationResponse {
     public id: string,
     public name: string,
     public createAt: Date
-  ) {
-  }
+  ) { }
 }

@@ -6,22 +6,26 @@ export class ClusterCredentialRepositoryPg
   extends PostgresRepositoryBase<ClusterCredential> {
 
   constructor(pool: Pool) {
-    super(pool, "cluster_credentials", {
+    const mapping = {
       id: "id",
       clusterId: "cluster_id",
-      loginId: "username",
+      loginId: "login_id",
       password: "password_hash",
       salt: "salt",
       createdAt: "created_at",
-    }, (row: any) =>
-      new ClusterCredential({
-        id: row["id"],
-        clusterId: row["cluster_id"],
-        loginId: row["username"],
-        password: row["password_hash"],
-        salt: row["salt"],
-        createdAt: row["created_at"],
-      })
+    }
+
+    super(pool, "cluster_credentials",
+      mapping
+      , (row: any) =>
+        new ClusterCredential({
+          id: row[mapping.id],
+          clusterId: row[mapping.clusterId],
+          loginId: row[mapping.loginId],
+          password: row[mapping.password],
+          salt: row[mapping.salt],
+          createdAt: row[mapping.createdAt],
+        })
     )
   }
 }

@@ -22,12 +22,12 @@ export class ClusterRepositoryPg
     },
       (row) => {
         return new Cluster({
-          id: row.id,
-          orgId: row.org_id,
-          name: row.name,
-          description: row.description,
-          location: row.locaiton,
-          createdAt: row.created_at
+          id: row["id"],
+          orgId: row["org_id"],
+          name: row["name"],
+          description: row["description"],
+          location: row["location"],
+          createdAt: row["created_at"]
         })
       }
     )
