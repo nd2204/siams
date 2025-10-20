@@ -141,3 +141,4 @@ vite.config.ts.timestamp-*
 */.DS_STORE
 siams-mqtt-broker/config/pwfile
 build/
+siams-be/package-lock.json
