@@ -22,9 +22,9 @@ export class CreateClusterUC implements IUseCase<CreateClusterResponse> {
 
     const cluster = new Cluster({
       id: uuidv4(),
-      name: value.name,
-      location: value.location,
-      orgId: value.orgId
+      name: value.name!,
+      location: value.location!,
+      orgId: value.orgId!
     })
 
     const savedCluster = await this.repo.create(cluster);

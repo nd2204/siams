@@ -7,29 +7,21 @@ export type DeviceStatus = 'offline' | 'online' | 'unregistered';
 
 export class Device extends Entity<Device, string> {
   declare name: string;
-  declare clusterId: string
-  // metadata?: Record<string, string> | undefined;
+  declare clusterId: string;
+  declare model: string;
+  declare firmwareVersion: string;
   status: DeviceStatus = 'offline';
-  // actuators: Actuator[] = [];
-  // schedules: Schedule[] = [];
-  sensors: Sensor[] = [];
-  // thresholds: Threshold[] = [];
-  lastSeen?: Date;
+  declare lastSeen?: Date;
+  declare createdAt?: Date;
 
-  constructor(opts?: Partial<Device>) {
+  constructor(opts: Device) {
     super(opts);
     this.name = opts?.name ?? opts?.id ?? "Unamed Device";
   }
 
-  // // Evaluate a single telemetry reading and produce actuation intents (pure domain)
-  // evaluate(_reading: Telemetry): ActuationIntent[] {
-  //   // placeholder: real logic lives in ThresholdEvaluatorService
-  //   return ThresholdEvaluatorService.evaluate(this, _reading)[];
-  // }
-
-  markSeen(ts: Date = new Date()) {
-    this.lastSeen = ts;
-    this.status = 'online';
+  static markSeen(device: Device, ts: Date = new Date()) {
+    device.lastSeen = ts;
+    device.status = 'online';
   }
 
   // updateThreshold(sensorType: string, newT: Threshold) {

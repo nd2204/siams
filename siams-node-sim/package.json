@@ -7,7 +7,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && node build",
+    "start": "npm run build && node --env-file .env build/siams-node-sim/src",
     "dev": "nodemon --watch ./src --exec \"npm run start\"",
     "build": "npm run clean && tsc && tsc-alias",
     "clean": "rimraf ./build",

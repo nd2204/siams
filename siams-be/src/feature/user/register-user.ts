@@ -1,9 +1,8 @@
-import { User } from "@/domain/entities/user";
 import { IUseCase, IValidator } from "@/shared/interfaces";
 import { IUserRepository } from "@domain/repositories";
 import { UserRegisterRequest } from "./dtos/user-register-request";
 import { ValidationError } from "@shared/errors";
-import { AuthUser } from "@domain/entities";
+import { User } from "@domain/entities";
 import { UserRegisterResponse } from "./dtos/user-register-response";
 import { v4 as uuidv4 } from "uuid";
 
@@ -26,11 +25,11 @@ export class RegisterUserUC implements IUseCase<UserRegisterResponse> {
     }
 
     const { password: password_hashed, salt } = await this.encryptPassword(value.password!);
-    const savedUser = await this.repo.create(new AuthUser({
+    const savedUser = await this.repo.create(new User({
       id: uuidv4(),
-      firstName: req.firstName,
-      lastName: req.lastName,
-      email: req.email,
+      firstName: value.firstName!,
+      lastName: value.lastName!,
+      email: value.email!,
       password: password_hashed,
       salt: salt
     }))

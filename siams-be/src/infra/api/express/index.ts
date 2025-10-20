@@ -2,7 +2,6 @@
 
 import { logger } from '@adapters/http/v1/middlewares'
 import { IError } from '@shared/interfaces'
-import { sm_error, sm_info } from '@/shared/logger'
 import routes from './routes'
 import express from 'express'
 import cors from 'cors'
@@ -11,8 +10,8 @@ import config from '@/config'
 
 const app: express.Application = express()
 
-import swaggerUi from 'swagger-ui-express'
-import swaggerDocument from './swagger.json'
+// import swaggerUi from 'swagger-ui-express'
+// import swaggerDocument from '@config/swagger.json'
 
 app.use(logger())
 app.use(express.json())
@@ -25,9 +24,9 @@ app.use(
 )
 app.use(express.urlencoded({ extended: false }))
 
-if (!config.app.isProduction()) {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-}
+// if (!config.app.isProduction()) {
+//   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// }
 
 routes.attach(app)
 
@@ -44,7 +43,7 @@ app.use((err: IError, _req: express.Request, res: express.Response, _next: expre
     error: err.name,
     message: err.message,
     status: err.httpStatus,
-    details: err?.details,
+    details: err.details,
   })
 })
 

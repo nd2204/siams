@@ -1,8 +1,8 @@
-import config from '@/config'
+import { app } from '@/config/app'
 import { sm_fatal } from '@/shared/logger'
 import { Pool, PoolClient } from 'pg'
 
-const cfg = config.app.database
+const cfg = app.database
 
 export const pool = new Pool({
   user: cfg.user,

@@ -7,9 +7,7 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
     protected readonly tableName: string,
     protected readonly columns: Record<keyof T, string>, // map key entity -> column DB
     protected readonly toEntity: (row: any) => T
-  ) {
-
-  }
+  ) { }
 
   protected buildWhere(filters: Partial<T>) {
     const keys = Object.keys(filters) as (keyof T)[];
@@ -17,14 +15,18 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
     const values: any[] = [];
 
     keys.forEach((key, idx) => {
-      const col = this.columns[key];
-      if (!col) throw new Error(`Column mapping not found for ${String(key)}`);
-      conditions.push(`${col} = $${idx + 1}`);
+      conditions.push(`${this.getColumn(key)} = $${idx + 1}`);
       values.push((filters as any)[key]);
     });
 
     const whereClause = conditions.length > 0 ? "WHERE " + conditions.join(" AND ") : "";
     return { whereClause, values };
+  }
+
+  protected getColumn(key: keyof T): string {
+    const col = this.columns[key]
+    if (!col) throw new Error(`Column mapping not found for key \"${String(key)}\"`);
+    return col
   }
 
   async findOneBy(filters: Partial<T>): Promise<T | undefined> {
@@ -64,7 +66,7 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
 
   async create(payload: Partial<T>): Promise<T> {
     const keys = Object.keys(payload) as (keyof T)[];
-    const cols = keys.map(k => this.columns[k]);
+    const cols = keys.map(k => this.getColumn(k));
     const placeholders = keys.map((_, i) => `$${i + 1}`);
     const values = keys.map(k => (payload as any)[k]);
 
@@ -75,7 +77,7 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
 
   async update(id: number | string, payload: Partial<T>): Promise<T> {
     const keys = Object.keys(payload) as (keyof T)[];
-    const sets = keys.map((k, i) => `${this.columns[k]} = $${i + 1}`);
+    const sets = keys.map((k, i) => `${this.getColumn(k)} = $${i + 1}`);
     const values = keys.map(k => (payload as any)[k]);
 
     const sql = `UPDATE ${this.tableName} SET ${sets.join(",")} WHERE id = $${keys.length + 1} RETURNING *`;

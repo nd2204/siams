@@ -1,4 +1,4 @@
-import { RegisterDeviceUC } from "./register";
+import { RegisterDeviceUC } from "./register-device";
 
 export {
   RegisterDeviceUC

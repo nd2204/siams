@@ -9,7 +9,7 @@ import {
 } from '@feature/cluster';
 import { CreateClusterResponse } from '@feature/cluster/dtos/create-cluster-response';
 
-export default class OrganizationController {
+export class OrganizationController {
 
   constructor(
     private createOrgUC: CreateOrganizationUC,

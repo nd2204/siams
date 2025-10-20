@@ -17,7 +17,7 @@ const clusterRepo = new ClusterRepositoryPg(pool)
 const clusterCredRepo = new ClusterCredentialRepositoryPg(pool)
 const logger = new SMLogger()
 
-export default {
+export const services = {
   device: {
     repository: deviceRepo,
     validators: validators.device,

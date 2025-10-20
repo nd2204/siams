@@ -1,11 +1,13 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { getAuthToken } from "../get-auth-token";
-import ClusterController from "@adapters/http/v1/controllers/cluster-controller";
+import { ClusterController } from "@adapters/http/v1/controllers/cluster-controller";
 import { GetClusterByIdUC } from "@feature/cluster";
-import services from "@config/services";
+import { services } from "@config/services";
 
 const controller = new ClusterController(
-  new GetClusterByIdUC(services.cluster.repository)
+  new GetClusterByIdUC(
+    services.cluster.repository
+  ),
 )
 
 export function clusterRouter() {

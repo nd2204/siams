@@ -10,32 +10,53 @@ const logger = pino({
 }, stream());
 
 export function sm_debug(logInfo: LogInfo) {
-  logger.debug({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
+  logger.debug({ tag: logInfo.tag, obj: logInfo.obj }, logInfo.msg);
 }
 export function sm_error(logInfo: LogInfo) {
-  logger.error({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
+  logger.error({ tag: logInfo.tag, obj: logInfo.obj }, logInfo.msg);
 }
 export function sm_fatal(logInfo: LogInfo) {
-  logger.fatal({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
+  logger.fatal({ tag: logInfo.tag, obj: logInfo.obj }, logInfo.msg);
 }
 export function sm_info(logInfo: LogInfo) {
-  logger.info({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
+  logger.info({ tag: logInfo.tag, obj: logInfo.obj }, logInfo.msg);
 }
 export function sm_trace(logInfo: LogInfo) {
-  logger.trace({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
+  logger.trace({ tag: logInfo.tag, obj: logInfo.obj }, logInfo.msg);
 }
 export function sm_warn(logInfo: LogInfo) {
-  logger.warn({ tag: logInfo.tag, msg: logInfo.msg }, logInfo.obj);
+  logger.warn({ tag: logInfo.tag, obj: logInfo.obj }, logInfo.msg);
 }
 
 export class SMLogger implements ILogger {
-  info(logInfo: LogInfo): void { sm_info(logInfo) }
-  debug(logInfo: LogInfo): void { sm_debug(logInfo) }
-  error(logInfo: LogInfo): void { sm_error(logInfo) }
-  fatal(logInfo: LogInfo): void { sm_fatal(logInfo) }
-  trace(logInfo: LogInfo): void { sm_trace(logInfo) }
-  warn(logInfo: LogInfo): void { sm_warn(logInfo) }
-  // Export wrapper API
+  constructor(
+    public readonly tag?: string
+  ) { }
+
+  info(logInfo: LogInfo): void {
+    if (!logInfo.tag) logInfo.tag = this.tag
+    sm_info(logInfo)
+  }
+  debug(logInfo: LogInfo): void {
+    if (!logInfo.tag) logInfo.tag = this.tag
+    sm_debug(logInfo)
+  }
+  error(logInfo: LogInfo): void {
+    if (!logInfo.tag) logInfo.tag = this.tag
+    sm_error(logInfo)
+  }
+  fatal(logInfo: LogInfo): void {
+    if (!logInfo.tag) logInfo.tag = this.tag
+    sm_fatal(logInfo)
+  }
+  trace(logInfo: LogInfo): void {
+    if (!logInfo.tag) logInfo.tag = this.tag
+    sm_trace(logInfo)
+  }
+  warn(logInfo: LogInfo): void {
+    if (!logInfo.tag) logInfo.tag = this.tag
+    sm_warn(logInfo)
+  }
 }
 
 export const sm_logger_internal = logger;

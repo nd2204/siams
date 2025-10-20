@@ -1,5 +1,5 @@
 import AuthController from "@/adapters/http/v1/controllers/auth-controller";
-import services from "@/config/services";
+import { services } from "@/config/services";
 import { LoginUserUC, RegisterUserUC, AuthorizeUserUC, UpdateUserUC, UserProfileUC } from "@/feature/user";
 import { NextFunction, Router, Request, Response } from "express";
 import { getAuthToken } from "../get-auth-token";

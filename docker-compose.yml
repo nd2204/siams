@@ -27,7 +27,7 @@ services:
 
   # mqtt broker
   emqx:
-    image: emqx:latest
+    image: emqx/emqx:5.8
     container_name: emqx
     restart: unless-stopped
     ports:

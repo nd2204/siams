@@ -5,5 +5,5 @@ export class ClusterCredential extends Entity<ClusterCredential, string> {
   declare loginId: string;
   declare password: string;
   declare salt: string;
-  declare createdAt: Date;
+  declare createdAt?: Date;
 }

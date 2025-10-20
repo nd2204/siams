@@ -1,9 +1,9 @@
-import { AuthUser, User } from "@/domain/entities";
+import { User } from "@/domain/entities";
 import { IUseCase, IValidator } from "@/shared/interfaces";
 
 export class AuthorizeAdminUC implements IUseCase<User> {
   constructor(
-    protected validator: IValidator<AuthUser>
+    protected validator: IValidator<User>
   ) { }
 
   call(...args: unknown[]): Promise<User> {

@@ -1,8 +1,12 @@
+import { RegisterDevicePayload } from "@feature/device/dtos/register-device-request";
+import { topics } from "@config/mqtt-topics";
 import mqtt from "mqtt";
 import { v4 as uuidv4 } from "uuid"
 
+
 const tempId = "temp-" + uuidv4(); // ID tạm
-const clusterId = "cluster-123";
+const clusterId = "082edbc1-9e31-45bc-a701-72f96ffcd2ef";
+const orgId = "e400bd9a-6b31-4aff-8f25-3c8f3bad00a0"
 
 let deviceId: string | null = null;
 
@@ -15,24 +19,27 @@ client.on("connect", () => {
   console.log(`[${tempId}] Connected to broker`);
 
   // Gửi registration message
-  const regPayload = {
-    tempId,
+  const regPayload: RegisterDevicePayload = {
     name: "device-simulator",
-    sensors: ["soil-moisture", "temperature"]
+    model: "nodejs",
+    firmwareVersion: "1.0.0",
+    capabilities: {
+      sensors: ["soil-moist", "temp"]
+    }
   };
-  client.publish(`org/siams/cluster/${clusterId}/register`, JSON.stringify(regPayload));
+  client.publish(`org/${orgId}/cluster/${clusterId}/register/${tempId}`, JSON.stringify(regPayload));
   console.log(`[${tempId}] Sent registration request`);
 
   // Subscribe để nhận ack
-  client.subscribe(`org/demo/cluster/${clusterId}/register/ack/${tempId}`);
+  client.subscribe(topics.registerDevice.ack(orgId, clusterId, tempId));
 });
 
 // Nhận registration ack hoặc command
 client.on("message", (topic, message) => {
   const payload = JSON.parse(message.toString());
-  if (topic.includes("register/ack")) {
+  if (topic.includes("register-ack")) {
     deviceId = payload.deviceId;
-    console.log(`[${tempId}] Registered as ${deviceId}`);
+    console.log(`[${tempId}] Received from register-ack`, payload);
     startTelemetry();
   } else if (topic.includes("command")) {
     console.log(`[${deviceId}] Received command: ${message.toString()}`);
@@ -52,14 +59,14 @@ function startTelemetry() {
       timestamp: new Date().toISOString()
     };
     client.publish(
-      `org/siams/cluster/${clusterId}/node/${deviceId}/telemetry`,
+      `org/${orgId}/cluster/${clusterId}/node/${deviceId}/telemetry`,
       JSON.stringify(payload)
     );
     console.log(`[${deviceId}] Published telemetry`, payload);
   }, 5000);
 
   // Subscribe command channel
-  client.subscribe(`org/demo/cluster/${clusterId}/node/${deviceId}/command`);
+  client.subscribe(`org/${orgId}/cluster/${clusterId}/node/${deviceId}/command`);
 }
 
 

@@ -2,16 +2,16 @@
   "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
     "outDir": "./build",
-    "rootDir": "./src",
+    "rootDir": "..",
     "baseUrl": "./",
     "paths": {
-      "@domain/*": ["./src/domain/*"],
-      "@shared/*": ["./src/shared/*"],
-      "@adapters/*": ["./src/adapters/*"],
-      "@feature/*": ["./src/feature/*"],
-      "@config/*": ["./src/config/*"],
-      "@infra/*": ["./src/infra/*"],
-      "@/*": ["./src/*"]
+      "@domain/*": ["../siams-be/src/domain/*"],
+      "@shared/*": ["../siams-be/src/shared/*"],
+      "@adapters/*": ["../siams-be/src/adapters/*"],
+      "@feature/*": ["../siams-be/src/feature/*"],
+      "@config/*": ["../siams-be/src/config/*"],
+      "@infra/*": ["../siams-be/src/infra/*"],
+      "@/*": ["../siams-be/src/*"]
     },
     "strict": false,
     "esModuleInterop": true,

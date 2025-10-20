@@ -1,5 +1,4 @@
 import { User } from "./user";
-import { AuthUser } from "./auth-user";
 import { Actuator } from "./actuator";
 import { Alert } from "./alert";
 import { Command } from "./command";
@@ -12,7 +11,6 @@ import { ClusterCredential } from "./cluster-credential";
 
 export {
   User,
-  AuthUser,
   Actuator,
   Alert,
   Command,

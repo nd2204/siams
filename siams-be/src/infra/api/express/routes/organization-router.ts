@@ -1,9 +1,9 @@
-import services from "@/config/services";
-import OrganizationController from "@adapters/http/v1/controllers/organization-controller";
+import { services } from "@/config/services";
+import { getAuthToken } from "@infra/api/express/get-auth-token";
+import { OrganizationController } from "@adapters/http/v1/controllers/organization-controller";
 import { CreateOrganizationUC, GetOrganizationByIdUC } from "@feature/organization";
-import { NextFunction, Router, Request, Response } from "express";
-import { getAuthToken } from "../get-auth-token";
 import { CreateClusterUC, GetClusterByIdUC, ListClusterByOrgIdUC } from "@feature/cluster";
+import { NextFunction, Router, Request, Response } from "express";
 
 const controller = new OrganizationController(
   new CreateOrganizationUC(
