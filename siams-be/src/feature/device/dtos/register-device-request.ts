@@ -1,16 +1,12 @@
-import { SensorType } from "@domain/entities/sensor"
-
-export type DeviceCapabilites = {
-  sensors?: SensorType[],
-  actuators?: string[]
-}
+import { DeviceCapabilities } from "@domain/entities"
 
 export class RegisterDevicePayload {
   constructor(
-    public name: string,
     public model: string,
     public firmwareVersion: string,
-    public capabilities: DeviceCapabilites
+    public capabilities: Pick<DeviceCapabilities, "sensors" | "actuators" | "commands">,
+    public location: { lon: number, lat: number },
+    public name?: string,
   ) { }
 }
 

@@ -1,9 +1,13 @@
 import { Actuator } from "@domain/entities";
-import { IActuatorRepository } from "@domain/repositories";
+import { IDeviceActuatorRepository } from "@domain/repositories";
 import { IPaginated } from "@shared/interfaces";
 
-export class ActuatorRepositoryMock implements IActuatorRepository {
+export class ActuatorRepositoryMock implements IDeviceActuatorRepository {
   constructor() { }
+
+  upsert(payload: Partial<Actuator>): Promise<Actuator> {
+    throw new Error("Method not implemented.");
+  }
 
   findOneBy(filters: Partial<Actuator>): Promise<Actuator | undefined> {
     throw new Error("Method not implemented.");

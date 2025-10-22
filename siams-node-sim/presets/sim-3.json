@@ -1,0 +1,62 @@
+{
+  "orgId": "19fb0bb0-3f5f-4a60-9f65-84ac8c858a1f",
+  "clusterId": "49150afa-c26b-4233-b75a-cce37490e938",
+  "tempId": "sim-3",
+  "mqtt": {
+    "opts": {
+      "clean": true
+    }
+  },
+  "simulation": {
+    "telemetryIntervalMs": 5000,
+    "statusIntervalMs": 30000,
+    "telemetryJitterMs": 1000
+  },
+  "capabilities": {
+    "sensors": [
+      {
+        "localId": 1,
+        "type": "soilMoisture",
+        "unit": "%"
+      },
+      {
+        "localId": 2,
+        "type": "temperature",
+        "unit": "°C"
+      },
+      {
+        "localId": 3,
+        "type": "humidity",
+        "unit": "%"
+      },
+      {
+        "localId": 4,
+        "type": "lightIntensity",
+        "unit": "lux"
+      }
+    ],
+    "actuators": [
+      {
+        "localId": 5,
+        "type": "coolingFan"
+      },
+      {
+        "localId": 6,
+        "type": "ventilationFlap"
+      },
+      {
+        "localId": 7,
+        "type": "heater"
+      }
+    ],
+    "commands": [
+      {
+        "action": "turn_something_on_pv",
+        "params": [
+          "testArgs"
+        ]
+      }
+    ]
+  },
+  "deviceId": "dcb71c80-80b0-44c6-bce2-500e2cf172ed"
+}

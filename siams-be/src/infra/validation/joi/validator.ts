@@ -15,4 +15,8 @@ export default class JOIValidator<T> implements IValidator<T> {
 
     return { value: result.value, errors: errors }
   }
+
+  public getSchema() {
+    return this.schema;
+  }
 }

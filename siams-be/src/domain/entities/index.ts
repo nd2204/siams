@@ -1,24 +1,26 @@
 import { User } from "./user";
 import { Actuator } from "./actuator";
-import { Alert } from "./alert";
+import { DeviceEvent } from "./device-event";
 import { Command } from "./command";
 import { Sensor } from "./sensor";
-import { SensorTelemetry, DeviceStatus } from "./telemetry";
+import { DeviceTelemetry, DeviceStatus } from "./telemetry";
 import { Device } from "./device";
 import { Cluster } from "./cluster";
 import { Organization } from "./organization";
 import { ClusterCredential } from "./cluster-credential";
+import { DeviceCapabilities } from "./device-capabilities"
 
 export {
   User,
   Actuator,
-  Alert,
+  DeviceEvent,
   Command,
   Sensor,
-  SensorTelemetry,
+  DeviceTelemetry,
   DeviceStatus,
   Device,
   Cluster,
   ClusterCredential,
   Organization,
+  DeviceCapabilities,
 } 

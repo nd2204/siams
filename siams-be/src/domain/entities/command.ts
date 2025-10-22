@@ -5,17 +5,21 @@ export type CommandStatus = 'acked' | 'expired' | 'failed' | 'pending' | 'sent';
 export class Command extends Entity<Command, string> {
   declare deviceId: string;
   declare issuedBy?: null | string;
-  declare commandType: string;
+  declare command: string;
   declare payload: Record<string, unknown>;
   declare expiresAt?: Date
   status = 'pending';
-  createdAt = new Date();
+  declare createdAt?: Date;
+  declare ackedAt?: Date;
 
-  isExpired(now: Date = new Date()): boolean {
-    return !!this.expiresAt && this.expiresAt.getTime() < now.getTime();
+  static isExpired(command: Command, now: Date = new Date()): boolean {
+    return !!command.expiresAt && command.expiresAt.getTime() < now.getTime();
   }
-  markAcked() { this.status = 'acked'; }
-  markFailed(reason?: string) { this.status = 'failed'; }
-  markSent() { this.status = 'sent'; }
+  static markAcked(command: Command): Command { command.status = 'acked'; return command }
+  static markFailed(command: Command): Command { command.status = 'failed'; return command }
+  static markSent(command: Command): Command {
+    command.status = 'sent';
+    return command
+  }
 }
 

@@ -1,23 +1,25 @@
-import { IAlertRepository } from "./alert-repo"
-import { ICommandRepository } from "./command-repo"
-import { IDeviceRepository } from "./device-repo"
-import { ITelemetryRepository } from "./telemetry-repo"
 import { IUserRepository } from "./user-repo"
-import { IClusterRepository } from "./cluster-repo"
-import { IActuatorRepository } from "./actuator-repo"
-import { ISensorRepository } from "./sensor-repo"
 import { IOrganizationRepository } from "./organization-repo"
+import { IClusterRepository } from "./cluster-repo"
 import { IClusterCredentialRepository } from "./cluster-credential-repo"
+import { IDeviceEventRepository } from "./device-event-repo"
+import { IDeviceCommandRepository } from "./device-command-repo"
+import { IDeviceRepository } from "./device-repo"
+import { IDeviceTelemetryRepository } from "./device-telemetry-repo"
+import { IDeviceActuatorRepository } from "./device-actuator-repo"
+import { IDeviceSensorRepository } from "./device-sensor-repo"
+import { IDeviceCapabilitiesRepository } from "./device-capabilities-repo"
 
 export {
-  IAlertRepository,
-  ICommandRepository,
+  IDeviceEventRepository,
+  IDeviceCommandRepository,
   IDeviceRepository,
-  ITelemetryRepository,
+  IDeviceTelemetryRepository,
   IUserRepository,
   IClusterRepository,
-  IActuatorRepository,
-  ISensorRepository,
+  IDeviceActuatorRepository,
+  IDeviceSensorRepository,
   IOrganizationRepository,
   IClusterCredentialRepository,
+  IDeviceCapabilitiesRepository
 }

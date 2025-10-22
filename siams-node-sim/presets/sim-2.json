@@ -1,0 +1,32 @@
+{
+  "orgId": "19fb0bb0-3f5f-4a60-9f65-84ac8c858a1f",
+  "clusterId": "49150afa-c26b-4233-b75a-cce37490e938",
+  "tempId": "sim-2",
+  "mqtt": {
+    "opts": {
+      "clean": true
+    }
+  },
+  "simulation": {
+    "telemetryIntervalMs": 5000,
+    "statusIntervalMs": 30000,
+    "telemetryJitterMs": 1000
+  },
+  "capabilities": {
+    "sensors": [
+      {
+        "localId": 1,
+        "type": "soilMoisture",
+        "unit": "%"
+      },
+      {
+        "localId": 2,
+        "type": "temperature",
+        "unit": "°C"
+      }
+    ],
+    "actuators": [],
+    "commands": []
+  },
+  "deviceId": "bc69d9b5-5f0a-4cf1-a449-477a145ebe0e"
+}

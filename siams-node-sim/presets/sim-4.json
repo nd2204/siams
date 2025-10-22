@@ -1,0 +1,64 @@
+{
+  "orgId": "19fb0bb0-3f5f-4a60-9f65-84ac8c858a1f",
+  "clusterId": "49150afa-c26b-4233-b75a-cce37490e938",
+  "tempId": "sim-4",
+  "mqtt": {
+    "opts": {
+      "clean": true
+    }
+  },
+  "simulation": {
+    "telemetryIntervalMs": 5000,
+    "statusIntervalMs": 30000,
+    "telemetryJitterMs": 1000
+  },
+  "capabilities": {
+    "sensors": [
+      {
+        "localId": 1,
+        "type": "temperature",
+        "unit": "°C"
+      }
+    ],
+    "actuators": [
+      {
+        "localId": 2,
+        "type": "lightingRelay"
+      },
+      {
+        "localId": 3,
+        "type": "fertilizerDispenser"
+      },
+      {
+        "localId": 4,
+        "type": "shadeMotor"
+      },
+      {
+        "localId": 5,
+        "type": "heater"
+      },
+      {
+        "localId": 6,
+        "type": "irrigationValve"
+      },
+      {
+        "localId": 7,
+        "type": "ventilationFlap"
+      },
+      {
+        "localId": 8,
+        "type": "waterPump"
+      },
+      {
+        "localId": 9,
+        "type": "seedDispenser"
+      }
+    ],
+    "commands": [
+      {
+        "action": "turn_something_on"
+      }
+    ]
+  },
+  "deviceId": "2aa5e648-7766-4742-ae13-f7f5101d205b"
+}

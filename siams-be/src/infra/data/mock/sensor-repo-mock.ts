@@ -1,10 +1,14 @@
 import { Sensor } from "@domain/entities";
-import { ISensorRepository } from "@domain/repositories";
+import { IDeviceSensorRepository } from "@domain/repositories";
 import { IPaginated } from "@shared/interfaces";
 
-export class SensorRepositoryMock implements ISensorRepository {
+export class SensorRepositoryMock implements IDeviceSensorRepository {
 
   constructor() { }
+
+  upsert(payload: Partial<Sensor>): Promise<Sensor> {
+    throw new Error("Method not implemented.");
+  }
 
   findOneBy(filters: Partial<Sensor>): Promise<Sensor | undefined> {
     throw new Error("Method not implemented.");

@@ -1,27 +1,28 @@
 // import { ActuationIntent, ThresholdEvaluatorService } from "@domain/services/threshold-evaluator";
-import { Actuator, Sensor } from "@domain/entities";
 // import { Threshold, Schedule } from "@domain/value-objects";
 import { Entity } from "@domain/interfaces";
 
 export type DeviceStatus = 'offline' | 'online' | 'unregistered';
 
 export class Device extends Entity<Device, string> {
-  declare name: string;
+  declare name?: string;
   declare clusterId: string;
   declare model: string;
   declare firmwareVersion: string;
-  status: DeviceStatus = 'offline';
+  declare status: DeviceStatus;
   declare lastSeen?: Date;
   declare createdAt?: Date;
 
   constructor(opts: Device) {
     super(opts);
-    this.name = opts?.name ?? opts?.id ?? "Unamed Device";
+    this.name = opts.name ?? `${opts.model}-${this.firmwareVersion}`;
   }
 
-  static markSeen(device: Device, ts: Date = new Date()) {
-    device.lastSeen = ts;
-    device.status = 'online';
+  static markSeen(ts: Date = new Date()): Partial<Device> {
+    return {
+      lastSeen: ts,
+      status: 'online',
+    }
   }
 
   // updateThreshold(sensorType: string, newT: Threshold) {

@@ -80,7 +80,7 @@ CREATE TABLE devices (
 CREATE TABLE sensors (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   device_id    UUID NOT NULL REFERENCES devices(id) ON DELETE CASCADE,
-  local_id     TEXT NOT NULL,
+  local_id     NUMERIC NOT NULL,
   type         TEXT NOT NULL,
   unit         TEXT,
   status       TEXT CHECK (status IN ('online','offline','removed')) DEFAULT 'offline',
@@ -91,7 +91,7 @@ CREATE TABLE sensors (
 CREATE TABLE actuators (
   id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   device_id    UUID NOT NULL REFERENCES devices(id) ON DELETE CASCADE,
-  local_id     TEXT NOT NULL,
+  local_id     NUMERIC NOT NULL,
   type         TEXT NOT NULL,
   status       TEXT CHECK (status IN ('online','offline')) DEFAULT 'offline',
   last_seen_at TIMESTAMPTZ,

@@ -33,29 +33,33 @@ export class SMLogger implements ILogger {
     public readonly tag?: string
   ) { }
 
-  info(logInfo: LogInfo): void {
-    if (!logInfo.tag) logInfo.tag = this.tag
-    sm_info(logInfo)
+  private log(logInfo: string | LogInfo, cb: (logInfo: LogInfo) => void) {
+    if (typeof logInfo === 'string') {
+      cb({ tag: this.tag, msg: logInfo })
+    } else {
+      if (!logInfo.msg) logInfo.msg = ""
+      if (!logInfo.tag) logInfo.tag = this.tag
+      cb(logInfo)
+    }
   }
-  debug(logInfo: LogInfo): void {
-    if (!logInfo.tag) logInfo.tag = this.tag
-    sm_debug(logInfo)
+
+  info(logInfo: string | LogInfo): void {
+    this.log(logInfo, sm_info)
   }
-  error(logInfo: LogInfo): void {
-    if (!logInfo.tag) logInfo.tag = this.tag
-    sm_error(logInfo)
+  debug(logInfo: string | LogInfo): void {
+    this.log(logInfo, sm_debug)
   }
-  fatal(logInfo: LogInfo): void {
-    if (!logInfo.tag) logInfo.tag = this.tag
-    sm_fatal(logInfo)
+  error(logInfo: string | LogInfo): void {
+    this.log(logInfo, sm_info)
   }
-  trace(logInfo: LogInfo): void {
-    if (!logInfo.tag) logInfo.tag = this.tag
-    sm_trace(logInfo)
+  fatal(logInfo: string | LogInfo): void {
+    this.log(logInfo, sm_fatal)
   }
-  warn(logInfo: LogInfo): void {
-    if (!logInfo.tag) logInfo.tag = this.tag
-    sm_warn(logInfo)
+  trace(logInfo: string | LogInfo): void {
+    this.log(logInfo, sm_trace)
+  }
+  warn(logInfo: string | LogInfo): void {
+    this.log(logInfo, sm_warn)
   }
 }
 

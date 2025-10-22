@@ -1,0 +1,3 @@
+
+ALTER TABLE commands
+ADD COLUMN expires_at TIMESTAMPTZ;

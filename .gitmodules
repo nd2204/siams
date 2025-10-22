@@ -1,0 +1,3 @@
+[submodule "siams-node"]
+	path = siams-node
+	url = https://github.com/nd2204/siams-node

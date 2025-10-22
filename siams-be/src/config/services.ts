@@ -1,25 +1,50 @@
 import { SMLogger } from "@shared/logger"
 
-import { OrganizationRepositoryPg } from '@infra/data/postgres/organization-repo-pg'
-import { DeviceRepositoryPg } from '@infra/data/postgres/device-repo-pg'
-import { UserRepositoryPg } from '@infra/data/postgres/user-repo-pg'
-import { ClusterRepositoryPg } from '@infra/data/postgres/cluster-repo-pg'
-import { ClusterCredentialRepositoryPg } from "@infra/data/postgres/cluster-crendential-repo-pg"
+import {
+  OrganizationRepositoryPg,
+  DeviceRepositoryPg,
+  UserRepositoryPg,
+  ClusterRepositoryPg,
+  ClusterCredentialRepositoryPg,
+  DeviceSensorRepositoryPg,
+  DeviceActuatorRepositoryPg,
+  DeviceCapabilitiesRepositoryPg,
+  DeviceStatusRepositoryPg,
+  DeviceTelemetryRepositoryPg,
+  DeviceCommandRepositoryPg
+} from "@infra/data/postgres/repositories"
 
 import { pool } from '@infra/data/postgres/pool-pg'
 import { encryptPassword, issueToken, comparePasswords, verifyToken } from '@infra/utils/auth'
 import * as validators from '@infra/validation/joi'
 
 const orgRepo = new OrganizationRepositoryPg(pool)
-const deviceRepo = new DeviceRepositoryPg(pool)
 const userRepo = new UserRepositoryPg(pool)
+
+// Cluster aggregate
 const clusterRepo = new ClusterRepositoryPg(pool)
 const clusterCredRepo = new ClusterCredentialRepositoryPg(pool)
-const logger = new SMLogger()
+
+// Device aggregate
+const deviceRepo = new DeviceRepositoryPg(pool)
+const deviceCapabilitesRepo = new DeviceCapabilitiesRepositoryPg(pool)
+const deviceStatusRepo = new DeviceStatusRepositoryPg(pool)
+const deviceSensorRepo = new DeviceSensorRepositoryPg(pool)
+const deviceActuatorRepo = new DeviceActuatorRepositoryPg(pool)
+const deviceTelemetryRepo = new DeviceTelemetryRepositoryPg(pool)
+const deviceCommandRepo = new DeviceCommandRepositoryPg(pool)
 
 export const services = {
   device: {
-    repository: deviceRepo,
+    repositories: {
+      base: deviceRepo,
+      status: deviceStatusRepo,
+      capabilities: deviceCapabilitesRepo,
+      sensors: deviceSensorRepo,
+      actuators: deviceActuatorRepo,
+      telemetry: deviceTelemetryRepo,
+      commands: deviceCommandRepo,
+    },
     validators: validators.device,
   },
   user: {
@@ -43,6 +68,6 @@ export const services = {
     issueToken,
     verifyToken,
     comparePasswords,
-    logger: logger
+    logger: new SMLogger("app")
   },
 }

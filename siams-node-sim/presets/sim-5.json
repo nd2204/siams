@@ -1,0 +1,70 @@
+{
+  "orgId": "19fb0bb0-3f5f-4a60-9f65-84ac8c858a1f",
+  "clusterId": "49150afa-c26b-4233-b75a-cce37490e938",
+  "tempId": "sim-5",
+  "mqtt": {
+    "opts": {
+      "clean": true
+    }
+  },
+  "simulation": {
+    "telemetryIntervalMs": 5000,
+    "statusIntervalMs": 30000,
+    "telemetryJitterMs": 1000
+  },
+  "capabilities": {
+    "sensors": [
+      {
+        "localId": 1,
+        "type": "soilMoisture",
+        "unit": "%"
+      },
+      {
+        "localId": 2,
+        "type": "soilNutrient",
+        "unit": "ppm"
+      },
+      {
+        "localId": 3,
+        "type": "CO2",
+        "unit": "ppm"
+      },
+      {
+        "localId": 4,
+        "type": "temperature",
+        "unit": "°C"
+      }
+    ],
+    "actuators": [
+      {
+        "localId": 5,
+        "type": "irrigationValve"
+      },
+      {
+        "localId": 6,
+        "type": "fertilizerDispenser"
+      },
+      {
+        "localId": 7,
+        "type": "coolingFan"
+      },
+      {
+        "localId": 8,
+        "type": "heater"
+      },
+      {
+        "localId": 9,
+        "type": "waterPump"
+      }
+    ],
+    "commands": [
+      {
+        "action": "turn_something_on_pv",
+        "params": [
+          "testArgs"
+        ]
+      }
+    ]
+  },
+  "deviceId": "23c4f7cd-e641-434b-b575-eb8e29c5ad1a"
+}

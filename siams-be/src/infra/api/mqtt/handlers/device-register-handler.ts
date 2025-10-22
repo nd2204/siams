@@ -10,23 +10,29 @@ type RegisterParams = {
   orgId: string;
   clusterId: string;
 };
+
 export class DeviceRegisterHandler implements IMqttHandler<RegisterDevicePayload, RegisterParams> {
-  pattern = topics.registerDevice.pattern
-  topic = topics.registerDevice.topic;
+  pattern = topics.deviceRegister.pattern
+  topic = topics.deviceRegister.topic;
 
   constructor(
     private readonly useCase: RegisterDeviceUC,
     private readonly logger: ILogger
   ) { }
 
-  async handle(client: IMqttClient, params: RegisterParams, payload: any): Promise<void> {
+  async handle(client: IMqttClient, params: RegisterParams, payload: RegisterDevicePayload): Promise<void> {
     const orgId = params.orgId;
     const clusterId = params.clusterId;
     const tempId = params.tempId;
 
-    this.logger.info({ msg: `Received register request from ${tempId}` });
+    this.logger.info({ msg: `Received from ${tempId}` });
 
-    const ackTopic = topics.registerDevice.ack(params.orgId, params.clusterId, tempId);
+    const ackTopic = topics.deviceRegisterAck.create({
+      orgId: params.orgId,
+      clusterId: params.clusterId,
+      tempId: tempId
+    });
+
     try {
       // xử lý usecase
       const res = await this.useCase.call({ orgId, clusterId, payload });
@@ -41,7 +47,6 @@ export class DeviceRegisterHandler implements IMqttHandler<RegisterDevicePayload
       });
     }
 
-    this.logger.info({ msg: `Sent register-ack to ${tempId} with topic: ${ackTopic}` });
+    this.logger.info({ msg: `Acked: ${ackTopic}` });
   }
-
 }

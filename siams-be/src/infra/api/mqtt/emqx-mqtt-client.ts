@@ -1,7 +1,8 @@
 import mqtt, { IClientOptions } from "mqtt";
 import { IMqttClient, IMqttHandler } from "@domain/interfaces";
-import { parseTopic } from "@shared/mqtt/parse-topic";
+import { parseTopic } from "@infra/utils/mqtt/parse-topic";
 import { ILogger } from "@shared/interfaces";
+import { matchTopic } from "@infra/utils/mqtt/match-topic";
 
 export class EmqxMqttClient implements IMqttClient {
   private client?: mqtt.MqttClient;
@@ -44,8 +45,12 @@ export class EmqxMqttClient implements IMqttClient {
 
     this.client!.on("message", async (topic, msg) => {
       const payload = this.tryParse(msg.toString());
+      this.logger.info({ msg: `Received message from topic ${topic} with payload`, obj: payload })
 
       for (const h of this.handlers) {
+        // NOTE: using this pattern matching could be the bottleneck
+        // as the number of topics grows
+        if (!matchTopic(h.topic, topic)) continue;
         const params = parseTopic(topic, h.pattern);
         if (Object.keys(params).length > 0) {
           await h.handle(this, params, payload);
