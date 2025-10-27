@@ -1,6 +1,10 @@
-import { User } from "@/domain/entities";
-
 export class UserLoginResponse {
-  user!: Partial<User>
+  user!: {
+    id: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    orgId?: string
+  }
   token!: string
 }

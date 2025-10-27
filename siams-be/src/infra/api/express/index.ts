@@ -17,10 +17,10 @@ app.use(logger())
 app.use(express.json())
 app.use(
   cors({
-    origin: 'http://127.0.0.1:33445',
+    origin: ['http://127.0.0.1:33445', 'http://localhost:33445'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
-  }),
+  })
 )
 app.use(express.urlencoded({ extended: false }))
 
