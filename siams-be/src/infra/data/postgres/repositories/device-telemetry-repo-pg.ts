@@ -1,4 +1,4 @@
-import { DeviceTelemetry } from "@domain/entities/telemetry";
+import { DeviceTelemetry } from "@domain/entities";
 import { IDeviceTelemetryRepository } from "@domain/repositories";
 import { PostgresRepositoryBase } from "@infra/data/postgres/postgres-repo-base";
 import { Pool } from "pg";

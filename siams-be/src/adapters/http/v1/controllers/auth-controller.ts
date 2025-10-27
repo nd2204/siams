@@ -1,8 +1,7 @@
 import { IRequest } from '@shared/interfaces'
-import { UserLoginResponse } from '@feature/user/dtos/user-login-response'
+import { AuthResponse } from '@feature/user/dtos/auth-response'
 import { User } from '@domain/entities'
 import * as u from '@/feature/user'
-import { UserRegisterResponse } from '@feature/user/dtos/user-register-response'
 
 export default class AuthController {
   constructor(
@@ -13,12 +12,12 @@ export default class AuthController {
     protected getProfile: u.UserProfileUC,
   ) { }
 
-  async register(req: IRequest): Promise<UserRegisterResponse> {
+  async register(req: IRequest): Promise<AuthResponse> {
     const result = await this.registerUser.call(req.body)
     return result
   }
 
-  async login(req: IRequest): Promise<UserLoginResponse> {
+  async login(req: IRequest): Promise<AuthResponse> {
     return this.loginUser.call(req.body)
   }
 

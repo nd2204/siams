@@ -1,7 +1,7 @@
-export class CreateOrganizationRequest {
-  constructor(
-    public userId?: string,
-    public name?: string
-  ) { }
+export interface CreateOrganizationRequest {
+  token?: string,
+  userId?: string,
+  name?: string,
+  slug?: string
 }
 

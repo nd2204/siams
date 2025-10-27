@@ -1,5 +1,5 @@
 import { topics } from "@config/mqtt-topics";
-import { SensorType } from "@domain/entities/sensor";
+import { SensorType } from "@domain/entities";
 import { RegisterDevicePayload } from "@feature/device/dtos/register-device-request"
 import { DeviceStatusPayload } from "@feature/telemetry/dtos/device-status-request"
 import { DeviceTelemetryPayload } from "@feature/telemetry/dtos/device-telemetry-request"
@@ -12,8 +12,10 @@ export class DeviceClient {
   private client?: MqttClient;
   private deviceId: string;
   private stopped = false;
+  private hasError = false;
   private telemetryTimer?: NodeJS.Timeout;
   private statusTimer?: NodeJS.Timeout;
+  private waitForDeviceIdTimer?: NodeJS.Timeout
   private presetStore: PresetStore
 
   constructor(
@@ -35,6 +37,18 @@ export class DeviceClient {
     this.client = mqtt.connect(this.cfg.mqtt.url, {
       ...this.cfg.mqtt.opts,
       clientId: this.cfg.tempId,
+      // will: {
+      //   topic: topics.deviceStatus.create({
+      //     orgId: this.cfg.orgId,
+      //     clusterId: this.cfg.clusterId,
+      //     deviceId: this.deviceId
+      //   }),
+      //   payload: {
+      //     online: false,
+      //     ts: new Date().toISOString()
+      //   },
+      //   retain: true
+      // },
       reconnectPeriod: 2000
     });
 
@@ -58,8 +72,7 @@ export class DeviceClient {
         this.emit({ type: "registered", deviceId: this.cfg.deviceId })
         this.deviceId = this.cfg.deviceId
       }
-      this.startTelemetryLoop();
-      this.startStatusLoop();
+      this.startWatingForId()
     });
 
     this.client.on("message", async (topic, msg) => {
@@ -134,15 +147,39 @@ export class DeviceClient {
     });
   }
 
+  private startWatingForId() {
+    const wait = async () => {
+      if (this.stopped) return
+      if (this.hasError) {
+        this.clearTimers()
+        return
+      }
+      if (this.deviceId === this.cfg.tempId) {
+        this.emitLog("Warn", "Wating for device id...")
+        this.waitForDeviceIdTimer = setTimeout(wait, 3000);
+        return;
+      };
+
+      this.emitLog("Important", "Device id received")
+      this.startTelemetryLoop()
+      this.startStatusLoop()
+
+      if (this.waitForDeviceIdTimer) clearTimeout(this.waitForDeviceIdTimer)
+    }
+    wait();
+  }
+
   private startTelemetryLoop() {
-    if (!this.deviceId) return;
     const sendTelemetry = async () => {
       if (this.stopped) return;
 
       // pick and set sensor mock value
       const idx = Math.floor(Math.random() * (this.cfg.capabilities.sensors.length))
       const sensor = this.cfg.capabilities.sensors[idx];
-      if (!sensor) throw new Error(`${JSON.stringify(sensor)} ${idx}`)
+      if (!sensor) {
+        this.emitLog("Error", "sensor is undefined", { sensor, idx, capabilities: this.cfg.capabilities.sensors })
+        return
+      }
       const value = this.mockValue(sensor.type);
 
       // create and publish payload
@@ -177,7 +214,6 @@ export class DeviceClient {
   }
 
   private startStatusLoop() {
-    if (!this.deviceId) return;
     const sendStatus = () => {
       if (this.stopped) return;
       const topic = topics.deviceStatus.create({
@@ -230,6 +266,7 @@ export class DeviceClient {
   private handleRegisterTopic(p: any) {
     if (p && p.error) {
       this.emitLog("Error", "Received an error", p)
+      this.hasError = true
     } else if (p && p.deviceId) {
       // backend returns deviceId
       this.deviceId = p.deviceId;
@@ -250,6 +287,7 @@ export class DeviceClient {
   // --------------------------------------------------------------------------------
 
   private clearTimers() {
+    if (this.waitForDeviceIdTimer) clearTimeout(this.waitForDeviceIdTimer)
     if (this.telemetryTimer) clearTimeout(this.telemetryTimer);
     if (this.statusTimer) clearTimeout(this.statusTimer);
   }

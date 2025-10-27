@@ -9,17 +9,21 @@ import { IDeviceTelemetryRepository } from "./device-telemetry-repo"
 import { IDeviceActuatorRepository } from "./device-actuator-repo"
 import { IDeviceSensorRepository } from "./device-sensor-repo"
 import { IDeviceCapabilitiesRepository } from "./device-capabilities-repo"
+import { IOrganizationUserRepository } from "./organization-user-repo"
+import { IRoleRepository } from "./user-role-repo"
 
 export {
+  IUserRepository,
+  IRoleRepository,
+  IOrganizationRepository,
+  IOrganizationUserRepository,
+  IClusterRepository,
+  IClusterCredentialRepository,
   IDeviceEventRepository,
   IDeviceCommandRepository,
   IDeviceRepository,
   IDeviceTelemetryRepository,
-  IUserRepository,
-  IClusterRepository,
+  IDeviceCapabilitiesRepository,
   IDeviceActuatorRepository,
-  IDeviceSensorRepository,
-  IOrganizationRepository,
-  IClusterCredentialRepository,
-  IDeviceCapabilitiesRepository
+  IDeviceSensorRepository
 }

@@ -5,8 +5,8 @@ import { DeviceStatusPayload, DeviceStatusRequest } from "@feature/telemetry/dto
 export const deviceStatusValidator = new JOIValidator<DeviceStatusRequest>(Joi.object({
   deviceId: Joi.string().uuid().required(),
   payload: Joi.object<DeviceStatusPayload>({
-    cpu: Joi.number().min(0).max(1).required(),
-    mem: Joi.number().min(0).max(1).required(),
+    cpu: Joi.number().min(0).max(1).optional(),
+    mem: Joi.number().min(0).max(1).optional(),
     wifi: Joi.number().optional(),
     online: Joi.boolean().required(),
     ts: Joi.string().isoDate().required()

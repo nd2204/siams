@@ -35,8 +35,7 @@ export class UserRepositoryMock implements IUserRepository {
     this.users = [
       new User({
         id: "f73ef5cc-fd2f-4664-ad13-363b555d0648",
-        firstName: "John",
-        lastName: "Doe",
+        name: "John Doe",
         email: "johndoe@gmail.com",
         ...(await this.encryptPassword("password0"))
       }),

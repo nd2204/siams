@@ -1,8 +1,5 @@
-export class UserRegisterRequest {
-  constructor(
-    public email?: string,
-    public password?: string,
-    public firstName?: string,
-    public lastName?: string,
-  ) { }
+export interface UserRegisterRequest {
+  email?: string,
+  password?: string,
+  name?: string,
 }

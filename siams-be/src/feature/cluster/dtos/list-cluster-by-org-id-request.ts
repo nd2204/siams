@@ -1,8 +1,6 @@
-export class ListClusterByOrgIdRequest {
-  constructor(
-    public token?: string,
-    public orgId?: string,
-    public page?: number,
-    public perPage?: number
-  ) { }
+import { IPaginatedRequest } from "@shared/interfaces/paginated-request";
+
+export interface ListClusterByOrgIdRequest extends IPaginatedRequest {
+  token?: string,
+  orgId?: string,
 }

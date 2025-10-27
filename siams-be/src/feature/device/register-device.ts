@@ -62,6 +62,7 @@ export class RegisterDeviceUC implements IUseCase<RegisterDeviceResponse> {
     const sensorsAck: SensorCapabilityResponse[] = [];
     for (const s of value.payload.capabilities?.sensors ?? []) {
       const sensor = await this.sensorRepo.upsert({
+        id: uuidv4(),
         deviceId: savedDevice.id,
         type: s.type,
         unit: s.unit,
@@ -74,6 +75,7 @@ export class RegisterDeviceUC implements IUseCase<RegisterDeviceResponse> {
     const actuatorsAck: ActuatorCapabilityResponse[] = [];
     for (const a of payload.capabilities?.actuators ?? []) {
       const act = await this.actuatorRepo.upsert({
+        id: uuidv4(),
         deviceId: savedDevice.id,
         type: a.type,
         localId: a.localId,

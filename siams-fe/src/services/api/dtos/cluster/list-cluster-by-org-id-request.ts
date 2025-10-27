@@ -1,8 +1,6 @@
-export class ListClusterByOrgIdRequest {
-  constructor(
-    public token?: string,
-    public orgId?: string,
-    public page?: number,
-    public perPage?: number
-  ) { }
+export interface ListClusterByOrgIdRequest {
+  token: string,
+  orgId: string,
+  page?: number,
+  perPage?: number
 }

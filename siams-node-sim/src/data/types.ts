@@ -1,6 +1,5 @@
-import { ActuatorType } from "@domain/entities/actuator";
 import { ActuatorCapability, CommandCapability, SensorCapability } from "@domain/entities/device-capabilities";
-import { SensorType } from "@domain/entities/sensor";
+import { SensorType, ActuatorType } from "@domain/entities";
 
 export type GlobalConfig = {
   mqttUrl: string;

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+import { IconTrendingUp } from "@tabler/icons-react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import { Badge } from "@/components/ui/badge"
 import {

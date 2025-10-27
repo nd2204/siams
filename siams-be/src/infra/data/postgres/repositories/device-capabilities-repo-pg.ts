@@ -13,7 +13,7 @@ export class DeviceCapabilitiesRepositoryPg
       deviceId: "device_id",
       sensors: "sensors_supported",
       actuators: "actuators_supported",
-      commands: "commands",
+      commands: "commands_supported",
       reportedAt: "reported_at"
     }
     super(pool, "device_capabilities",

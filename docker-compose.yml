@@ -12,18 +12,33 @@ services:
       context: ./siams-fe
       dockerfile: Dockerfile
     container_name: siams-fe
-    ports:
-      - '80:80'
-      - '443:443'
-    depends_on:
-      - be
-      - redis-fe
+    restart: always
 
   redis-fe:
     image: redis:latest
     container_name: siams-redis-fe
     ports:
       - '6379'
+
+  nginx-fe:
+    image: nginx:latest
+    container_name: nginx-fe
+    depends_on:
+      - fe
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./docker/certbot/letsencrypt:/etc/letsencrypt
+      - ./siams-fe/dist:/usr/share/nginx/html
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot-fe
+    volumes:
+      - ./docker/certbot/letsencrypt:/etc/letsencrypt
+      - ./siams-fe/dist:/var/www/html
 
   # mqtt broker
   emqx:

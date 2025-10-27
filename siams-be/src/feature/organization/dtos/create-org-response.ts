@@ -1,7 +1,6 @@
-export class CreateOrganizationResponse {
-  constructor(
-    public id: string,
-    public name: string,
-    public createAt: Date
-  ) { }
+export interface CreateOrganizationResponse {
+  id: string,
+  name: string,
+  slug: string,
+  createAt: Date
 }

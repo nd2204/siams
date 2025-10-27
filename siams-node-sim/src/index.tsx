@@ -1,20 +1,43 @@
-import React from "react"
-import { SensorType } from "@domain/entities/sensor";
 import { App } from "./ui/app"
 import { withFullScreen } from "fullscreen-ink";
 import { DeviceSimulatorManager } from "./manager";
-import { ActuatorType } from "@domain/entities/actuator";
+import { ActuatorType, SensorType } from "@domain/entities";
 import { CommandCapability } from "@domain/entities/device-capabilities";
+import meow from "meow";
 // import { DeviceSimulatorManager } from "./simulator.js";
 
 async function main() {
+  const cli = meow(`
+Usage
+$ cli --source <url>
+
+Options
+--org, -o  Organization Id (required)
+--cluster, -c  Cluster Id (required)
+
+Examples
+$ cli --source https://example.com/data.json
+`, {
+    importMeta: import.meta,
+    flags: {
+      org: {
+        type: 'string',
+        shortFlag: 'o',
+        isRequired: true,
+      },
+      cluster: {
+        type: 'string',
+        shortFlag: 'c',
+        isRequired: true,
+      }
+    }
+  });
+
   const cfg = {
     mqttUrl: process.env.MQTT_URL!,
     mqttOptions: { "clean": true },
-    orgId: "19fb0bb0-3f5f-4a60-9f65-84ac8c858a1f",
-    clusterId: "49150afa-c26b-4233-b75a-cce37490e938",
-    // orgId: "",
-    // clusterId: "",
+    orgId: cli.flags.org,
+    clusterId: cli.flags.cluster,
     count: 6,
     telemetryIntervalMs: 5000,
     statusIntervalMs: 30000,
@@ -61,7 +84,7 @@ async function main() {
     commands: cfg.commands,
     telemetryIntervalMs: cfg.telemetryIntervalMs || 5000,
     statusIntervalMs: cfg.statusIntervalMs || 30000,
-    telemetryJitterMs: cfg.telemetryJitterMs || 1000
+    telemetryJitterMs: cfg.telemetryJitterMs || 1000,
   });
 
   process.on("SIGINT", () => {

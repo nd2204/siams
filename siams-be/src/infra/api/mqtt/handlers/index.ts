@@ -11,7 +11,7 @@ import { ReceiveDeviceTelemetryUC } from "@feature/telemetry/receive-device-tele
 export const handlers: IMqttHandler[] = [
   new DeviceRegisterHandler(
     new RegisterDeviceUC(
-      services.cluster.repository,
+      services.cluster.repositories.base,
       services.device.repositories.base,
       services.device.repositories.sensors,
       services.device.repositories.actuators,

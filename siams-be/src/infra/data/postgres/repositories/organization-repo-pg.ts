@@ -8,10 +8,12 @@ export class OrganizationRepositoryPg
   implements IOrganizationRepository {
 
   constructor(pool: Pool) {
-    const mapping = {
+    const mapping: Record<keyof Organization, string> = {
       id: "id",
       name: "name",
-      created_at: "created_at"
+      createdAt: "created_at",
+      slug: "slug",
+      updatedAt: "updatedAt"
     }
 
     super(
@@ -22,7 +24,9 @@ export class OrganizationRepositoryPg
         return new Organization({
           id: row[mapping.id],
           name: row[mapping.name],
-          created_at: row[mapping.created_at]
+          createdAt: row[mapping.createdAt],
+          slug: row[mapping.slug],
+          updatedAt: row[mapping.updatedAt]
         })
       }
     )

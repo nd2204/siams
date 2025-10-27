@@ -1,26 +1,31 @@
 import { services } from "@/config/services";
 import { getAuthToken } from "@infra/api/express/get-auth-token";
 import { OrganizationController } from "@adapters/http/v1/controllers/organization-controller";
-import { CreateOrganizationUC, GetOrganizationByIdUC } from "@feature/organization";
-import { CreateClusterUC, GetClusterByIdUC, ListClusterByOrgIdUC } from "@feature/cluster";
 import { NextFunction, Router, Request, Response } from "express";
+import { CreateOrganizationUC } from "@feature/organization/create-org";
+import { GetOrganizationByIdUC } from "@feature/organization/get-org-by-id";
+import { CreateClusterUC } from "@feature/cluster/create-cluster";
+import { GetClusterByIdUC } from "@feature/cluster/get-by-id";
+import { ListClusterByOrgIdUC } from "@feature/cluster/list-clusters-by-org-id";
 
 const controller = new OrganizationController(
   new CreateOrganizationUC(
-    services.organization.repository,
-    services.user.repository,
+    services.organization.repositories.base,
+    services.organization.repositories.user,
+    services.user.repositories.base,
+    services.user.repositories.role,
     services.organization.validators.createOrganizationValidator
   ),
-  new GetOrganizationByIdUC(services.organization.repository),
+  new GetOrganizationByIdUC(services.organization.repositories.base),
   new CreateClusterUC(
-    services.cluster.repository,
-    services.clusterCredential.repository,
+    services.cluster.repositories.base,
+    services.cluster.repositories.credential,
     services.cluster.validators.createClusterValidator,
     services.utils.encryptPassword
   ),
-  new GetClusterByIdUC(services.cluster.repository),
+  new GetClusterByIdUC(services.cluster.repositories.base),
   new ListClusterByOrgIdUC(
-    services.cluster.repository,
+    services.cluster.repositories.base,
     services.cluster.validators.listClusterByOrgIdValidator
   )
 )

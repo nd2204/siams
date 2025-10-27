@@ -1,5 +1,4 @@
 import { IRepository } from "@/shared/interfaces";
-import { DeviceTelemetry } from "@domain/entities/telemetry";
+import { DeviceTelemetry } from "@domain/entities";
 
-export interface IDeviceTelemetryRepository extends IRepository<DeviceTelemetry> {
-}
+export interface IDeviceTelemetryRepository extends IRepository<DeviceTelemetry> { }

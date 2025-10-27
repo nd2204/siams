@@ -1,9 +1,9 @@
 import Joi from "joi";
 import JOIValidator from "@infra/validation/joi/validator";
-import { SensorType } from "@domain/entities/sensor";
+import { SensorType } from "@domain/entities/device-sensor";
 import { RegisterDevicePayload, RegisterDeviceRequest } from "@feature/device/dtos/register-device-request";
 import { ActuatorCapability, CommandCapability, SensorCapability } from "@domain/entities/device-capabilities";
-import { ActuatorType } from "@domain/entities/actuator";
+import { ActuatorType } from "@domain/entities/device-actuator";
 import { locationValidator } from "../value-objects/location-validator";
 
 /* TODO: device validation */

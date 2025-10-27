@@ -6,17 +6,21 @@ import { getAuthToken } from "../get-auth-token";
 
 const authController = new AuthController(
   new RegisterUserUC(
-    services.user.repository,
+    services.user.repositories.base,
+    services.user.validators.registerValidator,
     services.utils.encryptPassword,
-    services.user.validators.registerRequestValidator,
+    services.utils.issueToken
   ),
   new LoginUserUC(
     services.utils.comparePasswords,
-    services.user.repository,
+    services.user.repositories.base,
+    services.organization.repositories.user,
+    services.user.repositories.role,
+    services.user.validators.loginValidator,
     services.utils.issueToken
   ),
   new AuthorizeUserUC(
-    services.user.repository,
+    services.user.repositories.base,
     services.utils.verifyToken
   ),
   new UpdateUserUC(),
@@ -74,10 +78,10 @@ export function authRouter(): Router {
   ) => {
     try {
       const token = getAuthToken(req)
-      const { email, password, firstName, lastName, confirmPassword } = req.body
+      const { email, password, name } = req.body
       const success = await authController.update({
         token,
-        body: { email, password, firstName, lastName, confirmPassword },
+        body: { email, password, name },
       })
       res.send({ success })
     } catch (err) {

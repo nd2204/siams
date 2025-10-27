@@ -1,6 +1,5 @@
 import { Entity } from "@domain/interfaces"
-import { SensorType } from "./sensor";
-import { ActuatorType } from "./actuator";
+import { ActuatorType, SensorType } from "./";
 
 export type SensorCapability = { localId: number, type: SensorType, unit: string }
 export type ActuatorCapability = { localId: number, type: ActuatorType, }

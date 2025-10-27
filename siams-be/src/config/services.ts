@@ -17,9 +17,13 @@ import {
 import { pool } from '@infra/data/postgres/pool-pg'
 import { encryptPassword, issueToken, comparePasswords, verifyToken } from '@infra/utils/auth'
 import * as validators from '@infra/validation/joi'
+import { RoleRepositoryPg } from "@infra/data/postgres/repositories/user-role-repo-pg"
+import { OrganizationUserRepositoryPg } from "@infra/data/postgres/repositories/organization-user-repo-pg"
 
 const orgRepo = new OrganizationRepositoryPg(pool)
+const orgUserRepo = new OrganizationUserRepositoryPg(pool)
 const userRepo = new UserRepositoryPg(pool)
+const roleRepo = new RoleRepositoryPg(pool)
 
 // Cluster aggregate
 const clusterRepo = new ClusterRepositoryPg(pool)
@@ -48,19 +52,24 @@ export const services = {
     validators: validators.device,
   },
   user: {
-    repository: userRepo,
+    repositories: {
+      base: userRepo,
+      role: roleRepo
+    },
     validators: validators.user
   },
   cluster: {
-    repository: clusterRepo,
+    repositories: {
+      base: clusterRepo,
+      credential: clusterCredRepo,
+    },
     validators: validators.cluster
   },
-  clusterCredential: {
-    repository: clusterCredRepo,
-    validators: null
-  },
   organization: {
-    repository: orgRepo,
+    repositories: {
+      base: orgRepo,
+      user: orgUserRepo
+    },
     validators: validators.organization
   },
   utils: {

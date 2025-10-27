@@ -13,9 +13,7 @@ export class UserRepositoryPg
   ) {
     const mapping: Record<keyof User, string> = {
       id: "id",
-      orgId: "org_id",
-      firstName: "first_name",
-      lastName: "last_name",
+      name: "name",
       email: "email",
       password: "password",
       salt: "salt"
@@ -24,9 +22,7 @@ export class UserRepositoryPg
     super(pool, "users", mapping, (row: any) =>
       new User({
         id: row[mapping.id],
-        orgId: row[mapping.orgId],
-        firstName: row[mapping.firstName],
-        lastName: row[mapping.lastName],
+        name: row[mapping.name],
         email: row[mapping.email],
         password: row[mapping.password],
         salt: row[mapping.salt]
@@ -36,9 +32,6 @@ export class UserRepositoryPg
 
   async findForAuth(email: string): Promise<User | undefined> {
     const result = await this.findOneBy({ email })
-    if (!result) {
-      throw new NotFoundError(`User with email="${email}" not found`);
-    }
     return result;
   }
 }

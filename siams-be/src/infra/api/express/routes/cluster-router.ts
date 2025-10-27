@@ -1,13 +1,21 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { getAuthToken } from "../get-auth-token";
 import { ClusterController } from "@adapters/http/v1/controllers/cluster-controller";
-import { GetClusterByIdUC } from "@feature/cluster";
+import { GetClusterByIdUC } from "@feature/cluster/get-by-id";
 import { services } from "@config/services";
+import { ListDeviceByClusterIdUC } from "@feature/device/list-devices-by-cluster-id";
 
 const controller = new ClusterController(
   new GetClusterByIdUC(
-    services.cluster.repository
+    services.cluster.repositories.base
   ),
+  new ListDeviceByClusterIdUC(
+    services.organization.repositories.user,
+    services.cluster.repositories.base,
+    services.device.repositories.base,
+    services.cluster.validators.listDevicesByClusterIdValidator,
+    services.utils.verifyToken
+  )
 )
 
 export function clusterRouter() {
@@ -21,6 +29,23 @@ export function clusterRouter() {
     try {
       const token = getAuthToken(req)
       const result = await controller.getById({
+        token: token,
+        params: req.params
+      })
+      res.send(result)
+    } catch (err) {
+      return next(err)
+    }
+  })
+
+  router.get("/:id/devices", async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const token = getAuthToken(req)
+      const result = await controller.listDevices({
         token: token,
         params: req.params
       })
