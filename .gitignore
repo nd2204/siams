@@ -142,3 +142,4 @@ vite.config.ts.timestamp-*
 siams-mqtt-broker/config/pwfile
 build/
 siams-be/package-lock.json
+siams-node-sim/presets
