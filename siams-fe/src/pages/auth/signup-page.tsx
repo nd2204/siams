@@ -7,18 +7,42 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import { Spinner } from "@/components/ui/spinner"
+import { useAuth } from "@/hooks/use-auth"
+import { useRef, useState } from "react"
 import { Link } from "react-router"
 
 export default function SignupPage() {
   const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+  const [loading, setLoading] = useState(false)
+  const { signup } = useAuth()
+  const formValidRef = useRef(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const validateForm = () => {
     if (form.confirmPassword !== form.password) {
+      alert("password does not match")
+      formValidRef.current = false
       return;
     }
-    alert(JSON.stringify(form))
+    formValidRef.current = true
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    const result = await signup(
+      form.name ?? form.email.split("@")[0],
+      form.email,
+      form.password
+    )
+    if (result.error) {
+      if (typeof result.error === 'string') {
+        alert(result.error)
+      } else {
+        // TODO: handle validation error from backend
+      }
+    }
+    setLoading(false)
   }
 
   return (
@@ -80,9 +104,15 @@ export default function SignupPage() {
                 </FieldDescription>
               </Field>
               <Field>
-                <Button variant="outline" type="submit">Create Account</Button>
+                <Button
+                  onClick={validateForm}
+                  variant="outline"
+                  type="submit"
+                  disabled={loading}>
+                  {loading ? <Spinner /> : " Create Account "}
+                </Button>
                 <FieldDescription className="text-center">
-                  Already have an account? <Link to="/auth/signin">Sign in</Link>
+                  Already have an account? <Link to="/auth">Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

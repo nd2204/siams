@@ -8,11 +8,30 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
+import { useAuth } from "@/hooks/use-auth"
 import { useState } from "react"
 import { Link } from "react-router"
 
 export default function SigninPage() {
   const [form, setForm] = useState({ email: "", password: "" });
+  const { login } = useAuth()
+  const [loading, setLoading] = useState(false)
+
+  const formHandler = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    const result = await login(form.email, form.password)
+    if (result.error) {
+      if (typeof result.error === 'string') {
+        alert(result.error)
+      } else {
+        alert(JSON.stringify(result.error))
+      }
+    }
+    alert(result)
+    setLoading(false)
+  }
 
   return (
     <Card className="bg-background outline-2 outline-offset-2 outline-input">
@@ -23,7 +42,7 @@ export default function SigninPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={formHandler}>
           <FieldGroup>
             <Field>
               <Button variant="outline" type="button">
@@ -55,6 +74,7 @@ export default function SigninPage() {
                 type="email"
                 value={form.email}
                 placeholder="m@example.com"
+                onChange={(e) => setForm(prev => ({ ...prev, email: e.target.value }))}
                 required
               />
             </Field>
@@ -68,10 +88,16 @@ export default function SigninPage() {
                   Forgot your password?
                 </a>
               </div>
-              <Input id="password" placeholder="Enter your password" type="password" required />
+              <Input
+                id="password"
+                placeholder="Enter your password"
+                onChange={(e) => setForm(prev => ({ ...prev, password: e.target.value }))}
+                type="password" required />
             </Field>
             <Field>
-              <Button variant="outline" className="border" type="submit">Login</Button>
+              <Button variant="outline" type="submit" disabled={loading}>
+                {loading ? <Spinner /> : "Login"}
+              </Button>
               <FieldDescription className="text-center">
                 Don&apos;t have an account? <Link to="/auth/signup">Sign up</Link>
               </FieldDescription>

@@ -1,18 +1,11 @@
-import { useState, useEffect } from "react";
+import { AuthContext } from "@/contexts/auth-ctx";
+import { useContext } from "react";
 
-export interface User {
-  id: string;
-  username: string;
-  role: "user" | "admin";
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error('useAuth() must be used within <AuthProvider>')
+  }
+  return ctx;
 }
 
-export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) setUser(JSON.parse(stored));
-  }, []);
-
-  return { user, setUser };
-}
