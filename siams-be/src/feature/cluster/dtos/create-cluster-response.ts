@@ -1,8 +1,13 @@
-import { ClusterCredential, Cluster } from "@domain/entities";
-
-export class CreateClusterResponse {
-  constructor(
-    public cluster: Cluster,
-    public credentials: { loginId: string, password: string },
-  ) { }
+export interface CreateClusterResponse {
+  cluster: {
+    name: string
+    location: string
+    orgId: string
+    description?: string
+    createdAt?: Date
+  },
+  credentials: {
+    loginId: string,
+    password: string
+  },
 }
