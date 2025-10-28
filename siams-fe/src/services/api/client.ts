@@ -35,13 +35,16 @@ class ApiClient {
     if (error.response?.status === 401) {
       console.warn("Unauthorized - token might be expired");
       localStorage.removeItem("token");
-      window.location.href = "/auth";
+      if (error.response?.data?.error === "TokenExpiredError") {
+        console.log("Token expired")
+        window.location.href = "/auth";
+      }
     }
     return Promise.reject(error);
   }
 
-  get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return this.instance.get(url, config);
+  get<T = any>(url: string, query?: Record<string, any>, config?: AxiosRequestConfig): Promise<T> {
+    return this.instance.get(url, { params: query, ...config });
   }
 
   post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {

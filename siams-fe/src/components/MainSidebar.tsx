@@ -3,20 +3,12 @@
 import * as React from "react"
 import {
   IconCamera,
-  IconChartBar,
-  IconDashboard,
   IconDatabase,
   IconFileAi,
   IconFileDescription,
   IconFileWord,
-  IconFolder,
-  IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
   IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav/documents"
@@ -32,46 +24,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { routes } from "@/app/routes"
+import { extractSidebarNavGroups } from "@/utils/extract-sidebar-nav-group"
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: IconDashboard,
-    },
-    {
-      title: "Lifecycle",
-      url: "#",
-      icon: IconListDetails,
-    },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
-    },
-  ],
   navClouds: [
     {
       title: "Capture",
       icon: IconCamera,
       isActive: true,
-      url: "#",
+      path: "#",
       items: [
         {
           title: "Active Proposals",
@@ -86,71 +48,58 @@ const data = {
     {
       title: "Proposal",
       icon: IconFileDescription,
-      url: "#",
+      path: "#",
       items: [
         {
           title: "Active Proposals",
-          url: "#",
+          path: "#",
         },
         {
           title: "Archived",
-          url: "#",
+          path: "#",
         },
       ],
     },
     {
       title: "Prompts",
       icon: IconFileAi,
-      url: "#",
+      path: "#",
       items: [
         {
           title: "Active Proposals",
-          url: "#",
+          path: "#",
         },
         {
           title: "Archived",
-          url: "#",
+          path: "#",
         },
       ],
     },
   ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: IconSettings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
-  ],
   documents: [
     {
-      name: "Data Library",
-      url: "#",
+      title: "Data Library",
+      path: "#",
       icon: IconDatabase,
     },
     {
-      name: "Reports",
-      url: "#",
+      title: "Reports",
+      path: "#",
       icon: IconReport,
     },
     {
-      name: "Word Assistant",
-      url: "#",
+      title: "Word Assistant",
+      path: "#",
       icon: IconFileWord,
     },
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+const groups = (extractSidebarNavGroups(routes))
+const navMain = groups["general"]
+const navSecondary = groups["secondary"]
+
+export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -162,19 +111,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="#">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">Siams</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
         <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )

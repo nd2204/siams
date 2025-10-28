@@ -4,7 +4,7 @@ import { registerDeviceValidator } from "./device/register-device-validator";
 import { createOrganizationValidator } from "./organization/create-org-validator";
 import { deviceStatusValidator } from "./telemetry/device-status-validator";
 import { deviceTelemetryValidator } from "./telemetry/device-telemetry-validator";
-import { registerValidator } from "./user/register-validator";
+import { registerUserValidator } from "./user/register-user-validator";
 import { loginValidator } from "./user/login-validator";
 import { listDevicesByClusterIdValidator } from "./cluster/list-device-by-cluster-id-validator";
 
@@ -21,7 +21,7 @@ export const cluster = {
 }
 
 export const user = {
-  registerValidator,
+  registerUserValidator,
   loginValidator
 }
 

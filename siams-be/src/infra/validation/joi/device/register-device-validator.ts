@@ -7,6 +7,16 @@ import { ActuatorType } from "@domain/entities/device-actuator";
 import { locationValidator } from "../value-objects/location-validator";
 
 /* TODO: device validation */
+
+const command_capability_validator = Joi.object<CommandCapability>({
+  action: Joi.string().required(),
+  params: Joi.array().items(Joi.object({
+    name: Joi.string().required(),
+    type: Joi.string().required(),
+    enums: Joi.array<string[]>().optional()
+  })).optional(),
+})
+
 export const registerDeviceValidator = new JOIValidator<RegisterDeviceRequest>(Joi.object({
   orgId: Joi.string().uuid().required(),
   clusterId: Joi.string().uuid().required(),
@@ -19,16 +29,15 @@ export const registerDeviceValidator = new JOIValidator<RegisterDeviceRequest>(J
       sensors: Joi.array().items(Joi.object<SensorCapability>({
         localId: Joi.number().required(),
         type: Joi.string<SensorType>().required(),
-        unit: Joi.string().required()
+        unit: Joi.string().required(),
+        command: command_capability_validator.optional()
       })).optional(),
       actuators: Joi.array().items(Joi.object<ActuatorCapability>({
         localId: Joi.number().required(),
         type: Joi.string<ActuatorType>().required(),
+        command: command_capability_validator.optional()
       })).optional(),
-      commands: Joi.array().items(Joi.object<CommandCapability>({
-        action: Joi.string().required(),
-        params: Joi.array<string[]>().optional(),
-      })).optional()
+      commands: Joi.array().items(command_capability_validator).optional()
     })
   })
 }))

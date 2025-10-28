@@ -1,6 +1,6 @@
-import type { UserDTO } from "./user-dto"
+import type { UserData } from "./user-data"
 
 export interface AuthResponse {
-  user: UserDTO
+  user: UserData,
   token: string
 }

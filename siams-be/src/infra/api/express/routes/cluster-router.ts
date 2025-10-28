@@ -4,6 +4,7 @@ import { ClusterController } from "@adapters/http/v1/controllers/cluster-control
 import { GetClusterByIdUC } from "@feature/cluster/get-by-id";
 import { services } from "@config/services";
 import { ListDeviceByClusterIdUC } from "@feature/device/list-devices-by-cluster-id";
+import { IPaginatedRequest } from "@shared/interfaces/paginated-request";
 
 const controller = new ClusterController(
   new GetClusterByIdUC(
@@ -38,7 +39,7 @@ export function clusterRouter() {
     }
   })
 
-  router.get("/:id/devices", async (
+  router.post("/:id/devices", async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -47,7 +48,8 @@ export function clusterRouter() {
       const token = getAuthToken(req)
       const result = await controller.listDevices({
         token: token,
-        params: req.params
+        params: req.params,
+        body: req.body
       })
       res.send(result)
     } catch (err) {

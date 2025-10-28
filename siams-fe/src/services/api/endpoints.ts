@@ -8,6 +8,7 @@ export const ENDPOINTS = {
   DEVICE: {
     ROOT: "/devices",
     BY_ID: (id: string) => `/devices/${id}`,
+    LIST_BY_CLUSTER_ID: (clusterId: string) => `/clusters/${clusterId}/devices`,
     SENSORS: (id: string) => `devices/${id}/sensors`,
     TELEMETRY: (id: string) => `/devices/${id}/telemetry`,
     COMMANDS: (id: string) => `/devices/${id}/commands`

@@ -11,12 +11,13 @@ import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/hooks/use-auth"
 import { useState } from "react"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 
 export default function SigninPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const { login } = useAuth()
   const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   const formHandler = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,8 +29,9 @@ export default function SigninPage() {
       } else {
         alert(JSON.stringify(result.error))
       }
+    } else {
+      navigate("/")
     }
-    alert(result)
     setLoading(false)
   }
 

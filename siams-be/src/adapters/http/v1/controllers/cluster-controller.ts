@@ -22,7 +22,9 @@ export class ClusterController {
   async listDevices(req: IRequest): Promise<IPaginated<Device>> {
     const request: ListDeviceByClusterIdRequest = {
       token: req.token,
-      clusterId: req.params?.id as string
+      clusterId: req.params?.id as string,
+      page: req.body?.page as number,
+      perPage: req.body?.perPage as number,
     }
     return await this.listDeviceByClusterIdUC.call(request)
   }

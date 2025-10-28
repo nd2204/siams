@@ -1,10 +1,12 @@
 import { authService } from "@/services/api/auth-service";
-import type { UserDTO } from "@/services/api/dtos/auth/user-dto";
+import type { UserData } from "@/services/api/dtos/auth/user-data";
 import type { AxiosError } from "axios";
 import React, { createContext, useEffect, useState } from "react"
 
+export const AuthContext = createContext<AuthContextType | null>(null);
+
 interface AuthContextType {
-  user: UserDTO | null;
+  user: UserData | null;
   isAuthenticated: boolean;
   loading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean, error?: any }>;
@@ -12,17 +14,14 @@ interface AuthContextType {
   logout: () => void;
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null);
-
 interface Props {
   children: React.ReactNode
 }
 
 export const AuthProvider = (props: Props) => {
-  const [user, setUser] = useState<UserDTO | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-
 
   useEffect(() => {
     // Try to restore session
@@ -33,6 +32,7 @@ export const AuthProvider = (props: Props) => {
 
   const login: AuthContextType["login"] = async (email: string, password: string) => {
     try {
+      setLoading(true)
       const { user } = await authService.signin({ email, password });
       setUser(user);
       setIsAuthenticated(true);
@@ -43,19 +43,25 @@ export const AuthProvider = (props: Props) => {
         success: false,
         error: err.response?.data || err.message
       }
+    } finally {
+      setLoading(false)
     }
   }
 
   const signup: AuthContextType["signup"] = async (name: string, email: string, password: string) => {
     try {
-      const res = await authService.signup({ name, email, password });
-      setUser(res.user);
+      setLoading(true)
+      const { user } = await authService.signup({ name, email, password });
+      setUser(user);
       return { success: true }
     } catch (error) {
+      const err = error as AxiosError
       return {
         success: false,
-        error: (error as AxiosError).response?.data || 'Login failed'
+        error: err.response?.data || err.message
       }
+    } finally {
+      setLoading(false)
     }
   }
 

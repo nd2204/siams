@@ -7,7 +7,7 @@ import { getAuthToken } from "../get-auth-token";
 const authController = new AuthController(
   new RegisterUserUC(
     services.user.repositories.base,
-    services.user.validators.registerValidator,
+    services.user.validators.registerUserValidator,
     services.utils.encryptPassword,
     services.utils.issueToken
   ),

@@ -67,7 +67,7 @@ export function organizationRouter(): Router {
     }
   })
 
-  router.get("/:id/clusters", async (
+  router.post("/:id/clusters", async (
     req: Request,
     res: Response,
     next: NextFunction
