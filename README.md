@@ -1,6 +1,6 @@
 # Hướng dẫn cài đặt và chạy dự án SIAMS
 
-Tài liệu ngắn này hướng dẫn cách thiết lập và chạy backend (`siams-be`) và frontend (`siams-fe`) trên máy phát triển (Windows PowerShell). Bao gồm ví dụ `.env` cho Docker và Node.js, các lệnh phổ biến để chạy ở chế độ development/production, và một số lưu ý môi trường (CORS, symlink `.env`, dịch vụ Docker sẵn có).
+Tài liệu này hướng dẫn cách thiết lập và chạy backend (`siams-be`) và frontend (`siams-fe`) trên máy phát triển (Windows PowerShell). Bao gồm ví dụ `.env` cho Docker và Node.js, các lệnh phổ biến để chạy ở chế độ development/production, và một số lưu ý môi trường (CORS, symlink `.env`, dịch vụ Docker sẵn có).
 
 ## Yêu cầu
 
