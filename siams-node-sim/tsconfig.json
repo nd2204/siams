@@ -1,0 +1,45 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./build",
+    "jsx": "react-jsx",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "rootDir": "..",
+    "paths": {
+      "@domain/*": [
+        "../siams-be/src/domain/*"
+      ],
+      "@shared/*": [
+        "../siams-be/src/shared/*"
+      ],
+      "@adapters/*": [
+        "../siams-be/src/adapters/*"
+      ],
+      "@feature/*": [
+        "../siams-be/src/feature/*"
+      ],
+      "@config/*": [
+        "../siams-be/src/config/*"
+      ],
+      "@infra/*": [
+        "../siams-be/src/infra/*"
+      ],
+      "@/*": [
+        "../siams-be/src/*"
+      ]
+    },
+    "strict": false,
+    "esModuleInterop": true,
+    "strictNullChecks": true,
+    // Enables source maps for easier debugging.
+    "sourceMap": true,
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "build",
+    "dist"
+  ]
+}

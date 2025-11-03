@@ -1,0 +1,88 @@
+services:
+  be:
+    build:
+      context: ./siams-be
+      dockerfile: Dockerfile
+    container_name: siams-be
+    depends_on:
+      - db
+
+  fe:
+    build:
+      context: ./siams-fe
+      dockerfile: Dockerfile
+    container_name: siams-fe
+    restart: always
+
+  redis-fe:
+    image: redis:latest
+    container_name: siams-redis-fe
+    ports:
+      - '6379'
+
+  nginx-fe:
+    image: nginx:latest
+    container_name: nginx-fe
+    depends_on:
+      - fe
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./docker/certbot/letsencrypt:/etc/letsencrypt
+      - ./siams-fe/dist:/usr/share/nginx/html
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot-fe
+    volumes:
+      - ./docker/certbot/letsencrypt:/etc/letsencrypt
+      - ./siams-fe/dist:/var/www/html
+
+  # mqtt broker
+  emqx:
+    image: emqx/emqx:5.8
+    container_name: emqx
+    restart: unless-stopped
+    ports:
+      - "1883:1883"     # MQTT TCP
+      - "8883:8883"     # MQTT TLS (sau có thể bật cert)
+      - "8083:8083"     # MQTT over WebSocket
+      - "8084:8084"     # MQTT over WebSocket TLS
+      - "18083:18083"   # Dashboard web UI
+    volumes:
+      # - ./siams-mqtt-broker/config:/opt/emqx/etc:rw
+      - emqx_data:/opt/emqx/data:rw
+      - emqx_log:/opt/emqx/log:rw
+    environment:
+      - EMQX_NAME=emqx
+      - EMQX_NODE__NAME=emqx@127.0.0.1
+      # Cho phép anonymous login (demo), sau sẽ tắt đi
+      - EMQX_DASHBOARD__DEFAULT_PASSWORD=public
+      - EMQX_ALLOW_ANONYMOUS=true
+      # - EMQX_AUTH__HTTP__AUTH_REQ__URL=http://localhost:44556/mqtt/auth
+      # - EMQX_AUTH__HTTP__ACL_REQ__URL=http://localhost:44556/mqtt/acl
+
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  emqx_data:
+  emqx_log:

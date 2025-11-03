@@ -1,0 +1,11 @@
+{
+  "mqttOptions": { "username": "cluster_abc", "password": "s3cret", "clean": true },
+  "orgId": "org1",
+  "clusterId": "cluster1",
+  "count": 50,
+  "telemetryIntervalMs": 5000,
+  "statusIntervalMs": 30000,
+  "sensors": ["temperature", "humidity", "soil-moisture"],
+  "telemetryJitterMs": 1000,
+  "startClientId": "sim-"
+}
