@@ -4,9 +4,9 @@ import { OrganizationController } from "@adapters/http/v1/controllers/organizati
 import { NextFunction, Router, Request, Response } from "express";
 import { CreateOrganizationUC } from "@feature/organization/create-org";
 import { GetOrganizationByIdUC } from "@feature/organization/get-org-by-id";
-import { CreateClusterUC } from "@feature/cluster/create-cluster";
 import { GetClusterByIdUC } from "@feature/cluster/get-by-id";
 import { ListClusterByOrgIdUC } from "@feature/cluster/list-clusters-by-org-id";
+import { ListDeviceByOrgIdUC } from "@feature/device/list-by-org-id";
 
 const controller = new OrganizationController(
   new CreateOrganizationUC(
@@ -17,16 +17,16 @@ const controller = new OrganizationController(
     services.organization.validators.createOrganizationValidator
   ),
   new GetOrganizationByIdUC(services.organization.repositories.base),
-  new CreateClusterUC(
-    services.cluster.repositories.base,
-    services.cluster.repositories.credential,
-    services.cluster.validators.createClusterValidator,
-    services.utils.encryptPassword
-  ),
   new GetClusterByIdUC(services.cluster.repositories.base),
   new ListClusterByOrgIdUC(
     services.cluster.repositories.base,
     services.cluster.validators.listClusterByOrgIdValidator
+  ),
+  new ListDeviceByOrgIdUC(
+    services.organization.repositories.user,
+    services.device.repositories.base,
+    services.organization.validators.listDeviceByOrgIdValidator,
+    services.utils.verifyToken
   )
 )
 
@@ -67,6 +67,26 @@ export function organizationRouter(): Router {
     }
   })
 
+
+  router.post("/:id/devices", async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const token = getAuthToken(req)
+      const result = await controller.listDeviceByOrgId({
+        token: token,
+        params: req.params,
+        body: req.body
+      })
+      res.send(result)
+    } catch (err) {
+      return next(err)
+    }
+  })
+
+
   router.post("/:id/clusters", async (
     req: Request,
     res: Response,
@@ -90,17 +110,6 @@ export function organizationRouter(): Router {
     res: Response,
     next: NextFunction
   ) => {
-    try {
-      const token = getAuthToken(req)
-      const result = await controller.createCluster({
-        token: token,
-        params: req.params,
-        body: req.body
-      })
-      res.send(result)
-    } catch (err) {
-      return next(err)
-    }
   })
 
   router.get("/:id/clusters/:clusterId", async (

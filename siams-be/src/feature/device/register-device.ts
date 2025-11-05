@@ -43,7 +43,7 @@ export class RegisterDeviceUC implements IUseCase<RegisterDeviceResponse> {
         clusterId: cluster.id,
         model: req.payload.model,
         firmwareVersion: req.payload.firmwareVersion,
-        status: "online",
+        status: "offline",
       })
     );
 

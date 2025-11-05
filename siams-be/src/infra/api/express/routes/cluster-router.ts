@@ -4,11 +4,17 @@ import { ClusterController } from "@adapters/http/v1/controllers/cluster-control
 import { GetClusterByIdUC } from "@feature/cluster/get-by-id";
 import { services } from "@config/services";
 import { ListDeviceByClusterIdUC } from "@feature/device/list-devices-by-cluster-id";
-import { IPaginatedRequest } from "@shared/interfaces/paginated-request";
+import { CreateClusterUC } from "@feature/cluster/create-cluster";
 
 const controller = new ClusterController(
   new GetClusterByIdUC(
     services.cluster.repositories.base
+  ),
+  new CreateClusterUC(
+    services.cluster.repositories.base,
+    services.cluster.repositories.credential,
+    services.cluster.validators.createClusterValidator,
+    services.utils.encryptPassword
   ),
   new ListDeviceByClusterIdUC(
     services.organization.repositories.user,
@@ -32,6 +38,24 @@ export function clusterRouter() {
       const result = await controller.getById({
         token: token,
         params: req.params
+      })
+      res.send(result)
+    } catch (err) {
+      return next(err)
+    }
+  })
+
+  router.post("/", async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const token = getAuthToken(req)
+      const result = await controller.createCluster({
+        token: token,
+        params: req.params,
+        body: req.body
       })
       res.send(result)
     } catch (err) {

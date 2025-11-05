@@ -29,6 +29,14 @@ export const topics = {
     "org/:orgId/cluster/:clusterId/register-ack/:tempId",
     "org/+/cluster/+/register-ack/+"
   ),
+  deviceVerify: defineTopic(
+    "org/:orgId/cluster/:clusterId/device/:deviceId/verify",
+    "org/+/cluster/+/device/+/verify",
+  ),
+  deviceVerifyAck: defineTopic(
+    "org/:orgId/cluster/:clusterId/device/:deviceId/verify-ack",
+    "org/+/cluster/+/device/+/verify-ack",
+  ),
   deviceCommand: defineTopic(
     "org/:orgId/cluster/:clusterId/device/:deviceId/command",
     "org/+/cluster/+/device/+/command",

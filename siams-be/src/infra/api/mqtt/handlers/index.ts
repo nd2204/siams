@@ -7,6 +7,8 @@ import { DeviceStatusHandler } from "./device-status-handler";
 import { ReceiveDeviceStatusUC } from "@feature/telemetry/receive-device-status";
 import { DeviceTelemetryHandler } from "./device-telemetry-handler";
 import { ReceiveDeviceTelemetryUC } from "@feature/telemetry/receive-device-telemetry";
+import { DeviceVerifyHandler } from "./device-verify-handler";
+import { VerifyDeviceUC } from "@feature/device/verify-device";
 
 export const handlers: IMqttHandler[] = [
   new DeviceRegisterHandler(
@@ -35,5 +37,13 @@ export const handlers: IMqttHandler[] = [
       services.device.validators.deviceTelemetryValidator,
     ),
     new SMLogger("infra:emqx:DeviceTelemetryHandler")
+  ),
+  new DeviceVerifyHandler(
+    new VerifyDeviceUC(
+      services.device.repositories.base,
+      // services.device.repositories.capabilities,
+      services.device.validators.deviceVerifyValidator
+    ),
+    new SMLogger("infra:emqx:DeviceVerifyHandler")
   )
 ]

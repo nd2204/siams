@@ -6,6 +6,9 @@ export class DeviceRepositoryMock implements IDeviceRepository {
   devices: Device[] = []
 
   constructor() { }
+  listByOrg(orgId: string, page: number, perPage: number): Promise<IPaginated<Device>> {
+    throw new Error("Method not implemented.");
+  }
 
   findOneBy(filters: Partial<Device>): Promise<Device | undefined> {
     throw new Error("Method not implemented.");
