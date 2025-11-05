@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,75 +26,6 @@ import {
   Search,
 } from 'lucide-react';
 
-// Data types for the farm IoT system
-export type SensorType =
-  | 'temperature'
-  | 'humidity'
-  | 'soil_moisture'
-  | 'ph'
-  | 'light'
-  | 'pressure'
-  | 'npk'
-  | 'wind_speed';
-
-export type ActuatorType =
-  | 'valve'
-  | 'pump'
-  | 'fan'
-  | 'heater'
-  | 'cooler'
-  | 'led_light'
-  | 'motor'
-  | 'relay';
-
-export type DeviceStatus = 'online' | 'offline' | 'warning';
-
-export interface Sensor {
-  id: string;
-  name: string;
-  type: SensorType;
-  unit: string;
-  currentValue: number;
-  status: 'active' | 'inactive' | 'error';
-  lastUpdate: string;
-}
-
-export interface Actuator {
-  id: string;
-  name: string;
-  type: ActuatorType;
-  state: 'on' | 'off';
-  value?: number; // For actuators with variable control (0-100)
-  unit?: string; // %, RPM, etc.
-  status: 'active' | 'inactive' | 'error';
-  lastCommand: string;
-  controlType: 'toggle' | 'slider'; // UI control type
-}
-
-export interface Device {
-  id: string;
-  name: string;
-  type: string; // MCU type: ESP32, Arduino, etc.
-  clusterId: string;
-  status: DeviceStatus;
-  battery: number;
-  sensors: Sensor[];
-  actuators: Actuator[];
-  lastUpdate: string;
-}
-
-export interface Cluster {
-  id: string;
-  name: string;
-  location: string;
-  devices: Device[];
-  coordinates: { x: number; y: number };
-  credentials?: {
-    loginId: string;
-    password: string;
-    createdAt: string;
-  };
-}
 
 // Mock data
 export const farmData: Cluster[] = [
@@ -694,8 +625,13 @@ export function getClusterCredentials(clusterId: string) {
 
 export default function DevicePage() {
   const [selectedDevice, setSelectedDevice] = useState<{ device: Device; clusterName: string } | null>(null);
+  const [devices, setDevices] = useState<Device>
   const allDevices = getAllDevices();
   const stats = getClusterStats();
+
+  useEffect(() => {
+
+  }, [])
 
   // if (selectedDevice) {
   //   return (
@@ -807,7 +743,6 @@ export default function DevicePage() {
                 <TableHead>Cluster</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Sensors</TableHead>
-                <TableHead>Battery</TableHead>
                 <TableHead>Last Update</TableHead>
                 <TableHead className="w-[50px]"></TableHead>
               </TableRow>
@@ -848,24 +783,6 @@ export default function DevicePage() {
                         {activeSensors}/{device.sensors.length}
                       </div>
                       <div className="text-muted-foreground">active</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 bg-muted outline-2 outline-offset-3 outline-muted h-2 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full ${device.battery > 50
-                              ? 'bg-green-500'
-                              : device.battery > 20
-                                ? 'bg-yellow-500'
-                                : 'bg-red-500'
-                              }`}
-                            style={{ width: `${device.battery}%` }}
-                          />
-                        </div>
-                        <span className={getBatteryColor(device.battery)}>
-                          {device.battery}%
-                        </span>
-                      </div>
                     </TableCell>
                     <TableCell className="text-muted-foreground">{device.lastUpdate}</TableCell>
                     <TableCell>
