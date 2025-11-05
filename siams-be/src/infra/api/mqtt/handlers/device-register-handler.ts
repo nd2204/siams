@@ -47,6 +47,6 @@ export class DeviceRegisterHandler implements IMqttHandler<RegisterDevicePayload
       });
     }
 
-    this.logger.info({ msg: `Acked: ${ackTopic}` });
+    this.logger.info({ msg: `Acked: ${tempId}` });
   }
 }

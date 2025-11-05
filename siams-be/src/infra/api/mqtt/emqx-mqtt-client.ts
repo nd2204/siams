@@ -45,7 +45,7 @@ export class EmqxMqttClient implements IMqttClient {
 
     this.client!.on("message", async (topic, msg) => {
       const payload = this.tryParse(msg.toString());
-      this.logger.info({ msg: `Received message from topic ${topic} with payload`, obj: payload })
+      this.logger.info({ msg: `Rx [${topic}]:`, obj: payload })
 
       for (const h of this.handlers) {
         // NOTE: using this pattern matching could be the bottleneck

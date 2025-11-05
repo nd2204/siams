@@ -4,10 +4,14 @@ import { ListDeviceByClusterIdUC } from '@feature/device/list-devices-by-cluster
 import { Cluster, Device } from '@domain/entities'
 import { ListDeviceByClusterIdRequest } from '@feature/device/dtos/list-devices-by-cluster-id-request'
 import { GetClusterByIdRequest } from '@feature/cluster/dtos/get-cluster-by-id-request'
+import { CreateClusterUC } from '@feature/cluster/create-cluster'
+import { CreateClusterRequest } from '@feature/cluster/dtos/create-cluster-request'
+import { CreateClusterResponse } from '@feature/cluster/dtos/create-cluster-response'
 
 export class ClusterController {
   constructor(
     private getClusterByIdUC: GetClusterByIdUC,
+    private createClusterUC: CreateClusterUC,
     private listDeviceByClusterIdUC: ListDeviceByClusterIdUC
   ) { }
 
@@ -27,5 +31,15 @@ export class ClusterController {
       perPage: req.body?.perPage as number,
     }
     return await this.listDeviceByClusterIdUC.call(request)
+  }
+
+  async createCluster(req: IRequest): Promise<CreateClusterResponse> {
+    const request: CreateClusterRequest = {
+      token: req.token,
+      orgId: req.body?.orgId as string,
+      name: req.body?.name,
+      location: req.body?.location
+    }
+    return await this.createClusterUC.call(request)
   }
 }

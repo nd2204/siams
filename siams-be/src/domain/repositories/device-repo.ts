@@ -3,4 +3,5 @@ import { type Device } from "@domain/entities";
 
 export interface IDeviceRepository extends IRepository<Device> {
   findByArea(areaId: string): Promise<IPaginated<Device>>;
+  listByOrg(orgId: string, page: number, perPage: number): Promise<IPaginated<Device>>;
 }

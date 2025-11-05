@@ -40,6 +40,38 @@ export class DeviceRepositoryPg
       }
     )
   }
+  async listByOrg(orgId: string, page: number, perPage: number): Promise<IPaginated<Device>> {
+    const offset = (page - 1) * perPage;
+    
+    const countResult = await this.pool.query(
+      `SELECT COUNT(*) as total 
+       FROM devices d
+       JOIN clusters c ON d.cluster_id = c.id
+       WHERE c.org_id = $1`,
+      [orgId]
+    );
+    
+    const total = parseInt(countResult.rows[0].total);
+    
+    const result = await this.pool.query(
+      `SELECT d.* 
+       FROM devices d
+       JOIN clusters c ON d.cluster_id = c.id
+       WHERE c.org_id = $1
+       ORDER BY d.created_at DESC
+       LIMIT $2 OFFSET $3`,
+      [orgId, perPage, offset]
+    );
+    
+    return {
+      data: result.rows.map(row => this.toEntity(row)),
+      pagination: {
+        total,
+        page,
+        perPage
+      }
+    };
+  }
 
   findByArea(areaId: string): Promise<IPaginated<Device>> {
     throw new Error("Method not implemented.");

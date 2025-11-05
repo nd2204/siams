@@ -1,24 +1,22 @@
 import { IPaginated, IRequest } from '@shared/interfaces'
-import { Cluster, Organization } from '@domain/entities'
+import { Cluster, Device, Organization } from '@domain/entities'
 import { CreateOrganizationRequest, CreateOrganizationResponse } from '@feature/organization/dtos';
-import { CreateClusterResponse } from '@feature/cluster/dtos/create-cluster-response';
 import { CreateOrganizationUC } from '@feature/organization/create-org';
 import { GetOrganizationByIdUC } from '@feature/organization/get-org-by-id';
-import { CreateClusterUC } from '@feature/cluster/create-cluster';
 import { GetClusterByIdUC } from '@feature/cluster/get-by-id';
 import { ListClusterByOrgIdUC } from '@feature/cluster/list-clusters-by-org-id';
 import { GetClusterByIdRequest } from '@feature/cluster/dtos/get-cluster-by-id-request';
 import { ListClusterByOrgIdRequest } from '@feature/cluster/dtos/list-cluster-by-org-id-request';
-import { CreateClusterRequest } from '@feature/cluster/dtos/create-cluster-request';
+import { ListDeviceByOrgIdUC } from '@feature/device/list-by-org-id';
 
 export class OrganizationController {
 
   constructor(
     private createOrgUC: CreateOrganizationUC,
     private getOrgByIdUC: GetOrganizationByIdUC,
-    private createClusterUC: CreateClusterUC,
     private getClusterByIdUC: GetClusterByIdUC,
-    private listClusterByOrgIdUC: ListClusterByOrgIdUC
+    private listClusterByOrgIdUC: ListClusterByOrgIdUC,
+    private listDeviceByOrgIdUC: ListDeviceByOrgIdUC
   ) { }
 
   async create(req: IRequest): Promise<CreateOrganizationResponse> {
@@ -35,15 +33,16 @@ export class OrganizationController {
     return await this.getOrgByIdUC.call(req.params?.id as string);
   }
 
-  async createCluster(req: IRequest): Promise<CreateClusterResponse> {
-    const request: CreateClusterRequest = {
+  async listDeviceByOrgId(req: IRequest): Promise<IPaginated<Device>> {
+    const request: ListClusterByOrgIdRequest = {
       token: req.token,
       orgId: req.params?.id as string,
-      name: req.body?.name,
-      location: req.body?.location
+      page: req.body?.page as number,
+      perPage: req.body?.perPage as number
     }
-    return await this.createClusterUC.call(request)
+    return await this.listDeviceByOrgIdUC.call(request)
   }
+
 
   async listClusterByOrgId(req: IRequest): Promise<IPaginated<Cluster>> {
     const request: ListClusterByOrgIdRequest = {
