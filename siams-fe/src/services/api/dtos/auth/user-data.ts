@@ -1,4 +1,4 @@
-import type { PermissionKey } from "@/lib/types"
+import type { PermissionKey } from "@/types/role"
 
 export type UserData = {
   id: string,

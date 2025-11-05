@@ -13,6 +13,10 @@ export const deviceService = {
   },
 
   async listByClusterId(clusterId: string, page?: number, perPage?: number): Promise<IPaginated<DeviceDTO>> {
-    return apiClient.post<IPaginated<DeviceDTO>>(ENDPOINTS.DEVICE.LIST_BY_CLUSTER_ID(clusterId), { page, perPage });
+    return apiClient.post<IPaginated<DeviceDTO>>(ENDPOINTS.CLUSTER.LIST_DEVICES(clusterId), { page, perPage });
+  },
+
+  async listByOrgId(orgId: string, page?: number, perPage?: number): Promise<IPaginated<DeviceDTO>> {
+    return apiClient.post<IPaginated<DeviceDTO>>(ENDPOINTS.ORG.LIST_DEVICES(orgId), { page, perPage });
   },
 };
