@@ -24,7 +24,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import type { NavItem } from "@/types/nav-items"
+import type { NavItem } from "@/types/navigations"
 
 export function NavDocuments({ items }: { items: NavItem[] }) {
   const { isMobile } = useSidebar()

@@ -2,6 +2,7 @@ import { apiClient } from "@/services/api/client";
 import { ENDPOINTS } from "@/services/api/endpoints";
 import type { DeviceDTO } from "./dtos/device/device-dto";
 import type { IPaginated } from "@/types/paginated";
+import type { DeviceStatus, DeviceTelemetry, Sensor } from "@/types/device";
 
 export const deviceService = {
   async getAll(): Promise<DeviceDTO[]> {
@@ -19,4 +20,20 @@ export const deviceService = {
   async listByOrgId(orgId: string, page?: number, perPage?: number): Promise<IPaginated<DeviceDTO>> {
     return apiClient.post<IPaginated<DeviceDTO>>(ENDPOINTS.ORG.LIST_DEVICES(orgId), { page, perPage });
   },
+
+  async listSensors(id: string): Promise<Sensor[]> {
+    return apiClient.get<Sensor>(ENDPOINTS.DEVICE.SENSORS(id))
+  },
+
+  async listActuator() {
+
+  },
+
+  async getTelemetry(id: string): Promise<IPaginated<DeviceTelemetry>> {
+    return apiClient.get<IPaginated<DeviceTelemetry>>(ENDPOINTS.DEVICE.TELEMETRY(id))
+  },
+
+  async getStatus(id: string): Promise<IPaginated<DeviceStatus>> {
+    return apiClient.get<IPaginated<DeviceStatus>>(ENDPOINTS.DEVICE.STATUS(id))
+  }
 };

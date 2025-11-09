@@ -1,6 +1,6 @@
 export interface CreateClusterRequest {
-  token?: string,
-  orgId?: string,
-  name?: string,
-  location?: string,
+  orgId?: string;
+  name?: string;
+  location?: string;
+  description?: string;
 }

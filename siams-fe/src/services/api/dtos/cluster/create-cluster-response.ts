@@ -3,7 +3,6 @@ export interface CreateClusterResponse {
     name: string
     location: string
     orgId: string
-    description?: string
     createdAt?: Date
   },
   credentials: {
