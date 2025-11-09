@@ -25,6 +25,7 @@ import {
   Filter,
   Search,
 } from 'lucide-react';
+import type { Device } from '@/types/device';
 
 
 // Mock data
@@ -516,116 +517,9 @@ export const farmData: Cluster[] = [
     ],
   },
 ];
-
-// Helper functions to get aggregated data
-export function getAllDevices(): Device[] {
-  return farmData.flatMap(cluster => cluster.devices);
-}
-
-export function getAllSensors(): Sensor[] {
-  return getAllDevices().flatMap(device => device.sensors);
-}
-
-export function getAllActuators(): Actuator[] {
-  return getAllDevices().flatMap(device => device.actuators);
-}
-
-export function getDevicesByCluster(clusterId: string): Device[] {
-  const cluster = farmData.find(c => c.id === clusterId);
-  return cluster?.devices || [];
-}
-
-export function getSensorsByDevice(deviceId: string): Sensor[] {
-  const device = getAllDevices().find(d => d.id === deviceId);
-  return device?.sensors || [];
-}
-
-export function getActuatorsByDevice(deviceId: string): Actuator[] {
-  const device = getAllDevices().find(d => d.id === deviceId);
-  return device?.actuators || [];
-}
-
-export function getClusterStats() {
-  const allDevices = getAllDevices();
-  const allSensors = getAllSensors();
-  const allActuators = getAllActuators();
-
-  return {
-    totalClusters: farmData.length,
-    totalDevices: allDevices.length,
-    onlineDevices: allDevices.filter(d => d.status === 'online').length,
-    offlineDevices: allDevices.filter(d => d.status === 'offline').length,
-    warningDevices: allDevices.filter(d => d.status === 'warning').length,
-    totalSensors: allSensors.length,
-    activeSensors: allSensors.filter(s => s.status === 'active').length,
-    inactiveSensors: allSensors.filter(s => s.status === 'inactive').length,
-    errorSensors: allSensors.filter(s => s.status === 'error').length,
-    totalActuators: allActuators.length,
-    activeActuators: allActuators.filter(a => a.state === 'on').length,
-    inactiveActuators: allActuators.filter(a => a.state === 'off').length,
-    errorActuators: allActuators.filter(a => a.status === 'error').length,
-  };
-}
-
-export function getDeviceWithCluster(deviceId: string) {
-  for (const cluster of farmData) {
-    const device = cluster.devices.find(d => d.id === deviceId);
-    if (device) {
-      return { device, cluster };
-    }
-  }
-  return null;
-}
-
-// Generate random credentials
-function generateLoginId(): string {
-  const prefix = 'CLS';
-  const randomNum = Math.floor(Math.random() * 900000) + 100000;
-  return `${prefix}${randomNum}`;
-}
-
-function generatePassword(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-  let password = '';
-  for (let i = 0; i < 12; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return password;
-}
-
-// Add new cluster
-export function addCluster(name: string, location: string): Cluster {
-  const newClusterId = `CLS-${String(farmData.length + 1).padStart(3, '0')}`;
-
-  const newCluster: Cluster = {
-    id: newClusterId,
-    name,
-    location,
-    devices: [],
-    coordinates: {
-      x: Math.floor(Math.random() * 80) + 10,
-      y: Math.floor(Math.random() * 60) + 20
-    },
-    credentials: {
-      loginId: generateLoginId(),
-      password: generatePassword(),
-      createdAt: new Date().toISOString(),
-    },
-  };
-
-  farmData.push(newCluster);
-  return newCluster;
-}
-
-// Get cluster credentials
-export function getClusterCredentials(clusterId: string) {
-  const cluster = farmData.find(c => c.id === clusterId);
-  return cluster?.credentials || null;
-}
-
 export default function DevicePage() {
   const [selectedDevice, setSelectedDevice] = useState<{ device: Device; clusterName: string } | null>(null);
-  const [devices, setDevices] = useState<Device>
+  const [devices, setDevices] = useState<Device[]>();
   const allDevices = getAllDevices();
   const stats = getClusterStats();
 

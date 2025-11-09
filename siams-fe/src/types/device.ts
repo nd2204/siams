@@ -1,3 +1,5 @@
+import type { IPaginated } from "./paginated";
+
 // Data types for the farm IoT system
 export type SensorType =
   | 'temperature'
@@ -18,8 +20,6 @@ export type ActuatorType =
   | 'led_light'
   | 'motor'
   | 'relay';
-
-export type DeviceStatus = 'online' | 'offline' | 'warning';
 
 export interface DeviceCommand {
   action: string,
@@ -54,23 +54,35 @@ export interface Command extends DeviceCommand {
   localId: string;
 }
 
+export interface DeviceTelemetry {
+  localId: string;
+}
+
+export interface DeviceStatus {
+  cpu: number,
+  mem: number,
+  wifi: number,
+  online: boolean
+}
+
 export interface Device {
   id: string;
   name: string;
   type: string; // MCU type: ESP32, Arduino, etc.
   clusterId: string;
   status: DeviceStatus;
-  sensors: Sensor[];
-  actuators: Actuator[];
-  commands: Command[];
+  sensors?: Sensor[];
+  actuators?: Actuator[];
+  commands?: Command[];
   lastUpdate: string;
 }
 
 export interface Cluster {
   id: string;
   name: string;
-  location: string;
-  devices: Device[];
+  locName: string;
+  geom?: GeoJSON.Feature;
+  devices?: IPaginated<Device>;
   coordinates: { x: number; y: number };
   credentials?: {
     loginId: string;

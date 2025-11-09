@@ -16,12 +16,12 @@ import { Link, useNavigate } from "react-router"
 export default function SigninPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const { login } = useAuth()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const navigate = useNavigate()
 
   const formHandler = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
+    setLoading(true);
     const result = await login(form.email, form.password)
     if (result.error) {
       if (typeof result.error === 'string') {
@@ -32,7 +32,7 @@ export default function SigninPage() {
     } else {
       navigate("/")
     }
-    setLoading(false)
+    setLoading(false);
   }
 
   return (

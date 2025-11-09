@@ -2,24 +2,20 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { IconBuilding } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRightIcon } from "lucide-react";
-import OrganizationCreateForm from "./OrganizationCreateForm";
 
-export default function OrganizationEmpty() {
+export default function ClusterNotFound() {
   return (
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <IconBuilding />
         </EmptyMedia>
-        <EmptyTitle>No Organizations Yet</EmptyTitle>
+        <EmptyTitle>Cluster Not Found</EmptyTitle>
         <EmptyDescription>
-          You haven&apos;t created any organizations yet. Get started by creating your first
-          organization to manage projects and team members.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <div className="flex gap-2">
-          <OrganizationCreateForm />
         </div>
       </EmptyContent>
       <Button

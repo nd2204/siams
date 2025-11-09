@@ -1,5 +1,5 @@
 import { authService } from "@/services/api/auth-service";
-import type { UserData } from "@/services/api/dtos/auth/user-data";
+import type { OrganizationUserData, UserData } from "@/services/api/dtos/auth/user-data";
 import type { AxiosError } from "axios";
 import React, { createContext, useCallback, useEffect, useState } from "react"
 
@@ -7,8 +7,10 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthContextType {
   user: UserData | null;
+  activeOrg: OrganizationUserData | null;
   isAuthenticated: boolean;
   loading: boolean;
+  setOrg: (org: OrganizationUserData | null) => void
   login: (email: string, password: string) => Promise<{ success: boolean, error?: any }>;
   signup: (name: string, email: string, password: string) => Promise<{ success: boolean, error?: any }>;
   logout: () => void;
@@ -24,6 +26,7 @@ interface StoredSession {
   token: string;
   refreshToken?: string;
   expiresAt: number; // timestamp
+  activeOrg?: OrganizationUserData | null;
 }
 
 // Helper to check if stored session is valid
@@ -35,22 +38,45 @@ const isValidSession = (session: StoredSession | null): boolean => {
 
 export const AuthProvider = (props: Props) => {
   const [user, setUser] = useState<UserData | null>(null);
+  const [activeOrg, setActiveOrg] = useState<OrganizationUserData | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const cleanSession = useCallback(() => {
+    console.log("cleaned session")
+    localStorage.removeItem("session");
+    setUser(null);
+    setActiveOrg(null);
+    setIsAuthenticated(false);
+  }, [])
+
   // Helper to persist session
-  const persistSession = useCallback((userData: UserData, token: string, refreshToken?: string) => {
+  const persistSession = useCallback((userData: UserData, token: string, refreshToken?: string, org?: OrganizationUserData | null) => {
     const session: StoredSession = {
       user: userData,
       token,
       refreshToken,
+      activeOrg: org ?? activeOrg,
       // Default to 24h from now if no explicit expiry
       expiresAt: Date.now() + 24 * 60 * 60 * 1000
     };
     localStorage.setItem("session", JSON.stringify(session));
+    console.log(session)
     setUser(userData);
+    setActiveOrg(session.activeOrg ?? null);
     setIsAuthenticated(true);
-  }, []);
+  }, [activeOrg]);
+
+  // Allow user to select or change active organization
+  const setOrg = (org: OrganizationUserData | null) => {
+    setActiveOrg(org);
+    const storedSession = localStorage.getItem("session");
+    if (storedSession) {
+      const session: StoredSession = JSON.parse(storedSession);
+      session.activeOrg = org;
+      localStorage.setItem("session", JSON.stringify(session));
+    }
+  };
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -63,18 +89,16 @@ export const AuthProvider = (props: Props) => {
         }
 
         const session: StoredSession = JSON.parse(storedSession);
-
         if (!isValidSession(session)) {
           throw new Error("Session expired");
         }
 
         setUser(session.user);
+        setActiveOrg(session.activeOrg ?? null);
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Failed to restore session:", error);
-        localStorage.removeItem("session");
-        setUser(null);
-        setIsAuthenticated(false);
+        cleanSession();
       } finally {
         setLoading(false);
       }
@@ -87,15 +111,11 @@ export const AuthProvider = (props: Props) => {
     try {
       setLoading(true);
       const { user, token, refreshToken } = await authService.signin({ email, password });
-      console.log(user, token, refreshToken);
-      persistSession(user, token, refreshToken);
+      persistSession(user, token, refreshToken, user.organizations?.at(0));
       return { success: true };
     } catch (error) {
       const err = error as AxiosError;
-      return {
-        success: false,
-        error: err.response?.data || err.message
-      };
+      return { success: false, error: err.response?.data || err.message };
     } finally {
       setLoading(false);
     }
@@ -105,14 +125,11 @@ export const AuthProvider = (props: Props) => {
     try {
       setLoading(true);
       const { user, token, refreshToken } = await authService.signup({ name, email, password });
-      persistSession(user, token, refreshToken);
+      persistSession(user, token, refreshToken, user.organizations?.at(0));
       return { success: true };
     } catch (error) {
       const err = error as AxiosError;
-      return {
-        success: false,
-        error: err.response?.data || err.message
-      };
+      return { success: false, error: err.response?.data || err.message };
     } finally {
       setLoading(false);
     }
@@ -131,20 +148,21 @@ export const AuthProvider = (props: Props) => {
       return true;
     } catch (error) {
       console.error("Failed to refresh token:", error);
+      cleanSession();
       return false;
     }
   };
 
   const logout: AuthContextType["logout"] = () => {
-    localStorage.removeItem("session");
-    setUser(null);
-    setIsAuthenticated(false);
+    cleanSession();
   };
 
   const value: AuthContextType = {
     user,
+    activeOrg,
     isAuthenticated,
     loading,
+    setOrg,
     login,
     signup,
     logout,

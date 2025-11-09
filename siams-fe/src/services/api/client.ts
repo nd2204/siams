@@ -14,6 +14,8 @@ class ApiClient {
       timeout: 10000,
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
+        "ngrok-skip-browser-warning": "true"
       },
     });
 
@@ -47,7 +49,7 @@ class ApiClient {
 
   private handleError = async (error: any) => {
     const originalRequest = error.config;
-    
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       // Prevent multiple simultaneous refresh attempts
       if (!this.refreshPromise) {
@@ -72,7 +74,7 @@ class ApiClient {
       localStorage.removeItem("session");
       window.location.href = "/auth";
     }
-    
+
     return Promise.reject(error);
   }
 
@@ -89,7 +91,7 @@ class ApiClient {
         `${API_BASE_URL}${ENDPOINTS.AUTH.REFRESH}`,
         { refreshToken }
       );
-      
+
       if (response.data?.token) {
         // Update session in localStorage
         const newSession = {

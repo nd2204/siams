@@ -22,6 +22,7 @@ export const ENDPOINTS = {
   ORG: {
     ROOT: "/orgs",
     LIST_DEVICES: (orgId: string) => `/orgs/${orgId}/devices`,
+    LIST_CLUSTERS: (orgId: string) => `/orgs/${orgId}/clusters`,
     LIST_USERS: (orgId: string) => `/orgs/${orgId}/users`,
     GET_USER_BY_ID: (orgId: string, uid: string) => `/orgs/${orgId}/users/${uid}`
   },

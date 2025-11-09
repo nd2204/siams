@@ -10,13 +10,14 @@ import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/hooks/use-auth"
 import { useRef, useState } from "react"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 
 export default function SignupPage() {
   const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false)
   const { signup } = useAuth()
   const formValidRef = useRef(false)
+  const navigate = useNavigate()
 
   const validateForm = () => {
     if (form.confirmPassword !== form.password) {
@@ -40,7 +41,10 @@ export default function SignupPage() {
         alert(result.error)
       } else {
         // TODO: handle validation error from backend
+        alert(JSON.stringify(result.error))
       }
+    } else {
+      navigate("/")
     }
     setLoading(false)
   }
