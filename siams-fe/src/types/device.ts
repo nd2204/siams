@@ -68,13 +68,11 @@ export interface DeviceStatus {
 export interface Device {
   id: string;
   name: string;
-  type: string; // MCU type: ESP32, Arduino, etc.
+  model: string; // MCU model: ESP32, Arduino, etc.
   clusterId: string;
-  status: DeviceStatus;
-  sensors?: Sensor[];
-  actuators?: Actuator[];
-  commands?: Command[];
-  lastUpdate: string;
+  status: "online" | "offline";
+  firmwareVersion: string;
+  lastSeen: string;
 }
 
 export interface Cluster {
