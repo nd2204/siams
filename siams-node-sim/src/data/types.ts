@@ -1,5 +1,6 @@
-import { ActuatorCapability, CommandCapability, SensorCapability } from "@domain/entities/device-capabilities";
-import { SensorType, ActuatorType } from "@domain/entities";
+import { ActuatorType, SensorType } from "@domain/entities";
+import { CommandDesc } from "@domain/value-objects/command";
+import { RegisterDevicePayload } from "@feature/device/dtos/register-device-request";
 
 export type GlobalConfig = {
   mqttUrl: string;
@@ -8,11 +9,13 @@ export type GlobalConfig = {
   clusterId: string;
   sensors: { type: SensorType, unit: string }[];
   actuators: { type: ActuatorType }[];
-  commands: CommandCapability[];
+  commands: { commands: CommandDesc[] }[];
   telemetryIntervalMs: number;
   statusIntervalMs: number;
   telemetryJitterMs?: number;
 }
+
+type DeviceCapabilities = RegisterDevicePayload["capabilities"]
 
 export type DeviceConfig = {
   tempId: string;
@@ -28,11 +31,7 @@ export type DeviceConfig = {
     statusIntervalMs: number;
     telemetryJitterMs?: number;
   }
-  capabilities: {
-    sensors: SensorCapability[],
-    actuators: ActuatorCapability[],
-    commands: CommandCapability[]
-  }
+  capabilities: DeviceCapabilities
 };
 
 export type DevInfo = {
@@ -40,8 +39,7 @@ export type DevInfo = {
   id: string; // deviceId or tempId
   registered: boolean;
   lastSeen?: string;
-  sensors?: SensorCapability[]
-  actuators?: ActuatorCapability[]
+  capabilities: RegisterDevicePayload["capabilities"]
   reading?: Record<number, number>,
   cpu?: number;
   mem?: number;
@@ -52,17 +50,19 @@ export type DevInfo = {
 export type LogLevel = "Info" | "Warn" | "Error" | "Important"
 
 export type DeviceEventInput =
-  | { type: "created"; tempId?: string, sensors: SensorCapability[], actuators: ActuatorCapability[], commands: CommandCapability[] }
+  | { type: "created"; tempId?: string, capabilities: DeviceCapabilities }
   | { type: "registered"; tempId?: string; deviceId: string }
   | { type: "telemetry"; tempId?: string; localId: number, sensor: string; value: number }
   | { type: "status"; tempId?: string; cpu: number; mem: number, wifi: number }
+  | { type: "verified"; tempId?: string; }
   | { type: "log"; tempId?: string; level: LogLevel, message: string, obj?: any };
 
 export type DeviceEvent =
-  | { type: "created"; tempId: string, sensors: SensorCapability[], actuators: ActuatorCapability[], commands: CommandCapability[] }
+  | { type: "created"; tempId: string, capabilities: DeviceCapabilities }
   | { type: "registered"; tempId: string; deviceId: string }
   | { type: "telemetry"; tempId: string; localId: number, sensor: string; value: number }
   | { type: "status"; tempId: string; cpu: number; mem: number, wifi: number }
+  | { type: "verified"; tempId?: string; }
   | { type: "log"; tempId: string; level: LogLevel, message: string, obj?: any };
 
-export type TopicType = "command" | "register-ack" | "unknown"
+export type TopicType = "command" | "register-ack" | "verify-ack" | "unknown"
