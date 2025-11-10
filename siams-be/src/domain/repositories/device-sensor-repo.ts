@@ -1,6 +1,6 @@
-import { Sensor } from "@domain/entities";
+import { DeviceSensor } from "@domain/entities";
 import { IRepository } from "@shared/interfaces";
 
-export interface IDeviceSensorRepository extends IRepository<Sensor> {
-  upsert(payload: Partial<Sensor>): Promise<Sensor>
+export interface IDeviceSensorRepository extends IRepository<DeviceSensor> {
+  upsert(payload: Partial<DeviceSensor>): Promise<DeviceSensor>
 }

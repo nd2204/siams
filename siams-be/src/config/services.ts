@@ -8,7 +8,6 @@ import {
   ClusterCredentialRepositoryPg,
   DeviceSensorRepositoryPg,
   DeviceActuatorRepositoryPg,
-  DeviceCapabilitiesRepositoryPg,
   DeviceStatusRepositoryPg,
   DeviceTelemetryRepositoryPg,
   DeviceCommandRepositoryPg
@@ -19,6 +18,7 @@ import { encryptPassword, issueToken, comparePasswords, verifyToken } from '@inf
 import * as validators from '@infra/validation/joi'
 import { RoleRepositoryPg } from "@infra/data/postgres/repositories/user-role-repo-pg"
 import { OrganizationUserRepositoryPg } from "@infra/data/postgres/repositories/organization-user-repo-pg"
+import { OutboxRepositoryPg } from "@infra/data/postgres/repositories/outbox-repo-pg"
 
 const orgRepo = new OrganizationRepositoryPg(pool)
 const orgUserRepo = new OrganizationUserRepositoryPg(pool)
@@ -31,19 +31,18 @@ const clusterCredRepo = new ClusterCredentialRepositoryPg(pool)
 
 // Device aggregate
 const deviceRepo = new DeviceRepositoryPg(pool)
-const deviceCapabilitesRepo = new DeviceCapabilitiesRepositoryPg(pool)
 const deviceStatusRepo = new DeviceStatusRepositoryPg(pool)
 const deviceSensorRepo = new DeviceSensorRepositoryPg(pool)
 const deviceActuatorRepo = new DeviceActuatorRepositoryPg(pool)
 const deviceTelemetryRepo = new DeviceTelemetryRepositoryPg(pool)
 const deviceCommandRepo = new DeviceCommandRepositoryPg(pool)
+const outboxRepo = new OutboxRepositoryPg(pool);
 
 export const services = {
   device: {
     repositories: {
       base: deviceRepo,
       status: deviceStatusRepo,
-      capabilities: deviceCapabilitesRepo,
       sensors: deviceSensorRepo,
       actuators: deviceActuatorRepo,
       telemetry: deviceTelemetryRepo,
@@ -71,6 +70,9 @@ export const services = {
       user: orgUserRepo
     },
     validators: validators.organization
+  },
+  outbox: {
+    repository: outboxRepo
   },
   utils: {
     encryptPassword,

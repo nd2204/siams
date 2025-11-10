@@ -23,8 +23,9 @@ export class CreateClusterUC implements IUseCase<CreateClusterResponse> {
     const cluster = new Cluster({
       id: uuidv4(),
       name: value.name!,
-      location: value.location!,
-      orgId: value.orgId!
+      locName: value.location!,
+      orgId: value.orgId!,
+      createdAt: new Date()
     })
 
     const savedCluster = await this.repo.create(cluster);
@@ -43,8 +44,11 @@ export class CreateClusterUC implements IUseCase<CreateClusterResponse> {
     await this.credRepo.create(cred)
 
     return {
-      cluster: savedCluster,
-      credentials: { loginId: loginId, password: passwordRaw }
+      cluster: { ...savedCluster },
+      credentials: {
+        loginId: loginId,
+        password: passwordRaw
+      }
     }
   }
 }

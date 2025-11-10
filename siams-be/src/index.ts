@@ -3,12 +3,15 @@ import { createServer } from "http";
 import config from "@/config"
 import app from "@infra/api/express"
 import { mqttClient } from "@infra/api/mqtt"
+import { outboxWorker } from "@infra/worker";
 
 async function main() {
   const server = createServer(app);
   const port: number = config.app.port;
 
-  mqttClient.connect()
+  mqttClient.connect();
+
+  outboxWorker.start();
 
   server.listen(port, () => {
     sm_info({ msg: `server is running at http://localhost:${port.toString()}`, tag: "app" })

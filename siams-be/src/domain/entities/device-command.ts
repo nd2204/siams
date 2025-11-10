@@ -1,25 +1,19 @@
 import { Entity } from "@domain/interfaces";
+import { CommandDesc } from "@domain/value-objects/command";
 
-export type CommandStatus = 'acked' | 'expired' | 'failed' | 'pending' | 'sent';
-
-export class Command extends Entity<Command, string> {
+// Store supported command for a device
+// which including sensor and actuator and general actions
+export class DeviceCommand extends Entity<DeviceCommand, string> {
   declare deviceId: string;
-  declare issuedBy?: null | string;
-  declare command: string;
-  declare payload: Record<string, unknown>;
-  declare expiresAt?: Date
-  status = 'pending';
-  declare createdAt?: Date;
-  declare ackedAt?: Date;
 
-  static isExpired(command: Command, now: Date = new Date()): boolean {
-    return !!command.expiresAt && command.expiresAt.getTime() < now.getTime();
-  }
-  static markAcked(command: Command): Command { command.status = 'acked'; return command }
-  static markFailed(command: Command): Command { command.status = 'failed'; return command }
-  static markSent(command: Command): Command {
-    command.status = 'sent';
-    return command
-  }
+  // localId can be used to cross reference between actuator and sensors
+  // or identifying general actions.
+  // Doesn't need to be unique.
+  declare localId: number;
+
+  // For general commands
+  declare name?: string;
+  declare type?: string;
+
+  declare commands: CommandDesc[];
 }
-

@@ -65,7 +65,8 @@ services:
       # - EMQX_AUTH__HTTP__ACL_REQ__URL=http://localhost:44556/mqtt/acl
 
   db:
-    image: postgres:15-alpine
+    image: postgis/postgis:15-3.5
+    platform: linux/amd64
     container_name: postgres_db
     ports:
       - '5432:5432'

@@ -10,31 +10,34 @@ export class ClusterRepositoryPg
   constructor(
     pool: Pool
   ) {
-    super(pool, "clusters", {
+    const mapping: Record<keyof Cluster, string> = {
       id: "id",
       orgId: "org_id",
       name: "name",
+      geom: "area_geom",
+      locName: "location",
       description: "description",
-      location: "location",
       createdAt: "created_at"
-    },
+    }
+
+    super(pool, "clusters", mapping,
       (row) => {
         return new Cluster({
-          id: row["id"],
-          orgId: row["org_id"],
-          name: row["name"],
-          description: row["description"],
-          location: row["location"],
-          createdAt: row["created_at"]
+          id: row[mapping.id],
+          orgId: row[mapping.orgId],
+          locName: row[mapping.locName],
+          name: row[mapping.name],
+          description: row[mapping.description],
+          createdAt: row[mapping.createdAt],
+          geom: row[mapping.geom]
         })
-      }
+      },
+      undefined,
+      ["geom"]
     )
   }
 
-  addDevice(deviceId: string, clusterId: string): Promise<boolean> {
-    throw new Error("Method not implemented.");
-  }
-  removeDevice(deviceId: string, clusterId: string): Promise<boolean> {
-    throw new Error("Method not implemented.");
+  async updateClusterArea(clusterId: string) {
+    await this.pool.query("SELECT update_cluster_area($1)", [clusterId])
   }
 }

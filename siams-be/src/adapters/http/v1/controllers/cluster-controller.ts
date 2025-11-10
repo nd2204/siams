@@ -7,6 +7,7 @@ import { GetClusterByIdRequest } from '@feature/cluster/dtos/get-cluster-by-id-r
 import { CreateClusterUC } from '@feature/cluster/create-cluster'
 import { CreateClusterRequest } from '@feature/cluster/dtos/create-cluster-request'
 import { CreateClusterResponse } from '@feature/cluster/dtos/create-cluster-response'
+import { ClusterDTO } from '@feature/cluster/dtos/cluster-dto'
 
 export class ClusterController {
   constructor(
@@ -15,7 +16,7 @@ export class ClusterController {
     private listDeviceByClusterIdUC: ListDeviceByClusterIdUC
   ) { }
 
-  async getById(req: IRequest): Promise<Cluster> {
+  async getById(req: IRequest): Promise<ClusterDTO> {
     const request: GetClusterByIdRequest = {
       token: req.token,
       clusterId: req.params?.id as string

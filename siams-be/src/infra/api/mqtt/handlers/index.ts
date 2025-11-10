@@ -17,7 +17,7 @@ export const handlers: IMqttHandler[] = [
       services.device.repositories.base,
       services.device.repositories.sensors,
       services.device.repositories.actuators,
-      services.device.repositories.capabilities,
+      services.device.repositories.commands,
       services.device.validators.registerDeviceValidator
     ),
     new SMLogger("infra:emqx:DeviceRegisterHandler"),

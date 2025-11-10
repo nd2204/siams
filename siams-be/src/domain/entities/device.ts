@@ -2,14 +2,13 @@
 // import { Threshold, Schedule } from "@domain/value-objects";
 import { Entity } from "@domain/interfaces";
 
-export type DeviceStatus = 'offline' | 'online' | 'unregistered';
-
 export class Device extends Entity<Device, string> {
   declare name?: string;
   declare clusterId: string;
   declare model: string;
+  declare geom: object; // geojson
   declare firmwareVersion: string;
-  declare status: DeviceStatus;
+  declare status: 'offline' | 'online' | 'unregistered';
   declare lastSeen?: Date;
   declare createdAt?: Date;
 
@@ -18,10 +17,10 @@ export class Device extends Entity<Device, string> {
     this.name = opts.name ?? `${opts.model}-${this.firmwareVersion}`;
   }
 
-  static markSeen(ts: Date = new Date()): Partial<Device> {
+  static markSeen(ts: Date = new Date(), online?: boolean): Partial<Device> {
     return {
       lastSeen: ts,
-      status: 'online',
+      status: !!online ? 'online' : 'offline',
     }
   }
 

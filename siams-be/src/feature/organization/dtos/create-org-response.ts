@@ -1,6 +1,10 @@
+import { PermissionKey, RoleName } from "@domain/entities";
+
 export interface CreateOrganizationResponse {
   id: string,
   name: string,
   slug: string,
-  createAt: Date
+  role: RoleName,
+  permissions: PermissionKey[]
+  createdAt: Date;
 }

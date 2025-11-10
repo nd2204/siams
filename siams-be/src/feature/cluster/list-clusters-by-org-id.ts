@@ -1,16 +1,19 @@
-import { Cluster } from "@domain/entities";
-import { IClusterRepository } from "@domain/repositories";
-import { IPaginated, IUseCase, IValidator } from "@shared/interfaces";
+import { IClusterRepository, IOrganizationUserRepository } from "@domain/repositories";
+import { IUseCase, IValidator } from "@shared/interfaces";
 import { ListClusterByOrgIdRequest } from "./dtos/list-cluster-by-org-id-request";
-import { ValidationError } from "@shared/errors";
+import { UnauthorizedError, ValidationError } from "@shared/errors";
+import { AuthResponse } from "@feature/user/dtos/auth-response";
+import { ListClusterByOrgIdResponse } from "./dtos/list-cluster-by-org-id-response";
 
-export class ListClusterByOrgIdUC implements IUseCase<IPaginated<Cluster>> {
+export class ListClusterByOrgIdUC implements IUseCase<ListClusterByOrgIdResponse> {
   constructor(
     private clusterRepo: IClusterRepository,
-    private validator: IValidator<ListClusterByOrgIdRequest>
+    private orgUserRepo: IOrganizationUserRepository,
+    private validator: IValidator<ListClusterByOrgIdRequest>,
+    private verifyToken: (token: string) => AuthResponse["user"]
   ) { }
 
-  async call(req: ListClusterByOrgIdRequest): Promise<IPaginated<Cluster>> {
+  async call(req: ListClusterByOrgIdRequest): Promise<ListClusterByOrgIdResponse> {
     const { value, errors } = this.validator.validate(req);
 
     /* TODO: add auth verification from token */
@@ -19,8 +22,14 @@ export class ListClusterByOrgIdUC implements IUseCase<IPaginated<Cluster>> {
       throw new ValidationError("Invalid request", errors);
     }
 
+    const user = this.verifyToken(value.token!)
+    const existingOrgUser = await this.orgUserRepo.findOneBy({ userId: user.id, orgId: value.orgId! });
+    if (!existingOrgUser) {
+      throw new UnauthorizedError(`Organization not exists or user does not belong to this organization`)
+    }
+
     return await this.clusterRepo.listBy(
-      { orgId: value.orgId! },
+      { orgId: existingOrgUser.orgId! },
       value.page ?? 1,
       value.perPage ?? 10
     )

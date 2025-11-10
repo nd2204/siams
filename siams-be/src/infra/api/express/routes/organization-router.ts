@@ -17,10 +17,11 @@ const controller = new OrganizationController(
     services.organization.validators.createOrganizationValidator
   ),
   new GetOrganizationByIdUC(services.organization.repositories.base),
-  new GetClusterByIdUC(services.cluster.repositories.base),
   new ListClusterByOrgIdUC(
     services.cluster.repositories.base,
-    services.cluster.validators.listClusterByOrgIdValidator
+    services.organization.repositories.user,
+    services.cluster.validators.listClusterByOrgIdValidator,
+    services.utils.verifyToken
   ),
   new ListDeviceByOrgIdUC(
     services.organization.repositories.user,
@@ -98,30 +99,6 @@ export function organizationRouter(): Router {
         token: token,
         params: req.params,
         body: req.body
-      })
-      res.send(result)
-    } catch (err) {
-      return next(err)
-    }
-  })
-
-  router.post("/:id/clusters", async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-  })
-
-  router.get("/:id/clusters/:clusterId", async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const token = getAuthToken(req)
-      const result = await controller.getClusterById({
-        token: token,
-        params: req.params,
       })
       res.send(result)
     } catch (err) {

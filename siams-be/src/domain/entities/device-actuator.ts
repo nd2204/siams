@@ -1,4 +1,5 @@
 import { Entity } from "@domain/interfaces";
+import { CommandDesc } from "@domain/value-objects/command";
 
 export type ActuatorType =
   | "waterPump"
@@ -15,22 +16,20 @@ export type ActuatorType =
 
 export type ActuatorStatus = 'offline' | 'online';
 
-export class Actuator extends Entity<Actuator, string> {
+export class DeviceActuator extends Entity<DeviceActuator, string> {
   declare deviceId: string;
   declare localId: number;
+  declare name: string;
   declare type: ActuatorType;
-  declare status?: ActuatorStatus;
-  declare lastSeen?: Date;
+  declare status: ActuatorStatus;
 
-  static activate(actuator: Actuator, duration_ms?: number) {
+  static activate(actuator: DeviceActuator, duration_ms?: number) {
     actuator.status = 'offline';
-    actuator.lastSeen = new Date();
     // duration handling is infra responsibility (timer), domain just records intent
   }
 
-  static deactivate(actuator: Actuator) {
+  static deactivate(actuator: DeviceActuator) {
     actuator.status = 'online';
-    actuator.lastSeen = new Date();
   }
 }
 

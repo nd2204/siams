@@ -15,6 +15,7 @@ const authController = new AuthController(
     services.utils.comparePasswords,
     services.user.repositories.base,
     services.organization.repositories.user,
+    services.organization.repositories.base,
     services.user.repositories.role,
     services.user.validators.loginValidator,
     services.utils.issueToken

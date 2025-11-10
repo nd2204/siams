@@ -1,31 +1,31 @@
-import { Actuator } from "@domain/entities";
+import { DeviceActuator } from "@domain/entities";
 import { IDeviceActuatorRepository } from "@domain/repositories";
 import { IPaginated } from "@shared/interfaces";
 
 export class ActuatorRepositoryMock implements IDeviceActuatorRepository {
   constructor() { }
 
-  upsert(payload: Partial<Actuator>): Promise<Actuator> {
+  upsert(payload: Partial<DeviceActuator>): Promise<DeviceActuator> {
     throw new Error("Method not implemented.");
   }
 
-  findOneBy(filters: Partial<Actuator>): Promise<Actuator | undefined> {
+  findOneBy(filters: Partial<DeviceActuator>): Promise<DeviceActuator | undefined> {
     throw new Error("Method not implemented.");
   }
 
-  findAllBy(filters: Partial<Actuator>): Promise<Actuator[]> {
+  findAllBy(filters: Partial<DeviceActuator>): Promise<DeviceActuator[]> {
     throw new Error("Method not implemented.");
   }
 
-  listBy(filters: Partial<Actuator>, page: number, perPage: number): Promise<IPaginated<Actuator>> {
+  listBy(filters: Partial<DeviceActuator>, page: number, perPage: number): Promise<IPaginated<DeviceActuator>> {
     throw new Error("Method not implemented.");
   }
 
-  create(payload: Partial<Actuator>): Promise<Actuator> {
+  create(payload: Partial<DeviceActuator>): Promise<DeviceActuator> {
     throw new Error("Method not implemented.");
   }
 
-  update(id: number | string, payload: Partial<Actuator>): Promise<Actuator> {
+  update(id: number | string, payload: Partial<DeviceActuator>): Promise<DeviceActuator> {
     throw new Error("Method not implemented.");
   }
 
