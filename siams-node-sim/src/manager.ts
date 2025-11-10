@@ -4,6 +4,7 @@ import { randomInt } from "node:crypto";
 import { v4 } from "uuid";
 import { DeviceConfig, GlobalConfig } from "./data/types";
 import { PresetStore } from "./data/preset-store";
+import { type } from "node:os";
 
 // --- Utility for random selection ---
 function pickRandom<T>(arr: readonly T[], count: number): T[] {
@@ -55,14 +56,19 @@ export class DeviceSimulatorManager extends EventEmitter {
       capabilities: {
         sensors: pickRandom(this.globalCfg.sensors, randomInt(0, this.globalCfg.sensors.length)).map((s) => ({
           localId: autoId++,
+          name: s.type,
           type: s.type,
           unit: s.unit
         })),
         actuators: pickRandom(this.globalCfg.actuators, randomInt(0, this.globalCfg.actuators.length)).map((a) => ({
           localId: autoId++,
+          name: a.type,
           type: a.type
         })),
-        commands: pickRandom(this.globalCfg.commands, randomInt(0, this.globalCfg.commands.length))
+        commands: pickRandom(this.globalCfg.commands, randomInt(0, this.globalCfg.commands.length)).map((c) => ({
+          localId: autoId,
+          commands: c.commands
+        }))
       }
     }
   }

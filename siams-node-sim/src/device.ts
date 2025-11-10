@@ -1,18 +1,21 @@
 import { topics } from "@config/mqtt-topics";
 import { SensorType } from "@domain/entities";
 import { RegisterDevicePayload } from "@feature/device/dtos/register-device-request"
+import { DeviceVerifyPayload } from "@feature/device/dtos/device-verify-request"
 import { DeviceStatusPayload } from "@feature/telemetry/dtos/device-status-request"
 import { DeviceTelemetryPayload } from "@feature/telemetry/dtos/device-telemetry-request"
 import EventEmitter from "events";
 import mqtt, { MqttClient } from "mqtt";
 import { DeviceConfig, DeviceEventInput, LogLevel, TopicType } from "./data/types";
 import { PresetStore } from "./data/preset-store";
+import { randomInt } from "crypto";
 
 export class DeviceClient {
   private client?: MqttClient;
   private deviceId: string;
   private stopped = false;
   private hasError = false;
+  private verified = true;
   private telemetryTimer?: NodeJS.Timeout;
   private statusTimer?: NodeJS.Timeout;
   private waitForDeviceIdTimer?: NodeJS.Timeout
@@ -29,9 +32,11 @@ export class DeviceClient {
   async start(): Promise<void> {
     this.emit({
       type: "created",
-      sensors: this.cfg.capabilities.sensors,
-      actuators: this.cfg.capabilities.actuators,
-      commands: this.cfg.capabilities.commands
+      capabilities: {
+        sensors: this.cfg.capabilities.sensors,
+        actuators: this.cfg.capabilities.actuators,
+        commands: this.cfg.capabilities.commands
+      }
     });
 
     this.client = mqtt.connect(this.cfg.mqtt.url, {
@@ -68,9 +73,10 @@ export class DeviceClient {
         this.emitLog("Warn", "deviceId not found. requesting from backend...")
         this.publishRegister();
       } else {
-        this.emitLog("Important", "deviceId exist. skiping publish register")
-        this.emit({ type: "registered", deviceId: this.cfg.deviceId })
+        this.verified = false;
+        this.emitLog("Important", "deviceId exist. starting verification")
         this.deviceId = this.cfg.deviceId
+        this.publishVerify();
       }
       this.startWatingForId()
     });
@@ -85,6 +91,9 @@ export class DeviceClient {
           }
           case "register-ack": {
             this.handleRegisterTopic(p); break;
+          }
+          case "verify-ack": {
+            this.handleVerifyTopic(p); break;
           }
           case "unknown":
           default:
@@ -105,6 +114,43 @@ export class DeviceClient {
   // --------------------------------------------------------------------------------
   // Publisher Handler
   // --------------------------------------------------------------------------------
+
+  private publishVerify() {
+    // Subscribe ACK topic
+    // 1. create topic
+    const ackTopic = topics.deviceVerifyAck.create({
+      orgId: this.cfg.orgId,
+      clusterId: this.cfg.clusterId,
+      deviceId: this.deviceId
+    });
+
+    // 2. subscribe to that topic
+    this.client!.subscribe(ackTopic, (err) => {
+      if (err) this.emitLog("Error", `subscribe ack err`, err);
+    });
+
+    // Publish to register topic
+    // 3. create topic
+    const topic = topics.deviceVerify.create({
+      orgId: this.cfg.orgId,
+      clusterId: this.cfg.clusterId,
+      deviceId: this.deviceId
+    });
+
+    // 4. create payload
+    const payload: DeviceVerifyPayload = {
+      firmwareVersion: "sim-1.0",
+    };
+
+    // 5. publish
+    this.client!.publish(topic, JSON.stringify(payload), {}, (err) => {
+      if (err) {
+        this.emitLog("Error", `register publish failed: ${JSON.stringify(err, null, 2)}`);
+      } else {
+        this.emitLog("Important", `Published registration message`);
+      }
+    });
+  }
 
   private publishRegister() {
     // Subscribe ACK topic (tempId-based)
@@ -129,11 +175,13 @@ export class DeviceClient {
     });
 
     // 2. create payload
+    const randX = randomInt(0, 1000) / 1000;
+    const randY = randomInt(0, 1000) / 1000;
     const payload: RegisterDevicePayload = {
       name: this.cfg.tempId,
       model: "simulated-device",
       firmwareVersion: "sim-1.0",
-      location: { lat: 21.08, lon: 105.78 },
+      location: { lat: 21.08 + randY, lon: 105.78 + randX },
       capabilities: this.cfg.capabilities,
     };
 
@@ -142,7 +190,7 @@ export class DeviceClient {
       if (err) {
         this.emitLog("Error", `register publish failed: ${JSON.stringify(err, null, 2)}`);
       } else {
-        this.emitLog("Important", `Published registration message`);
+        this.emitLog("Important", `Published registration message ${JSON.stringify(payload, null)}`);
       }
     });
   }
@@ -154,7 +202,7 @@ export class DeviceClient {
         this.clearTimers()
         return
       }
-      if (this.deviceId === this.cfg.tempId) {
+      if (this.deviceId === this.cfg.tempId && !this.verified) {
         this.emitLog("Warn", "Wating for device id...")
         this.waitForDeviceIdTimer = setTimeout(wait, 3000);
         return;
@@ -263,6 +311,25 @@ export class DeviceClient {
     }
   }
 
+  private handleVerifyTopic(p: any) {
+    if (p && p.status == "ok") {
+      this.presetStore.save({
+        ...(this.cfg),
+        tempId: this.cfg.tempId,
+        deviceId: undefined, // delete device id for re-registration
+        orgId: this.cfg.orgId,
+        clusterId: this.cfg.clusterId,
+      })
+      this.emit({ type: "verified" })
+      this.emitLog("Important", `verified ack`);
+      this.emit({ type: "registered", deviceId: this.deviceId })
+      this.verified = true;
+    } else {
+      this.emitLog("Error", "Received an error", p)
+      this.hasError = true
+    }
+  }
+
   private handleRegisterTopic(p: any) {
     if (p && p.error) {
       this.emitLog("Error", "Received an error", p)
@@ -296,6 +363,9 @@ export class DeviceClient {
     if (topic.endsWith(`/register-ack/${this.cfg.tempId}`)) {
       return "register-ack"
     }
+    if (topic.endsWith(`/verify-ack/${this.deviceId}`)) {
+      return "verify-ack"
+    }
     if (topic.includes("/command")) {
       return "command"
     }
@@ -304,16 +374,15 @@ export class DeviceClient {
 
   private mockValue(type: SensorType) {
     switch (type) {
-      case "temperature": return +(20 + Math.random() * 10).toFixed(2);
-      case "humidity": return +(40 + Math.random() * 30).toFixed(2);
-      case "soilMoisture": return +(10 + Math.random() * 80).toFixed(2);
-      case "lightIntensity": return +(1 + Math.random() * 1200).toFixed(2);
-      case "pHLevel":
-      case "rainfall":
-      case "windSpeed":
-      case "soilNutrient":
+      case "TEMPERATURE": return +(20 + Math.random() * 10).toFixed(2);
+      case "HUMIDITY": return +(40 + Math.random() * 30).toFixed(2);
+      case "MOISTURE": return +(10 + Math.random() * 80).toFixed(2);
+      case "LIGHT_INTENSITY": return +(1 + Math.random() * 1200).toFixed(2);
+      case "PH_LEVEL":
+      case "RAINFALL":
+      case "WINDSPEED":
+      case "SOIL_NUTRIENT":
       case "CO2":
-      case "leafWetness":
       default: return +(Math.random() * 100).toFixed(2);
     }
   }

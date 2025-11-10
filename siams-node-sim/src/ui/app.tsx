@@ -33,8 +33,7 @@ export const App: React.FC<{ emitter: EventEmitter }> = ({ emitter }) => {
             ...prev, [key]: {
               tempId: key,
               id: key,
-              sensors: evt.sensors,
-              actuators: evt.actuators,
+              capabilities: evt.capabilities,
               registered: false,
               lastMessage: "created"
             }
@@ -42,6 +41,18 @@ export const App: React.FC<{ emitter: EventEmitter }> = ({ emitter }) => {
           if (!selected) setSelected(key);
           break;
         }
+        case "verified": {
+          const key = evt.tempId!;
+          setDevices((prev) => {
+            return ({
+              ...prev, [key]: {
+                ...(prev[key]),
+                registered: true,
+                lastMessage: "verified"
+              }
+            })
+          });
+        } break;
         case "registered": {
           const key = evt.tempId!;
           setDevices((prev) => {
@@ -128,8 +139,8 @@ export const App: React.FC<{ emitter: EventEmitter }> = ({ emitter }) => {
     if (!(selected && devices[selected])) return s
     const device = devices[selected]
 
-    if (!device || !device.sensors) return s
-    const sensor = device.sensors.find(s => s.localId === localId)
+    if (!device || !device.capabilities.sensors) return s
+    const sensor = device.capabilities.sensors.find(s => s.localId === localId)
     const reading = device.reading
 
     if (sensor && reading && reading[localId]) {
@@ -157,7 +168,7 @@ export const App: React.FC<{ emitter: EventEmitter }> = ({ emitter }) => {
               <Box flexGrow={1} flexDirection="row" width={columns - leftWidth - 2}>
                 <Box flexGrow={1} paddingLeft={1} paddingRight={1} borderStyle="single" flexDirection="column" minWidth={20}>
                   <Text color="green">Sensors</Text>
-                  {devices[selected]?.sensors?.map((s, idx) => (
+                  {devices[selected]?.capabilities.sensors?.map((s, idx) => (
                     <Box key={idx} justifyContent="space-between">
                       <Text>{s.localId} - {s.type}</Text>
                       <Text>{getSensorReading(s.localId)}</Text>
@@ -166,7 +177,7 @@ export const App: React.FC<{ emitter: EventEmitter }> = ({ emitter }) => {
                 </Box>
                 <Box flexGrow={1} paddingLeft={1} borderStyle="single" flexDirection="column" minWidth={20}>
                   <Text color="green">Actuators</Text>
-                  {devices[selected]?.actuators?.map((a, idx) => (
+                  {devices[selected]?.capabilities.actuators?.map((a, idx) => (
                     <Text key={idx}>{a.localId} - {a.type}</Text>
                   ))}
                 </Box>

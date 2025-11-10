@@ -2,8 +2,8 @@ import { App } from "./ui/app"
 import { withFullScreen } from "fullscreen-ink";
 import { DeviceSimulatorManager } from "./manager";
 import { ActuatorType, SensorType } from "@domain/entities";
-import { CommandCapability } from "@domain/entities/device-capabilities";
 import meow from "meow";
+import { CommandDesc } from "@domain/value-objects/command";
 // import { DeviceSimulatorManager } from "./simulator.js";
 
 async function main() {
@@ -32,6 +32,11 @@ $ cli --source https://example.com/data.json
       }
     }
   });
+
+  const commands: { commands: CommandDesc[] }[] = [
+    { commands: [{ action: "turn_something_on" }] },
+    { commands: [{ action: "turn_something_on_pv", params: [{ name: "testArgs", type: "string" }] }] },
+  ]
 
   const cfg = {
     mqttUrl: process.env.MQTT_URL!,
@@ -65,10 +70,7 @@ $ cli --source https://example.com/data.json
       { type: "seedDispenser" },
       { type: "lightingRelay" }
     ] as { type: ActuatorType }[],
-    commands: [
-      { action: "turn_something_on" },
-      { action: "turn_something_on_pv", params: ["testArgs"] }
-    ] as CommandCapability[],
+    commands: commands,
     telemetryJitterMs: 1000,
     startClientId: "sim-"
   };
