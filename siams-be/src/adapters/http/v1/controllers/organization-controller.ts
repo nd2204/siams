@@ -3,9 +3,7 @@ import { Cluster, Device, Organization } from '@domain/entities'
 import { CreateOrganizationRequest, CreateOrganizationResponse } from '@feature/organization/dtos';
 import { CreateOrganizationUC } from '@feature/organization/create-org';
 import { GetOrganizationByIdUC } from '@feature/organization/get-org-by-id';
-import { GetClusterByIdUC } from '@feature/cluster/get-by-id';
 import { ListClusterByOrgIdUC } from '@feature/cluster/list-clusters-by-org-id';
-import { GetClusterByIdRequest } from '@feature/cluster/dtos/get-cluster-by-id-request';
 import { ListClusterByOrgIdRequest } from '@feature/cluster/dtos/list-cluster-by-org-id-request';
 import { ListDeviceByOrgIdUC } from '@feature/device/list-by-org-id';
 
@@ -14,7 +12,6 @@ export class OrganizationController {
   constructor(
     private createOrgUC: CreateOrganizationUC,
     private getOrgByIdUC: GetOrganizationByIdUC,
-    private getClusterByIdUC: GetClusterByIdUC,
     private listClusterByOrgIdUC: ListClusterByOrgIdUC,
     private listDeviceByOrgIdUC: ListDeviceByOrgIdUC
   ) { }
@@ -52,13 +49,5 @@ export class OrganizationController {
       perPage: req.body?.perPage as number
     }
     return await this.listClusterByOrgIdUC.call(request)
-  }
-
-  async getClusterById(req: IRequest): Promise<Cluster> {
-    const request: GetClusterByIdRequest = {
-      token: req.token,
-      clusterId: req.params?.id as string
-    }
-    return await this.getClusterByIdUC.call(request)
   }
 }

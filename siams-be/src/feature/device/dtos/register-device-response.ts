@@ -6,8 +6,8 @@ export class RegisterDeviceResponse {
     public deviceId: string,
     public assignedCluster: string,
     public status: string,
-    public sensors?: SensorCapabilityResponse[],
-    public actuators?: ActuatorCapabilityResponse[],
-    public commandRegistered?: number
+    public sensorsRegistered?: number,
+    public actuatorRegistered?: number,
+    public commandsRegistered?: number
   ) { }
 }

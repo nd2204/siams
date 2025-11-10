@@ -1,45 +1,33 @@
 import { IDeviceCommandRepository } from "@domain/repositories";
 import { PostgresRepositoryBase } from "@infra/data/postgres/postgres-repo-base";
-import { Command } from "@domain/entities";
+import { DeviceCommand } from "@domain/entities";
 import { type Pool } from "pg"
 
 export class DeviceCommandRepositoryPg
-  extends PostgresRepositoryBase<Command>
+  extends PostgresRepositoryBase<DeviceCommand>
   implements IDeviceCommandRepository {
 
   constructor(pool: Pool) {
-    const mapping: Record<keyof Command, string> = {
+    const mapping: Record<keyof DeviceCommand, string> = {
       id: "id",
+      name: "name",
+      type: "type",
       deviceId: "device_id",
-      issuedBy: "issued_by",
-      command: "commands",
-      payload: "payload",
-      expiresAt: "expires_at",
-      status: "status",
-      createdAt: "created_at",
-      ackedAt: "acked_at"
+      localId: "local_id",
+      commands: "commands_desc",
     }
 
     super(pool, "commands", mapping,
-      (row) => new Command({
+      (row) => new DeviceCommand({
         id: row[mapping.id],
+        name: row[mapping.name],
+        type: row[mapping.type],
         deviceId: row[mapping.deviceId],
-        issuedBy: row[mapping.issuedBy],
-        command: row[mapping.command],
-        payload: row[mapping.payload],
-        expiresAt: row[mapping.expiresAt],
-        status: row[mapping.status],
-        createdAt: row[mapping.createdAt],
-      })
+        localId: row[mapping.id],
+        commands: row[mapping.commands],
+      }),
+      ["commands"]
     )
-  }
-
-  getPending(deviceId: string): Promise<Command[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  save(c: Command): Promise<void> {
-    throw new Error("Method not implemented.");
   }
 
 }

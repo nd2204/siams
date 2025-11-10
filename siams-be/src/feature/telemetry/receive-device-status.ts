@@ -23,7 +23,7 @@ export class ReceiveDeviceStatusUC implements IUseCase<void> {
       throw new NotFoundError(`Cannot found device with Id=${value.deviceId}`)
     }
 
-    await this.deviceRepo.update(device.id, Device.markSeen(new Date()))
+    await this.deviceRepo.update(device.id, Device.markSeen(new Date(), value.payload?.online))
 
     // TODO: send realtime status to front end
     //

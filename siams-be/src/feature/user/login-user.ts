@@ -11,6 +11,7 @@ export class LoginUserUC implements IUseCase<AuthResponse> {
     protected comparePasswords: (input: string, encrypted: string) => Promise<boolean>,
     protected userRepo: IUserRepository,
     protected orgUserRepo: IOrganizationUserRepository,
+    protected orgRepo: IOrganizationRepository,
     protected roleRepo: IRoleRepository,
     protected validator: IValidator<UserLoginRequest>,
     protected issueToken: (payload: AuthResponse["user"]) => string,
@@ -38,19 +39,24 @@ export class LoginUserUC implements IUseCase<AuthResponse> {
       organizations: []
     };
 
-    const orgs = await this.orgUserRepo.findAllBy({ userId: user.id })
-    if (orgs && orgs.length > 0) {
-      for (let i = 0; i < orgs.length; i++) {
-        const role = await this.roleRepo.findOneBy({ id: orgs[i].roleId })
+    const orgUsers = await this.orgUserRepo.findAllBy({ userId: user.id })
+    if (orgUsers && orgUsers.length > 0) {
+      for (let i = 0; i < orgUsers.length; i++) {
+        const role = await this.roleRepo.findOneBy({ id: orgUsers[i].roleId })
         const map = await this.roleRepo.getRolePermissionMap()
+        const org = await this.orgRepo.findOneBy({ id: orgUsers[i].orgId })
+        if (!role || !map) {
+          throw new Error("Role and permissions does not exists");
+        }
         if (role && map) {
           responseUser.organizations!.push({
-            id: orgs[i].id,
+            id: orgUsers[i].orgId,
+            name: org!.name,
+            slug: org!.slug,
             role: role.name,
             permissions: map[role.name]
           });
         } else {
-          throw new Error("Role and permissions does not exists")
         }
       }
     }

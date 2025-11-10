@@ -54,13 +54,16 @@ export class CreateOrganizationUC implements IUseCase<CreateOrganizationResponse
       userId: existingUser.id,
       roleId: role!.id,
     }
-    await this.orgUserRepo.create(orgUser)
+    await this.orgUserRepo.create(orgUser);
+    const map = await this.roleRepo.getRolePermissionMap();
 
     return {
       id: savedOrg.id,
       name: savedOrg.name,
       slug: savedOrg.slug,
-      createAt: savedOrg.createdAt!
+      role: role.name,
+      permissions: map[role.name],
+      createdAt: savedOrg.createdAt!
     };
   }
 }

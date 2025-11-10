@@ -1,16 +1,20 @@
 import { type Pool } from "pg";
 import { IRepository, IPaginated } from "@shared/interfaces";
+import { NotFoundError } from "@shared/errors";
 
 export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
   protected readonly jsonColumns: Set<string> = new Set();
+  protected readonly geometryColumns: Set<string> = new Set();
   constructor(
     protected readonly pool: Pool,
     protected readonly tableName: string,
     protected readonly columns: Record<keyof T, string>, // map key entity -> column DB
     protected readonly toEntity: (row: any) => T,
-    jsonColumns?: (keyof T)[] // optional
+    jsonColumns?: (keyof T)[], // optional
+    geometryColumns?: (keyof T)[] // optional
   ) {
     this.jsonColumns = new Set(jsonColumns?.map(k => this.columns[k]));
+    this.geometryColumns = new Set(geometryColumns?.map(k => this.columns[k]));
   }
 
   protected buildWhere(filters: Partial<T>) {
@@ -18,19 +22,17 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
     const conditions: string[] = [];
     const values: any[] = [];
 
-    keys.forEach((key, idx) => {
+    let i = 1;
+    keys.forEach((key) => {
       const column = this.getColumn(key);
       const value = (filters as any)[key];
-
       if (value === undefined) return;
 
       if (this.jsonColumns.has(column)) {
-        // Use @> for JSON containment (Postgres jsonb operator)
-        // Example: column @> '{"field":"value"}'
-        conditions.push(`${column} @> $${idx + 1}::jsonb`);
+        conditions.push(`${column} @> $${i++}::jsonb`);
         values.push(JSON.stringify(value));
       } else {
-        conditions.push(`${column} = $${idx + 1}`);
+        conditions.push(`${column} = $${i++}`);
         values.push(value);
       }
     });
@@ -47,23 +49,23 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
 
   async findOneBy(filters: Partial<T>): Promise<T | undefined> {
     const { whereClause, values } = this.buildWhere(filters);
-    const sql = `SELECT * FROM ${this.tableName} ${whereClause} LIMIT 1`;
+    const sql = `SELECT *${this.geometrySelectSql()} FROM ${this.tableName} ${whereClause} LIMIT 1`;
     const res = await this.pool.query(sql, values);
     if (res.rows.length === 0) return undefined;
-    return this.toEntity(res.rows[0]);
+    return this.toEntity(this.postProcessGeometry(res.rows[0]));
   }
 
   async findAllBy(filters: Partial<T>): Promise<T[]> {
     const { whereClause, values } = this.buildWhere(filters);
-    const sql = `SELECT * FROM ${this.tableName} ${whereClause}`;
+    const sql = `SELECT *${this.geometrySelectSql()} FROM ${this.tableName} ${whereClause}`;
     const res = await this.pool.query(sql, values);
-    return res.rows.map(this.toEntity);
+    return res.rows.map(r => this.toEntity(this.postProcessGeometry(r)));
   }
 
   async listBy(filters: Partial<T>, page: number, perPage: number): Promise<IPaginated<T>> {
     const { whereClause, values } = this.buildWhere(filters);
 
-    const sql = `SELECT * FROM ${this.tableName} ${whereClause} OFFSET $${values.length + 1} LIMIT $${values.length + 2}`;
+    const sql = `SELECT *${this.geometrySelectSql()} FROM ${this.tableName} ${whereClause} OFFSET $${values.length + 1} LIMIT $${values.length + 2}`;
     const countSql = `SELECT COUNT(*) FROM ${this.tableName} ${whereClause}`;
 
     const offset = (page - 1) * perPage;
@@ -71,7 +73,7 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
     const countRes = await this.pool.query(countSql, values);
 
     return {
-      data: res.rows.map(this.toEntity),
+      data: res.rows.map(r => this.toEntity(this.postProcessGeometry(r))),
       pagination: {
         total: parseInt(countRes.rows[0].count, 10),
         page,
@@ -83,38 +85,82 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
   async create(payload: Partial<T>): Promise<T> {
     const keys = Object.keys(payload) as (keyof T)[];
     const cols = keys.map(k => this.getColumn(k));
-    const placeholders = keys.map((_, i) => `$${i + 1}`);
-    const values = keys.map(k => {
+    const placeholders: string[] = []
+    const values: any[] = []
+    let i = 1;
+    keys.forEach((k) => {
       const col = this.getColumn(k);
       const val = (payload as any)[k];
-      return this.jsonColumns.has(col) ? JSON.stringify(val) : val;
+
+      if (this.jsonColumns.has(col)) {
+        placeholders.push(`$${i++}::jsonb`);
+        values.push(JSON.stringify(val));
+      } else if (this.geometryColumns.has(col)) {
+        const v = val as { lat: number, lon: number };
+        placeholders.push(`ST_SetSRID(ST_MakePoint($${i++}, $${i++}), 4326)`);
+        values.push(v.lon, v.lat)
+      } else {
+        placeholders.push(`$${i++}`)
+        values.push(val)
+      }
     });
 
     const sql = `INSERT INTO ${this.tableName} (${cols.join(",")}) VALUES (${placeholders.join(",")}) RETURNING *`;
     const res = await this.pool.query(sql, values);
-    return this.toEntity(res.rows[0]);
+    return this.toEntity(this.postProcessGeometry(res.rows[0]));
   }
 
   async update(id: number | string, payload: Partial<T>): Promise<T> {
     const keys = Object.keys(payload) as (keyof T)[];
-    const sets = keys.map((k, i) => `${this.getColumn(k)} = $${i + 1}`);
-    const values = keys.map(
-      k => {
-        const col = this.getColumn(k);
-        const val = (payload as any)[k];
-        return this.jsonColumns.has(col) ? JSON.stringify(val) : val;
-      }
-    );
+    const sets: string[] = [];
+    const values: any[] = []
+    let i = 1;
+    keys.forEach((k) => {
+      const col = this.getColumn(k);
+      const val = (payload as any)[k];
 
-    const sql = `UPDATE ${this.tableName} SET ${sets.join(",")} WHERE id = $${keys.length + 1} RETURNING *`;
+      if (this.jsonColumns.has(col)) {
+        sets.push(`${col} = $${i++}::jsonb`);
+        values.push(JSON.stringify(val));
+      } else if (this.geometryColumns.has(col)) {
+        const v = val as { lat: number, lon: number };
+        sets.push(`${col} = ST_SetSRID(ST_MakePoint($${i++}, $${i++}), 4326)`)
+        values.push(v.lon, v.lat)
+      } else {
+        sets.push(`${col} = $${i++}`);
+        values.push(val);
+      }
+    });
+
+    const sql = `UPDATE ${this.tableName} SET ${sets.join(",")} WHERE id = $${i} RETURNING *`;
     const res = await this.pool.query(sql, [...values, id]);
-    if (res.rows.length === 0) throw new Error(`Entity not found with id=${id}`);
-    return this.toEntity(res.rows[0]);
+    if (res.rows.length === 0) throw new NotFoundError(`[${this.tableName}] Entity not found with id=${id}`);
+    return this.toEntity(this.postProcessGeometry(res.rows[0]));
   }
 
   async delete(id: number | string): Promise<boolean> {
     const sql = `DELETE FROM ${this.tableName} WHERE id = $1`;
     const res = await this.pool.query(sql, [id]);
     return (res.rowCount ?? -1) > 0;
+  }
+
+  /** Add geometry column projections as GeoJSON */
+  private geometrySelectSql(): string {
+    if (this.geometryColumns.size === 0) return '';
+    return ", " + Array.from(this.geometryColumns)
+      .map(col => `ST_AsGeoJSON(${col}) as ${col}_geojson`)
+      .join(", ");
+  }
+
+  private postProcessGeometry(row: any): any {
+    const row_copy = { ...row }
+    for (const col of this.geometryColumns) {
+      const geojson = row_copy[`${col}_geojson`];
+      if (geojson) {
+        row_copy[col] = JSON.parse(geojson);
+        delete row_copy[`${col}_geojson`];
+      }
+    }
+    return row_copy;
   }
 }

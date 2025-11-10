@@ -8,6 +8,10 @@ export class ClusterRepositoryMock implements IClusterRepository {
 
   constructor() { }
 
+  updateClusterArea(clusterId: string): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
   addDevice(deviceId: string, clusterId: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
@@ -19,7 +23,7 @@ export class ClusterRepositoryMock implements IClusterRepository {
       c =>
         filters.id ? (c.id === filters.id) : true &&
           filters.name ? (c.name === filters.name) : true &&
-            filters.location ? (c.location === filters.location) : true &&
+            filters.locName ? (c.locName === filters.locName) : true &&
               filters.orgId ? (c.orgId === filters.orgId) : true
     )))
   }

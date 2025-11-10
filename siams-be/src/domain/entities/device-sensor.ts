@@ -1,26 +1,28 @@
 import Entity from "@domain/interfaces/entity";
 
 export type SensorType =
-  | "soilMoisture"
-  | "temperature"
-  | "humidity"
-  | "lightIntensity"
-  | "pHLevel"
-  | "rainfall"
-  | "windSpeed"
-  | "soilNutrient"
+  | "MOISTURE"
+  | "TEMPERATURE"
+  | "HUMIDITY"
+  | "LIGHT_INTENSITY"
+  | "PH_LEVEL"
+  | "RAINFALL"
+  | "WINDSPEED"
+  | "SOIL_NUTRIENT"
   | "CO2"
-  | "leafWetness";
+  | "LEAF_WETNESS";
 
 export type SensorStatus = 'online' | 'offline' | 'removed'
 
-export class Sensor extends Entity<Sensor, string> {
+export class DeviceSensor extends Entity<DeviceSensor, string> {
   declare deviceId: string;
   declare localId: number;
+  declare name: string;
   declare type: SensorType;
   declare unit: string;
   declare status: SensorStatus;
   declare lastSeen: Date;
+
   // calibration?: { offset?: number; scale?: number };
   //
   // static normalize(sensor: Sensor, raw: number): number {

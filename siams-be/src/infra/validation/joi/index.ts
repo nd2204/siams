@@ -9,6 +9,7 @@ import { registerUserValidator } from "./user/register-user-validator";
 import { loginValidator } from "./user/login-validator";
 import { listDevicesByClusterIdValidator } from "./cluster/list-device-by-cluster-id-validator";
 import { listDeviceByOrgIdValidator } from "./organization/list-device-by-org-id-validator";
+import { getClusterValidator } from "./cluster/get-by-id-validator";
 
 export const device = {
   registerDeviceValidator,
@@ -20,7 +21,8 @@ export const device = {
 export const cluster = {
   createClusterValidator,
   listClusterByOrgIdValidator,
-  listDevicesByClusterIdValidator
+  listDevicesByClusterIdValidator,
+  getClusterValidator
 }
 
 export const user = {

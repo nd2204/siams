@@ -1,17 +1,16 @@
-import { Device } from "@/domain/entities";
+import { Device, DeviceCommand } from "@/domain/entities";
 import {
   IDeviceActuatorRepository,
   IClusterRepository,
   IDeviceRepository,
-  IDeviceSensorRepository
+  IDeviceSensorRepository,
+  IDeviceCommandRepository
 } from "@domain/repositories";
 import { NotFoundError, ValidationError } from "@/shared/errors";
 import { IUseCase, IValidator } from "@/shared/interfaces";
 import { RegisterDeviceRequest } from "./dtos/register-device-request";
-import { ActuatorCapabilityResponse, RegisterDeviceResponse, SensorCapabilityResponse } from "./dtos/register-device-response";
+import { RegisterDeviceResponse } from "./dtos/register-device-response";
 import { v4 as uuidv4 } from "uuid";
-import { IDeviceCapabilitiesRepository } from "@domain/repositories";
-import { DeviceCapabilities } from "@domain/entities";
 
 /* TODO: Add Unit of work */
 export class RegisterDeviceUC implements IUseCase<RegisterDeviceResponse> {
@@ -20,7 +19,7 @@ export class RegisterDeviceUC implements IUseCase<RegisterDeviceResponse> {
     private deviceRepo: IDeviceRepository,
     private sensorRepo: IDeviceSensorRepository,
     private actuatorRepo: IDeviceActuatorRepository,
-    private capabilitiesRepo: IDeviceCapabilitiesRepository,
+    private commandRepo: IDeviceCommandRepository,
     private validator: IValidator<RegisterDeviceRequest>
   ) { }
 
@@ -42,53 +41,64 @@ export class RegisterDeviceUC implements IUseCase<RegisterDeviceResponse> {
         name: req.payload.name,
         clusterId: cluster.id,
         model: req.payload.model,
+        geom: req.payload.location,
         firmwareVersion: req.payload.firmwareVersion,
         status: "offline",
       })
     );
 
+    await this.clusterRepo.updateClusterArea(cluster.id);
+
     const payload = req.payload
 
-    await this.capabilitiesRepo.create(new DeviceCapabilities({
-      id: uuidv4(),
-      deviceId: savedDevice.id,
-      sensors: value.payload.capabilities.sensors,
-      actuators: value.payload.capabilities.actuators,
-      commands: value.payload.capabilities.commands,
-      reportedAt: new Date()
-    }))
-
     // Sensors
-    const sensorsAck: SensorCapabilityResponse[] = [];
-    for (const s of value.payload.capabilities?.sensors ?? []) {
-      const sensor = await this.sensorRepo.upsert({
+    let sensorCount = 0;
+    for (const s of value.payload.capabilities.sensors ?? []) {
+      await this.sensorRepo.upsert({
         id: uuidv4(),
         deviceId: savedDevice.id,
         type: s.type,
+        name: s.name,
         unit: s.unit,
         localId: s.localId,
       });
-      sensorsAck.push({ localId: sensor.localId, sensorId: sensor.id });
+      sensorCount++
     }
 
     // Actuators
-    const actuatorsAck: ActuatorCapabilityResponse[] = [];
+    let actuatorCount = 0;
     for (const a of payload.capabilities?.actuators ?? []) {
-      const act = await this.actuatorRepo.upsert({
+      await this.actuatorRepo.upsert({
         id: uuidv4(),
         deviceId: savedDevice.id,
+        name: a.name,
         type: a.type,
         localId: a.localId,
       });
-      actuatorsAck.push({ localId: a.localId, actuatorId: act.id });
+      actuatorCount++;
+    }
+
+    // Commands
+    let commandCount = 0;
+    for (const c of value.payload.capabilities.commands ?? []) {
+      await this.commandRepo.create(new DeviceCommand({
+        id: uuidv4(),
+        name: c.name,
+        type: c.type,
+        deviceId: savedDevice.id,
+        localId: c.localId,
+        commands: c.commands
+      }))
+      commandCount++
     }
 
     return new RegisterDeviceResponse(
       savedDevice.id,
       savedDevice.clusterId,
       savedDevice.status,
-      sensorsAck,
-      actuatorsAck,
+      sensorCount,
+      actuatorCount,
+      commandCount
     );
   }
 }

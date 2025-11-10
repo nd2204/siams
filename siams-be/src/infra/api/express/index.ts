@@ -17,8 +17,12 @@ app.use(logger())
 app.use(express.json())
 app.use(
   cors({
-    origin: ['http://127.0.0.1:33445', 'http://localhost:33445'],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    origin: [
+      'http://127.0.0.1:33445',
+      'http://localhost:33445',
+      'http://192.168.1.16:33445',
+    ],
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true,
   })
 )

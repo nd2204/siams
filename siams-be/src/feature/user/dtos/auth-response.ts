@@ -7,6 +7,8 @@ export class AuthResponse {
     email: string,
     organizations?: {
       id: string,
+      name: string,
+      slug: string,
       role: string,
       permissions: PermissionKey[]
     }[]

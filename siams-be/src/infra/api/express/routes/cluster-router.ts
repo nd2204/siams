@@ -8,7 +8,11 @@ import { CreateClusterUC } from "@feature/cluster/create-cluster";
 
 const controller = new ClusterController(
   new GetClusterByIdUC(
-    services.cluster.repositories.base
+    services.cluster.repositories.base,
+    services.organization.repositories.user,
+    services.device.repositories.base,
+    services.cluster.validators.getClusterValidator,
+    services.utils.verifyToken
   ),
   new CreateClusterUC(
     services.cluster.repositories.base,
