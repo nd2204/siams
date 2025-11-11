@@ -3,8 +3,9 @@ export const QUERIES = {
     ROOT: "devices",
     BY_ID: (id?: string) => ['devices', id],
     SENSORS: (id?: string) => ['devices', id, 'sensors'],
-    ACTUATOR: (id?: string) => ['devices', id, 'sensors'],
-    TELEMETRY: (id?: string) => ['devices', id, 'telemetry'],
+    ACTUATORS: (id?: string) => ['devices', id, 'actuators'],
+    COMMANDS: (id?: string) => ['devices', id, 'commands'],
+    TELEMETRY: (id?: string, sensorId?: string) => ['devices', id, 'sensors', sensorId, 'telemetry'],
   },
   CLUSTER: {
     ROOT: "clusters",

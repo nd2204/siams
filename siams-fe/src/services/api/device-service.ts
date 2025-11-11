@@ -2,31 +2,23 @@ import { apiClient } from "@/services/api/client";
 import { ENDPOINTS } from "@/services/api/endpoints";
 import type { DeviceDTO } from "./dtos/device/device-dto";
 import type { IPaginated } from "@/types/paginated";
-import type { DeviceStatus, DeviceTelemetry, Sensor } from "@/types/device";
+import type { Actuator, Device, DeviceStatus, DeviceTelemetry, Sensor } from "@/types/device";
 
 export const deviceService = {
-  async getAll(): Promise<DeviceDTO[]> {
-    return apiClient.get<DeviceDTO[]>(ENDPOINTS.DEVICE.ROOT);
+  async getAll(): Promise<Device[]> {
+    return apiClient.get<Device[]>(ENDPOINTS.DEVICE.ROOT);
   },
 
   async getById(id: string): Promise<DeviceDTO> {
-    return apiClient.get<DeviceDTO>(ENDPOINTS.DEVICE.BY_ID(id));
-  },
-
-  async listByClusterId(clusterId: string, page?: number, perPage?: number): Promise<IPaginated<DeviceDTO>> {
-    return apiClient.post<IPaginated<DeviceDTO>>(ENDPOINTS.CLUSTER.LIST_DEVICES(clusterId), { page, perPage });
-  },
-
-  async listByOrgId(orgId: string, page?: number, perPage?: number): Promise<IPaginated<DeviceDTO>> {
-    return apiClient.post<IPaginated<DeviceDTO>>(ENDPOINTS.ORG.LIST_DEVICES(orgId), { page, perPage });
+    return apiClient.get<Device>(ENDPOINTS.DEVICE.BY_ID(id));
   },
 
   async listSensors(id: string): Promise<Sensor[]> {
-    return apiClient.get<Sensor>(ENDPOINTS.DEVICE.SENSORS(id))
+    return apiClient.get<Sensor[]>(ENDPOINTS.DEVICE.SENSORS(id))
   },
 
-  async listActuator() {
-
+  async listActuator(id: string): Promise<Actuator[]> {
+    return apiClient.get<Actuator[]>(ENDPOINTS.DEVICE.ACTUATORS(id))
   },
 
   async getTelemetry(id: string): Promise<IPaginated<DeviceTelemetry>> {

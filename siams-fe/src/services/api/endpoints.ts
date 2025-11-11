@@ -10,7 +10,8 @@ export const ENDPOINTS = {
     ROOT: "/devices",
     BY_ID: (id: string) => `/devices/${id}`,
     SENSORS: (id: string) => `devices/${id}/sensors`,
-    TELEMETRY: (id: string) => `/devices/${id}/telemetry`,
+    ACTUATORS: (id: string) => `devices/${id}/actuators`,
+    TELEMETRY: (id: string, sensorId: string) => `/devices/${id}/sensors/${sensorId}/telemetry/$`,
     STATUS: (id: string) => `devices/${id}/status`,
     COMMANDS: (id: string) => `/devices/${id}/commands`
   },
