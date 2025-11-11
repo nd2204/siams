@@ -1,5 +1,6 @@
 import { authService } from "@/services/api/auth-service";
 import type { OrganizationUserData, UserData } from "@/services/api/dtos/auth/user-data";
+import { createSocket } from "@/services/realtime/socket-client";
 import type { AxiosError } from "axios";
 import React, { createContext, useCallback, useEffect, useState } from "react"
 
@@ -10,6 +11,7 @@ interface AuthContextType {
   activeOrg: OrganizationUserData | null;
   isAuthenticated: boolean;
   loading: boolean;
+  token: string | null;
   setOrg: (org: OrganizationUserData | null) => void
   login: (email: string, password: string) => Promise<{ success: boolean, error?: any }>;
   signup: (name: string, email: string, password: string) => Promise<{ success: boolean, error?: any }>;
@@ -38,6 +40,7 @@ const isValidSession = (session: StoredSession | null): boolean => {
 
 export const AuthProvider = (props: Props) => {
   const [user, setUser] = useState<UserData | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [activeOrg, setActiveOrg] = useState<OrganizationUserData | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -46,6 +49,7 @@ export const AuthProvider = (props: Props) => {
     console.log("cleaned session")
     localStorage.removeItem("session");
     setUser(null);
+    setToken(null);
     setActiveOrg(null);
     setIsAuthenticated(false);
   }, [])
@@ -63,6 +67,7 @@ export const AuthProvider = (props: Props) => {
     localStorage.setItem("session", JSON.stringify(session));
     console.log(session)
     setUser(userData);
+    setToken(token);
     setActiveOrg(session.activeOrg ?? null);
     setIsAuthenticated(true);
   }, [activeOrg]);
@@ -93,7 +98,14 @@ export const AuthProvider = (props: Props) => {
           throw new Error("Session expired");
         }
 
+        // reconnect socket
+        if (token) {
+          const socket = createSocket(token);
+          socket.connect();
+        }
+
         setUser(session.user);
+        setToken(token);
         setActiveOrg(session.activeOrg ?? null);
         setIsAuthenticated(true);
       } catch (error) {
@@ -112,6 +124,11 @@ export const AuthProvider = (props: Props) => {
       setLoading(true);
       const { user, token, refreshToken } = await authService.signin({ email, password });
       persistSession(user, token, refreshToken, user.organizations?.at(0));
+
+      // Create & connect socket after login
+      const socket = createSocket(token);
+      socket.connect();
+
       return { success: true };
     } catch (error) {
       const err = error as AxiosError;
@@ -162,6 +179,7 @@ export const AuthProvider = (props: Props) => {
     activeOrg,
     isAuthenticated,
     loading,
+    token,
     setOrg,
     login,
     signup,

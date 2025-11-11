@@ -2,24 +2,20 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { QUERIES } from "./query-keys";
 import { deviceService } from "@/services/api/device-service";
 import React from "react";
+import { useSocket } from "../use-socket";
 
 export const useDeviceTelemetry = (deviceId: string) => {
   const queryClient = useQueryClient();
+  const socket = useSocket();
 
   const key = [QUERIES.DEVICE.TELEMETRY(deviceId)]
-  const query = useQuery({
-    queryKey: key,
-    queryFn: async () => await deviceService.getTelemetry(deviceId),
-    refetchInterval: 60_000
-  })
 
   // Realtime subscription setup
   React.useEffect(() => {
-    // TODO: add websocket url
-    const ws = new WebSocket("");
+    if (!socket) return;
 
-    ws.onmessage = (event) => {
-      const update = JSON.parse(event.data);
+    const handleTelemetry = (message: any) => {
+      const update = JSON.parse(message.data);
 
       // Merge dữ liệu mới vào cache
       queryClient.setQueryData(key, (old: any) => {
@@ -28,8 +24,14 @@ export const useDeviceTelemetry = (deviceId: string) => {
       });
     };
 
-    return () => ws.close();
-  }, [deviceId]);
+    socket?.on("device.telemetry", handleTelemetry)
 
-  return query;
+    return () => { socket?.off("device.telemetry", handleTelemetry); }
+  }, [socket, deviceId, queryClient]);
+
+  return useQuery({
+    queryKey: key,
+    queryFn: async () => await deviceService.getTelemetry(deviceId),
+    refetchInterval: 60_000
+  });
 }
