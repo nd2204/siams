@@ -19,6 +19,8 @@ import * as validators from '@infra/validation/joi'
 import { RoleRepositoryPg } from "@infra/data/postgres/repositories/user-role-repo-pg"
 import { OrganizationUserRepositoryPg } from "@infra/data/postgres/repositories/organization-user-repo-pg"
 import { OutboxRepositoryPg } from "@infra/data/postgres/repositories/outbox-repo-pg"
+import { NodeEventBus } from "@infra/events/node-event-bus"
+import { AuthService } from "@infra/services/auth-services-impl"
 
 const orgRepo = new OrganizationRepositoryPg(pool)
 const orgUserRepo = new OrganizationUserRepositoryPg(pool)
@@ -37,6 +39,9 @@ const deviceActuatorRepo = new DeviceActuatorRepositoryPg(pool)
 const deviceTelemetryRepo = new DeviceTelemetryRepositoryPg(pool)
 const deviceCommandRepo = new DeviceCommandRepositoryPg(pool)
 const outboxRepo = new OutboxRepositoryPg(pool);
+
+const authService = new AuthService(orgRepo, orgUserRepo, clusterRepo, deviceRepo, verifyToken)
+const eventBus = new NodeEventBus()
 
 export const services = {
   device: {
@@ -74,6 +79,8 @@ export const services = {
   outbox: {
     repository: outboxRepo
   },
+  authService,
+  eventBus,
   utils: {
     encryptPassword,
     issueToken,

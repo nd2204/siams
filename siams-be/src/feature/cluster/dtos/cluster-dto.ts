@@ -7,7 +7,6 @@ export interface ClusterDTO {
   loc_name?: string,
   orgId: string,
   geom?: object,
-  devices?: IPaginated<DeviceDTO>,
   description?: string,
   createdAt?: Date
 }

@@ -10,7 +10,6 @@ const controller = new ClusterController(
   new GetClusterByIdUC(
     services.cluster.repositories.base,
     services.organization.repositories.user,
-    services.device.repositories.base,
     services.cluster.validators.getClusterValidator,
     services.utils.verifyToken
   ),
