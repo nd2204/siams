@@ -1,5 +1,7 @@
 import { DeviceTelemetry } from "@domain/entities";
 import { IDeviceTelemetryRepository } from "@domain/repositories";
+import { GroupByDateType } from "@feature/device/dtos/list-telemetry-request";
+import { TelemetryGroupDto } from "@feature/device/dtos/telemtry-dto";
 import { PostgresRepositoryBase } from "@infra/data/postgres/postgres-repo-base";
 import { Pool } from "pg";
 
@@ -25,5 +27,47 @@ export class DeviceTelemetryRepositoryPg
         timestamp: row[mapping.timestamp]
       })
     })
+  }
+
+  async listByRange(
+    sensorId: string,
+    from: Date,
+    to: Date,
+    groupBy: GroupByDateType
+  ): Promise<TelemetryGroupDto[]> {
+    const groupExpr = this.groupExpression(groupBy);
+    const query = `
+      SELECT
+        sensor_id,
+        ${groupExpr} AS bucket,
+        AVG(value) AS avg_value,
+        MIN(value) AS min_value,
+        MAX(value) AS max_value,
+        COUNT(*) AS samples
+      FROM telemetry
+      WHERE sensor_id = $1 AND ts BETWEEN $2 AND $3
+      GROUP BY sensor_id, bucket
+      ORDER BY bucket ASC
+    `;
+    const res = await this.pool.query(query, [sensorId, from, to]);
+
+    return res.rows.map(r => ({
+      sensorId: r.sensor_id,
+      avgValue: Number(r.avg_value),
+      minValue: Number(r.min_value),
+      maxValue: Number(r.max_value),
+      count: Number(r.samples),
+      bucket: r.bucket,
+    }));
+  }
+
+  private groupExpression(granularity: GroupByDateType) {
+    switch (granularity) {
+      case "hour": return "date_trunc('hour', ts)";
+      case "week": return "date_trunc('week', ts)";
+      case "month": return "date_trunc('month', ts)";
+      case "day":
+      default: return "date_trunc('day', ts)";
+    }
   }
 }

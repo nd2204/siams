@@ -10,12 +10,22 @@ import { loginValidator } from "./user/login-validator";
 import { listDevicesByClusterIdValidator } from "./cluster/list-device-by-cluster-id-validator";
 import { listDeviceByOrgIdValidator } from "./organization/list-device-by-org-id-validator";
 import { getClusterValidator } from "./cluster/get-by-id-validator";
+import { getDeviceByIdValidator } from "./device/get-by-id-validator";
+import { getAllSensorsValidator } from "./device/get-all-sensors-validator";
+import { getAllCommandsValidator } from "./device/get-all-commands-validator";
+import { getAllActuatorsValidator } from "./device/get-all-actuators-validator";
+import { listTelemetryValidator } from "./device/list-telemetry-validator";
 
 export const device = {
   registerDeviceValidator,
   deviceStatusValidator,
   deviceTelemetryValidator,
-  deviceVerifyValidator
+  deviceVerifyValidator,
+  getDeviceByIdValidator,
+  getAllSensorsValidator,
+  getAllCommandsValidator,
+  getAllActuatorsValidator,
+  listTelemetryValidator
 }
 
 export const cluster = {

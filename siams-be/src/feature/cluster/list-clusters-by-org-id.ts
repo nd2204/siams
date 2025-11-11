@@ -28,10 +28,16 @@ export class ListClusterByOrgIdUC implements IUseCase<ListClusterByOrgIdResponse
       throw new UnauthorizedError(`Organization not exists or user does not belong to this organization`)
     }
 
-    return await this.clusterRepo.listBy(
+    const clusters = await this.clusterRepo.listBy(
       { orgId: existingOrgUser.orgId! },
       value.page ?? 1,
       value.perPage ?? 10
     )
+
+    clusters.data.map((c) => {
+      return c
+    })
+
+    return clusters;
   }
 }

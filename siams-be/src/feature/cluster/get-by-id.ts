@@ -1,4 +1,4 @@
-import { IClusterRepository, IDeviceRepository, IOrganizationUserRepository } from "@domain/repositories";
+import { IClusterRepository, IOrganizationUserRepository } from "@domain/repositories";
 import { ClusterDTO } from "@feature/cluster/dtos/cluster-dto";
 import { GetClusterByIdRequest } from "@feature/cluster/dtos/get-cluster-by-id-request";
 import { AuthResponse } from "@feature/user/dtos/auth-response";
@@ -9,7 +9,6 @@ export class GetClusterByIdUC implements IUseCase<ClusterDTO> {
   constructor(
     private clusterRepo: IClusterRepository,
     private orgUserRepo: IOrganizationUserRepository,
-    private deviceRepo: IDeviceRepository,
     private validator: IValidator<GetClusterByIdRequest>,
     private verifyToken: (token: string) => AuthResponse["user"]
   ) { }
@@ -31,11 +30,8 @@ export class GetClusterByIdUC implements IUseCase<ClusterDTO> {
       throw new UnauthorizedError(`Organization not exists or user does not belong to this organization`)
     }
 
-    const devices = await this.deviceRepo.listBy({ clusterId: cluster.id }, 1, 10);
-
     const result: ClusterDTO = {
       ...cluster,
-      devices: devices
     }
 
     return result;

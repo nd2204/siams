@@ -5,7 +5,7 @@ import { handlers } from "./handlers";
 
 export const mqttClient = new EmqxMqttClient(
   config.app.mqtt.url,
-  new SMLogger("infra:emqx:EmqxMqttClient"),
+  new SMLogger("infra:mqtt:EmqxMqttClient"),
   { clientId: "siams-be" },
   handlers
 )

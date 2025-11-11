@@ -11,6 +11,7 @@ import { IUseCase, IValidator } from "@/shared/interfaces";
 import { RegisterDeviceRequest } from "./dtos/register-device-request";
 import { RegisterDeviceResponse } from "./dtos/register-device-response";
 import { v4 as uuidv4 } from "uuid";
+import { IEventBus } from "@domain/interfaces/events";
 
 /* TODO: Add Unit of work */
 export class RegisterDeviceUC implements IUseCase<RegisterDeviceResponse> {
@@ -48,7 +49,6 @@ export class RegisterDeviceUC implements IUseCase<RegisterDeviceResponse> {
     );
 
     await this.clusterRepo.updateClusterArea(cluster.id);
-
     const payload = req.payload
 
     // Sensors

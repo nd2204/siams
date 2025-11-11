@@ -4,6 +4,7 @@ export const app = {
   },
   port: Number(process.env.PORT),
   jwtSecret: process.env.JWT_SECRET,
+  feHost: process.env.FE_HOST,
   logFile: process.env.LOG_FILE_PATH,
   bootLogFile: process.env.BOOT_LOG_FILEPATH,
   mqtt: {

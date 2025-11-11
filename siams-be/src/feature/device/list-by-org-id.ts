@@ -3,7 +3,7 @@ import { IDeviceRepository, IOrganizationUserRepository } from "@domain/reposito
 import { IPaginated, IUseCase, IValidator } from "@shared/interfaces";
 import { UnauthorizedError, ValidationError } from "@shared/errors";
 import { AuthResponse } from "@feature/user/dtos/auth-response";
-import { ListDeviceByOrgIdRequest } from "./dtos/list-device-by-org-id-request";
+import { ListDeviceByOrgIdRequest } from "./dtos/list-by-org-id-request";
 
 export class ListDeviceByOrgIdUC implements IUseCase<IPaginated<Device>> {
   constructor(

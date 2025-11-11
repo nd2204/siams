@@ -4,17 +4,18 @@ import config from "@/config"
 import app from "@infra/api/express"
 import { mqttClient } from "@infra/api/mqtt"
 import { outboxWorker } from "@infra/worker";
+import { socketClient } from "@infra/api/realtime";
 
 async function main() {
   const server = createServer(app);
   const port: number = config.app.port;
 
-  mqttClient.connect();
-
   outboxWorker.start();
+  mqttClient.connect();
+  socketClient.start(server);
 
   server.listen(port, () => {
-    sm_info({ msg: `server is running at http://localhost:${port.toString()}`, tag: "app" })
+    sm_info({ msg: `server is running at http://localhost:${port.toString()}`, tag: "main" })
   });
 }
 

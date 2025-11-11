@@ -7,11 +7,10 @@ import express from 'express'
 import cors from 'cors'
 import methodOverride from 'method-override'
 import config from '@/config'
-
-const app: express.Application = express()
-
 // import swaggerUi from 'swagger-ui-express'
 // import swaggerDocument from '@config/swagger.json'
+
+const app: express.Application = express()
 
 app.use(logger())
 app.use(express.json())
