@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router";
 import { useAuth } from "@/hooks/use-auth";
+import { Spinner } from "./ui/spinner";
 
 interface Props {
   roles?: string[];
@@ -7,9 +8,18 @@ interface Props {
 }
 
 export default function ProtectedRoute({ children }: Props) {
-  const { user } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
-  if (!user) return <Navigate to="/auth" replace />;
+  if (loading) {
+    return (
+      <div className="bg-background justify-center items-center"> </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    alert("user is not authenticated")
+    return <Navigate to="/auth" replace />
+  }
 
   return children ? <>{children}</> : <Outlet />;
 }

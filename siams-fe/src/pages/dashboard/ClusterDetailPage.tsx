@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item"
 import { useClusterDetail } from "@/hooks/queries/use-cluster-detail"
 import { cn } from "@/lib/utils"
-import { IconKey, IconMapPin } from "@tabler/icons-react"
+import { IconKey, IconMapPin, IconStack2 } from "@tabler/icons-react"
 import { ShieldAlertIcon } from "lucide-react"
 import { useParams } from "react-router"
 
@@ -32,7 +32,7 @@ export default function ClusterDetailPage() {
           <Card className={cn("flex", "border-ring/30 from-ring/10 to-card bg-card bg-gradient-to-t shadow-xs px-4 lg:px-6")}>
             <Item variant="default" className="p-0 bg-none">
               <ItemMedia variant="icon" className="border-ring/15 bg-ring/15 self-center">
-                <ShieldAlertIcon />
+                <IconStack2 />
               </ItemMedia>
               <ItemContent>
                 <ItemTitle className='text-lg font-semibold gap-4'>

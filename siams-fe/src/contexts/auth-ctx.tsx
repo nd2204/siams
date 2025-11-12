@@ -46,12 +46,12 @@ export const AuthProvider = (props: Props) => {
   const [loading, setLoading] = useState(true);
 
   const cleanSession = useCallback(() => {
-    console.log("cleaned session")
     localStorage.removeItem("session");
     setUser(null);
     setToken(null);
     setActiveOrg(null);
     setIsAuthenticated(false);
+    alert("cleaned session")
   }, [])
 
   // Helper to persist session
@@ -109,7 +109,7 @@ export const AuthProvider = (props: Props) => {
         setActiveOrg(session.activeOrg ?? null);
         setIsAuthenticated(true);
       } catch (error) {
-        console.error("Failed to restore session:", error);
+        alert(`Failed to restore session: ${JSON.stringify(error, null, 2)}`);
         cleanSession();
       } finally {
         setLoading(false);

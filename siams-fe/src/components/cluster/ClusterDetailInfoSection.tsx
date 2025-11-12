@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge"
 import {
   IconCpu,
   IconDeviceHeartMonitorFilled,
@@ -8,7 +7,6 @@ import {
 } from "@tabler/icons-react"
 import {
   Card,
-  CardAction,
   CardFooter,
   CardHeader,
   CardTitle,

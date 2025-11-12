@@ -21,37 +21,43 @@ export type ActuatorType =
   | 'motor'
   | 'relay';
 
-export interface DeviceCommand {
+export type ParamType = "int" | "number" | "string" | "boolean"
+
+export type ParamDesc = {
+  name: string,
+  type: ParamType,
+  enums?: string[]
+}
+
+export interface CommandDesc {
   action: string,
-  params: {
-    name: string,
-    type: string,
-    enums?: string[]
-  }[]
+  params: ParamDesc[]
 }
 
 export interface Sensor {
+  id: string;
   deviceId: string;
-  localId: string;
+  localId: number;
   name: string;
   type: SensorType;
   unit: string;
-  commands?: DeviceCommand[];
   lastUpdate: string;
 }
 
 export interface Actuator {
+  id: string;
   deviceId: string;
-  localId: string;
+  localId: number;
   name: string;
   type: ActuatorType;
-  value?: number;             // For actuators with variable control (0-100)
-  commands?: DeviceCommand[], // supported command
-  lastCommand: string;
 }
 
-export interface Command extends DeviceCommand {
-  localId: string;
+export interface Command {
+  id: string;
+  localId: number;
+  name?: string;
+  type?: string;
+  commands: CommandDesc[];
 }
 
 export interface DeviceTelemetry {
@@ -68,6 +74,7 @@ export interface DeviceStatus {
 export interface Device {
   id: string;
   name: string;
+  geom: GeoJSON.Point;
   model: string; // MCU model: ESP32, Arduino, etc.
   clusterId: string;
   status: "online" | "offline";

@@ -50,29 +50,32 @@ class ApiClient {
   private handleError = async (error: any) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      // Prevent multiple simultaneous refresh attempts
-      if (!this.refreshPromise) {
-        this.refreshPromise = this.tryRefreshToken();
-      }
-
-      try {
-        const session = await this.refreshPromise;
-        if (session) {
-          // Retry original request with new token
-          this.setAuthToken(session.token);
-          originalRequest.headers["Authorization"] = `Bearer ${session.token}`;
-          return this.instance(originalRequest);
+    if (error.response?.status === 401) {
+      if (error.response?.data?.error === 'TokenError' && !originalRequest._retry) {
+        // Prevent multiple simultaneous refresh attempts
+        if (!this.refreshPromise) {
+          this.refreshPromise = this.tryRefreshToken();
         }
-      } catch (refreshError) {
-        console.error("Failed to refresh token:", refreshError);
-      } finally {
-        this.refreshPromise = null;
-      }
 
-      // If we get here, refresh failed
-      localStorage.removeItem("session");
-      window.location.href = "/auth";
+        try {
+          const session = await this.refreshPromise;
+          if (session) {
+            // Retry original request with new token
+            this.setAuthToken(session.token);
+            originalRequest.headers["Authorization"] = `Bearer ${session.token}`;
+            return this.instance(originalRequest);
+          }
+        } catch (refreshError) {
+          console.error("Failed to refresh token:", refreshError);
+        } finally {
+          this.refreshPromise = null;
+        }
+
+        // If we get here, refresh failed
+        alert(JSON.stringify(error.response?.data))
+        localStorage.removeItem("session");
+        window.location.href = "/auth";
+      }
     }
 
     return Promise.reject(error);

@@ -4,34 +4,46 @@ import { deviceService } from "@/services/api/device-service";
 import React from "react";
 import { useSocket } from "../use-socket";
 
-export const useDeviceTelemetry = (deviceId: string) => {
+export const useDeviceTelemetry = (deviceId: string, sensorId: string) => {
   const queryClient = useQueryClient();
   const socket = useSocket();
 
-  const key = [QUERIES.DEVICE.TELEMETRY(deviceId)]
+  const key = [QUERIES.DEVICE.TELEMETRY(deviceId, sensorId)]
 
   // Realtime subscription setup
-  React.useEffect(() => {
-    if (!socket) return;
+  // React.useEffect(() => {
+  //   if (!socket) return;
+  //
+  //   const handleTelemetry = (message: any) => {
+  //     const update = JSON.parse(message.data);
+  //
+  //     // Merge dữ liệu mới vào cache
+  //     queryClient.setQueryData(key, (old: any) => {
+  //       if (!old) return [update];
+  //       return [...old.slice(-99), update]; // giữ 100 bản ghi mới nhất
+  //     });
+  //   };
+  //
+  //   socket?.on("device.telemetry", handleTelemetry)
+  //
+  //   return () => { socket?.off("device.telemetry", handleTelemetry); }
+  // }, [socket, deviceId, queryClient]);
 
-    const handleTelemetry = (message: any) => {
-      const update = JSON.parse(message.data);
-
-      // Merge dữ liệu mới vào cache
-      queryClient.setQueryData(key, (old: any) => {
-        if (!old) return [update];
-        return [...old.slice(-99), update]; // giữ 100 bản ghi mới nhất
-      });
-    };
-
-    socket?.on("device.telemetry", handleTelemetry)
-
-    return () => { socket?.off("device.telemetry", handleTelemetry); }
-  }, [socket, deviceId, queryClient]);
-
+  const now = new Date();
+  now.setDate(1);
   return useQuery({
     queryKey: key,
-    queryFn: async () => await deviceService.getTelemetry(deviceId),
-    refetchInterval: 60_000
+    queryFn: async () => await deviceService.getTelemetry({
+      deviceId,
+      sensorId,
+      payload: {
+        from: now,
+        to: new Date(),
+        groupBy: "minute"
+      }
+    }),
+    refetchInterval: 60_000,
+    // refetchInterval: 5_000,
+    enabled: !!deviceId && !!sensorId
   });
 }
