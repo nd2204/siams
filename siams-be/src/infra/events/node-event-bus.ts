@@ -6,7 +6,7 @@ export class NodeEventBus implements IEventBus {
 
   async publish(event: IDomainEvent): Promise<void> {
     // publish asynchronously, but don't block
-    process.nextTick(() => this.ee.emit(event.name, event.payload));
+    process.nextTick(() => this.ee.emit(event.name, event));
   }
 
   subscribe(eventName: string, handler: IDomainEventHandler): void {

@@ -7,6 +7,7 @@ import { GetAllSensorsUC } from "@feature/device/get-all-sensors";
 import { GetAllActuatorsUC } from "@feature/device/get-all-actuators";
 import { GetAllCommandsUC } from "@feature/device/get-all-commands";
 import { ListTelemetryUC } from "@feature/device/list-telemetry";
+import { DeviceSendCommandUC } from "@feature/device/device-send-command";
 
 const controller = new DeviceController(
   new GetDeviceByIdUC(
@@ -33,18 +34,38 @@ const controller = new DeviceController(
     services.authService,
     services.device.validators.listTelemetryValidator
   ),
+  new DeviceSendCommandUC(
+    services.device.repositories.commands,
+    services.device.validators.deviceSendCommandValidator,
+    services.outbox.repository,
+    services.authService
+  )
 )
 
 export function deviceRouter(): Router {
   const router = Router();
 
+  router.get("/:id", async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const token = getAuthToken(req)
+      const result = await controller.getById({
+        token: token,
+        params: req.params,
+      })
+      res.send(result)
+    } catch (err) {
+      return next(err)
+    }
+  });
+
+
   router.post("/", async (req, res) => {
     /* TODO: Add new device from the wait list */
   })
-
-  router.get("/:id", async (req, res) => {
-    /* TODO: Get device from id */
-  });
 
   router.put("/:id", async (req, res) => {
     /* TODO: Update device with id */
@@ -71,6 +92,25 @@ export function deviceRouter(): Router {
       return next(err)
     }
   })
+
+  router.post("/:id/commands", async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const token = getAuthToken(req)
+      const result = await controller.sendCommand({
+        token: token,
+        params: req.params,
+        body: req.body
+      })
+      res.send(result)
+    } catch (err) {
+      return next(err)
+    }
+  })
+
 
   router.get("/:id/commands", async (
     req: Request,
@@ -105,6 +145,25 @@ export function deviceRouter(): Router {
       return next(err)
     }
   })
+
+  router.post("/:id/sensors/:sensorId/telemetry", async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const token = getAuthToken(req)
+      const result = await controller.listTelemetry({
+        token: token,
+        params: req.params,
+        body: req.body
+      })
+      res.send(result)
+    } catch (err) {
+      return next(err)
+    }
+  })
+
 
   router.get("/:id/sensors", async (
     req: Request,

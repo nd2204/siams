@@ -42,6 +42,7 @@ export class DeviceRegisterHandler implements IMqttHandler<RegisterDevicePayload
       await this.eventBus.publish(new DeviceRegisteredEvent(
         orgId, clusterId, { deviceId: res.deviceId }
       ));
+      this.logger.info({ msg: `Acked: ${tempId}` });
     } catch (error: unknown) {
       const err = error as IError
       await client.publish(ackTopic, {
@@ -49,8 +50,7 @@ export class DeviceRegisterHandler implements IMqttHandler<RegisterDevicePayload
         message: err.message,
         details: err.details,
       });
+      this.logger.info({ msg: `Acked Error: ${tempId}` });
     }
-
-    this.logger.info({ msg: `Acked: ${tempId}` });
   }
 }

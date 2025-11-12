@@ -8,5 +8,6 @@ export const listTelemetryValidator = new JOIValidator(Joi.object<ListTelemetryR
   sensorId: Joi.string().uuid().required(),
   from: Joi.date().required(),
   to: Joi.date().required(),
-  groupBy: Joi.string().valid("hour", "day", "week", "month").optional().default("day")
+  groupBy: Joi.string().valid("second", "minute", "hour", "day", "week", "month").optional().default("day"),
+  limit: Joi.number().default(50).optional()
 }))

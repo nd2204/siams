@@ -29,7 +29,8 @@ export class ListTelemetryUC implements IUseCase<ListTelemetryResponse> {
       value.sensorId!,
       value.from!,
       value.to!,
-      value.groupBy!
+      value.groupBy!,
+      value.limit
     )
   }
 }

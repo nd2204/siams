@@ -5,8 +5,11 @@ export interface DeviceRegisteredPayload {
 }
 
 export class DeviceRegisteredEvent implements IDomainEvent<DeviceRegisteredPayload> {
-  name = "device.registered";
+  static readonly eventName = "device.created";
+
+  name = DeviceRegisteredEvent.eventName;
   ts = Date.now();
+
   constructor(
     public orgId: string,
     public clusterId: string,

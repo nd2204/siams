@@ -4,7 +4,7 @@ export class DeviceStatusPayload {
     public mem?: number,
     public wifi?: number,
     public online?: boolean,
-    public ts?: string
+    public ts?: number
   ) { }
 }
 

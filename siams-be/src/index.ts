@@ -10,8 +10,8 @@ async function main() {
   const server = createServer(app);
   const port: number = config.app.port;
 
-  outboxWorker.start();
-  mqttClient.connect();
+  await mqttClient.connect();
+  outboxWorker.start(mqttClient);
   socketClient.start(server);
 
   server.listen(port, () => {

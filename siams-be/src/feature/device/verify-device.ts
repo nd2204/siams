@@ -25,7 +25,8 @@ export class VerifyDeviceUC implements IUseCase<DeviceVerifyResponse> {
 
     const firmwareVersion = req.payload!.firmwareVersion!;
     if (device.firmwareVersion != firmwareVersion) {
-      return { status: "fail", reason: `mis match firmware version detected` }
+      await this.deviceRepo.delete(device.id);
+      return { status: "fail", reason: `mismatch firmware version detected` }
     }
 
     return { status: "ok" }

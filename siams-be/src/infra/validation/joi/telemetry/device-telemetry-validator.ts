@@ -7,6 +7,6 @@ export const deviceTelemetryValidator = new JOIValidator<DeviceTelemetryRequest>
   payload: Joi.object<DeviceTelemetryPayload>({
     value: Joi.number().required(),
     localId: Joi.number().required(),
-    ts: Joi.string().isoDate().required()
+    ts: Joi.number().required()
   }).required(),
 }))

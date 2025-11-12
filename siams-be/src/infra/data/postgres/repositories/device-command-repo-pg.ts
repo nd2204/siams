@@ -23,7 +23,7 @@ export class DeviceCommandRepositoryPg
         name: row[mapping.name],
         type: row[mapping.type],
         deviceId: row[mapping.deviceId],
-        localId: row[mapping.id],
+        localId: row[mapping.localId],
         commands: row[mapping.commands],
       }),
       ["commands"]

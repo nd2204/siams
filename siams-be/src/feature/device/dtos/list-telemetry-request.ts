@@ -1,6 +1,6 @@
 import { IPaginatedRequest } from "@shared/interfaces/paginated-request";
 
-export type GroupByDateType = "hour" | "day" | "week" | "month"
+export type GroupByDateType = "second" | "minute" | "hour" | "day" | "week" | "month"
 
 export interface ListTelemetryRequest extends IPaginatedRequest {
   token?: string,
@@ -8,5 +8,6 @@ export interface ListTelemetryRequest extends IPaginatedRequest {
   sensorId?: string,
   from?: Date,
   to?: Date,
-  groupBy?: GroupByDateType
+  groupBy?: GroupByDateType,
+  limit?: number
 }
