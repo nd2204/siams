@@ -15,6 +15,7 @@ import { getAllSensorsValidator } from "./device/get-all-sensors-validator";
 import { getAllCommandsValidator } from "./device/get-all-commands-validator";
 import { getAllActuatorsValidator } from "./device/get-all-actuators-validator";
 import { listTelemetryValidator } from "./device/list-telemetry-validator";
+import { deviceSendCommandValidator } from "./device/send-command-validator";
 
 export const device = {
   registerDeviceValidator,
@@ -25,7 +26,8 @@ export const device = {
   getAllSensorsValidator,
   getAllCommandsValidator,
   getAllActuatorsValidator,
-  listTelemetryValidator
+  listTelemetryValidator,
+  deviceSendCommandValidator
 }
 
 export const cluster = {

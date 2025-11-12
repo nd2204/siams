@@ -19,12 +19,12 @@ export class GetAllCommandsUC implements IUseCase<GetAllCommandsResponse> {
     }
 
     const user = this.authService.verifyToken(value.token!)
-    const device = await this.authService.canAccessDevice(user.id, value.deviceId!);
-    if (!device) {
+    const data = await this.authService.canAccessDevice(user.id, value.deviceId!);
+    if (!data) {
       throw new UnauthorizedError();
     }
 
-    const commands = await this.commandRepo.findAllBy({ deviceId: device.id }) ?? []
+    const commands = await this.commandRepo.findAllBy({ deviceId: data.device.id }) ?? []
     return commands
   }
 }

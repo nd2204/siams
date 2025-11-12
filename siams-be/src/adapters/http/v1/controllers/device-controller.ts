@@ -1,3 +1,6 @@
+import { DeviceSendCommandUC } from "@feature/device/device-send-command"
+import { DeviceSendCommandRequest } from "@feature/device/dtos/device-send-command-request"
+import { DeviceSendCommandResponse } from "@feature/device/dtos/device-send-command-response"
 import { GetAllActuatorsRequest } from "@feature/device/dtos/get-all-actuators-request"
 import { GetAllActuatorsResponse } from "@feature/device/dtos/get-all-actuators-response"
 import { GetAllCommandsResponse } from "@feature/device/dtos/get-all-commands-response"
@@ -20,7 +23,8 @@ export class DeviceController {
     private readonly getAllSensorsUC: GetAllSensorsUC,
     private readonly getAllActuatorsUC: GetAllActuatorsUC,
     private readonly getAllCommandsUC: GetAllCommandsUC,
-    private readonly listTelemetryUC: ListTelemetryUC
+    private readonly listTelemetryUC: ListTelemetryUC,
+    private readonly deviceSendCommandUC: DeviceSendCommandUC,
   ) { }
 
   async getById(req: IRequest): Promise<GetDeviceByIdResponse> {
@@ -31,13 +35,22 @@ export class DeviceController {
     return await this.getByIdUC.call(request)
   }
 
+  async sendCommand(req: IRequest): Promise<DeviceSendCommandResponse> {
+    const request: DeviceSendCommandRequest = {
+      token: req.token,
+      deviceId: req.params?.id as string,
+      payload: req.body?.payload
+    }
+    return await this.deviceSendCommandUC.call(request)
+  }
+
   async listTelemetry(req: IRequest): Promise<ListTelemetryResponse> {
     const request: ListTelemetryRequest = {
       token: req.token,
       deviceId: req.params?.id as string,
       sensorId: req.params?.sensorId as string,
-      from: req.body?.page,
-      to: req.body?.perPage,
+      from: req.body?.from,
+      to: req.body?.to,
       groupBy: req.body?.groupBy
     }
     return await this.listTelemetryUC.call(request)

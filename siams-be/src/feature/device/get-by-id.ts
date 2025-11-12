@@ -17,12 +17,11 @@ export class GetDeviceByIdUC implements IUseCase<GetDeviceByIdResponse> {
     }
 
     const user = this.authService.verifyToken(value.token!);
-
-    const device = await this.authService.canAccessDevice(user.id, value.deviceId!)
-    if (!device) {
-      throw new UnauthorizedError();
+    const data = await this.authService.canAccessDevice(user.id, value.deviceId!)
+    if (data == null) {
+      throw new UnauthorizedError("User doesn't have permission to access this device");
     }
 
-    return device
+    return data.device
   }
 }

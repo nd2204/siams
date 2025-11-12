@@ -32,7 +32,8 @@ export class ReceiveDeviceTelemetryUC implements IUseCase<DeviceTelemetry> {
 
     return await this.repo.create({
       sensorId: sensor.id,
-      timestamp: new Date(payload.ts!),
+      // WARN: Assuming unix timestamp
+      timestamp: new Date(payload.ts! * 1000),
       value: payload.value!,
     })
   }

@@ -9,6 +9,6 @@ export const deviceStatusValidator = new JOIValidator<DeviceStatusRequest>(Joi.o
     mem: Joi.number().min(0).max(1).optional(),
     wifi: Joi.number().optional(),
     online: Joi.boolean().required(),
-    ts: Joi.string().isoDate().required()
+    ts: Joi.number().required()
   }).required(),
 }))

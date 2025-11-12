@@ -23,7 +23,10 @@ export class ReceiveDeviceStatusUC implements IUseCase<void> {
       throw new NotFoundError(`Cannot found device with Id=${value.deviceId}`)
     }
 
-    await this.deviceRepo.update(device.id, Device.markSeen(new Date(), value.payload?.online))
+    await this.deviceRepo.update(
+      device.id,
+      (!!value.payload?.online) ? Device.markSeen(new Date()) : Device.markOffline()
+    )
 
     // TODO: send realtime status to front end
     //
@@ -34,7 +37,8 @@ export class ReceiveDeviceStatusUC implements IUseCase<void> {
       cpuUsage: payload.cpu,
       memUsage: payload.mem,
       wifiRssi: payload.wifi,
-      timestamp: new Date(payload.ts!)
+      // WARN: Assuming unix timestamp
+      timestamp: new Date(payload.ts! * 1000)
     })
   }
 }

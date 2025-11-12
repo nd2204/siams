@@ -1,18 +1,13 @@
 import { CommandDesc } from "@domain/value-objects/command";
 
-export interface DeviceCommandPayload extends CommandDesc {
+export interface DeviceCommandPayload {
   localId: number,
   action: string,
-  params?: {
-    name: string,
-    type: string,
-    enums?: string[]
-  }[]
+  params?: Record<string, any>
 }
 
 export interface DeviceSendCommandRequest {
-  token: string,
-  orgId: string,
-  deviceId: string,
-  payload: DeviceCommandPayload
+  token?: string,
+  deviceId?: string,
+  payload?: DeviceCommandPayload
 }

@@ -181,7 +181,7 @@ CREATE TABLE IF NOT EXISTS commands (
 );
 
 CREATE TABLE IF NOT EXISTS outbox (
-  id             UUID PRIMARY KEY,
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   aggregate_type TEXT NOT NULL,  -- e.g. "command"
   aggregate_id   UUID NOT NULL,
   topic          TEXT NOT NULL,

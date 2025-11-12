@@ -19,12 +19,12 @@ export class GetAllSensorsUC implements IUseCase<GetAllSensorsResponse> {
     }
 
     const user = this.authService.verifyToken(value.token!)
-    const device = await this.authService.canAccessDevice(user.id, value.deviceId!);
-    if (!device) {
+    const data = await this.authService.canAccessDevice(user.id, value.deviceId!);
+    if (!data) {
       throw new UnauthorizedError();
     }
 
-    const sensors = await this.sensorRepo.findAllBy({ deviceId: device.id }) ?? []
+    const sensors = await this.sensorRepo.findAllBy({ deviceId: data.device.id }) ?? []
     return sensors
   }
 }

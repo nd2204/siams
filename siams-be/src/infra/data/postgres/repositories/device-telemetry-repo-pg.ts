@@ -33,7 +33,8 @@ export class DeviceTelemetryRepositoryPg
     sensorId: string,
     from: Date,
     to: Date,
-    groupBy: GroupByDateType
+    groupBy: GroupByDateType,
+    limit?: number
   ): Promise<TelemetryGroupDto[]> {
     const groupExpr = this.groupExpression(groupBy);
     const query = `
@@ -45,11 +46,12 @@ export class DeviceTelemetryRepositoryPg
         MAX(value) AS max_value,
         COUNT(*) AS samples
       FROM telemetry
-      WHERE sensor_id = $1 AND ts BETWEEN $2 AND $3
+      WHERE sensor_id = $1 AND ${this.columns.timestamp} BETWEEN $2 AND $3
       GROUP BY sensor_id, bucket
       ORDER BY bucket ASC
+      LIMIT $4
     `;
-    const res = await this.pool.query(query, [sensorId, from, to]);
+    const res = await this.pool.query(query, [sensorId, from, to, limit ?? 50]);
 
     return res.rows.map(r => ({
       sensorId: r.sensor_id,
@@ -62,12 +64,15 @@ export class DeviceTelemetryRepositoryPg
   }
 
   private groupExpression(granularity: GroupByDateType) {
+    const ts = this.columns.timestamp
     switch (granularity) {
-      case "hour": return "date_trunc('hour', ts)";
-      case "week": return "date_trunc('week', ts)";
-      case "month": return "date_trunc('month', ts)";
+      case "second": return `date_trunc('second', ${ts})`;
+      case "minute": return `date_trunc('minute', ${ts})`;
+      case "hour": return `date_trunc('hour', ${ts})`;
+      case "week": return `date_trunc('week', ${ts})`;
+      case "month": return `date_trunc('month', ${ts})`;
       case "day":
-      default: return "date_trunc('day', ts)";
+      default: return `date_trunc('day', ${ts})`;
     }
   }
 }

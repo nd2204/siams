@@ -9,6 +9,6 @@ export class DeviceTelemetryPayload {
   constructor(
     public value: number,
     public localId?: number,
-    public ts?: string
+    public ts?: number
   ) { }
 }

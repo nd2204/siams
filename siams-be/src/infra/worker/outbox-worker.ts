@@ -6,16 +6,17 @@ import { ILogger } from "@shared/interfaces";
 
 export class OutboxWorker {
   private isRunning = false;
+  private mqttClient: IMqttClient;
 
   constructor(
     private readonly outboxRepo: IOutboxRepository,
-    private readonly mqttClient: IMqttClient,
     private readonly logger: ILogger,
     private readonly pollInterval = 3000
   ) { }
 
-  async start(): Promise<void> {
+  async start(client: IMqttClient): Promise<void> {
     if (this.isRunning) return;
+    this.mqttClient = client;
     this.isRunning = true;
     this.logger.info("Started");
 
@@ -41,16 +42,10 @@ export class OutboxWorker {
     this.logger.info(`Processing ${entries.length} entries`);
 
     for (const entry of entries) {
-      const { orgId, clusterId, deviceId } = entry.payload;
       try {
-        const topic = topics.deviceCommand.create({
-          orgId,
-          clusterId,
-          deviceId
-        });
-        await this.mqttClient.publish(topic, entry.payload);
+        await this.mqttClient.publish(entry.topic, entry.payload, { qos: 1 });
         await this.outboxRepo.markAsPublished(entry.id);
-        this.logger.info(`Tx [${entry.topic}]: ${entry.payload}`);
+        this.logger.info({ msg: `Tx [${entry.topic}]:`, obj: entry.payload });
       } catch (err: any) {
         this.logger.error({ msg: `Failed to publish id=${entry.id}`, obj: err });
         await this.outboxRepo.markAsFailed(entry.id);

@@ -7,6 +7,13 @@ import { AuthResponse } from "@feature/user/dtos/auth-response";
 import { IClusterRepository, IDeviceRepository, IOrganizationUserRepository } from "@domain/repositories";
 import { ILogger } from "@shared/interfaces";
 import { UserClaims } from "@feature/user/dtos/user-claims";
+import { IAuthService } from "@domain/services/auth-service";
+import { IEventBus } from "@domain/interfaces/events";
+import { DeviceRegisteredEventHandler } from "./handlers/device-registered-handler";
+import { DeviceRegisteredEvent } from "@domain/events/device-registered-event";
+import { DeviceTelemetryReceivedEvent } from "@domain/events/device-telemetry-received-event";
+import { DeviceTelemetryReceivedEventHandler } from "./handlers/device-telemetry-received-handler";
+import { TelemetryGroupDto } from "@feature/device/dtos/telemtry-dto";
 
 interface AuthenticatedSocket extends Socket {
   user: UserClaims;
@@ -26,37 +33,19 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
   };
 
   constructor(
-    private readonly orgUserRepo: IOrganizationUserRepository,
-    private readonly clusterRepo: IClusterRepository,
-    private readonly deviceRepo: IDeviceRepository,
+    private readonly authService: IAuthService,
     private readonly logger: ILogger,
+    private readonly eventBus: IEventBus,
     private readonly verifyToken: (token: string) => AuthResponse["user"]
-  ) { }
-
-  async canAccessOrg(user: UserClaims, orgId: string): Promise<boolean> {
-    const orgUser = await this.orgUserRepo.findOneBy({ id: orgId, userId: user.id });
-    if (!orgUser) return false
-
-    return true
-  }
-
-  async canAccessCluster(user: AuthResponse["user"], orgId: string, clusterId: string): Promise<boolean> {
-    if (!this.canAccessOrg(user, orgId)) return false
-
-    const cluster = await this.clusterRepo.findOneBy({ id: clusterId });
-    if (!cluster || cluster.orgId !== orgId) return false
-
-    return true
-  }
-
-  async canAccessDevice(user: AuthResponse["user"], orgId: string, clusterId: string, deviceId: string): Promise<boolean> {
-    if (!this.canAccessOrg(user, orgId)) return false
-    if (!this.canAccessCluster(user, orgId, clusterId)) return false
-
-    const device = await this.deviceRepo.findOneBy({ id: deviceId });
-    if (!device || device.clusterId !== clusterId) return false
-
-    return true
+  ) {
+    this.eventBus.subscribe(
+      DeviceRegisteredEvent.eventName,
+      new DeviceRegisteredEventHandler(this)
+    );
+    this.eventBus.subscribe(
+      DeviceTelemetryReceivedEvent.eventName,
+      new DeviceTelemetryReceivedEventHandler(this)
+    );
   }
 
   start(httpServer: HttpServer) {
@@ -90,13 +79,14 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
       this.logger.info(`Client connected: ${socket.id} (${socket.user.id})`);
 
       // Handle cluster subscription
-      socket.on("joinCluster", async ({ orgId, clusterId }) => {
+      socket.on("joinCluster", async ({ clusterId }) => {
         try {
-          if (!await this.canAccessCluster(socket.user, orgId, clusterId)) {
+          const data = await this.authService.canAccessCluster(socket.user.id, clusterId)
+          if (!data) {
             return socket.emit("error", { message: "Forbidden", code: "FORBIDDEN" });
           }
 
-          const room = this.roomForCluster(orgId, clusterId);
+          const room = this.roomForCluster(data.org.id, data.cluster.id);
           await socket.join(room);
 
           // Track subscription
@@ -107,7 +97,7 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
           this.clientTracker.clusters.get(clusterId)?.add(socket.id);
 
           socket.emit("joinedCluster", {
-            orgId,
+            orgId: data.org.id,
             clusterId,
             activeClients: this.clientTracker.clusters.get(clusterId)?.size || 1
           });
@@ -117,15 +107,49 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
         }
       });
 
-      // Handle device subscription
-      socket.on("joinDevice", async ({ orgId, clusterId, deviceId }) => {
+      // Handle org subscription
+      socket.on("joinOrg", async ({ orgId }) => {
         try {
-          if (!await this.canAccessDevice(socket.user, orgId, clusterId, deviceId)) {
+          const data = await this.authService.canAccessOrg(socket.user.id, orgId)
+          if (!data) {
             return socket.emit("error", { message: "Forbidden", code: "FORBIDDEN" });
           }
 
-          const room = this.roomForDevice(orgId, clusterId, deviceId);
+          const room = this.roomForOrg(data.id);
           await socket.join(room);
+
+          // Track subscription
+          socket.subscriptions.organizations.add(orgId);
+          if (!this.clientTracker.organizations.has(orgId)) {
+            this.clientTracker.organizations.set(orgId, new Set());
+          }
+          this.clientTracker.organizations.get(orgId)?.add(socket.id);
+
+          socket.emit("joinedOrg", {
+            orgId: data.id,
+            activeClients: this.clientTracker.organizations.get(orgId)?.size || 1
+          });
+        } catch (error) {
+          this.logger.error(`Error joining device: ${error}`);
+          socket.emit("error", { message: "Failed to join device", code: "JOIN_FAILED" });
+        }
+      });
+
+
+      // Handle device subscription
+      socket.on("joinDevice", async ({ deviceId }) => {
+        try {
+          this.logger.info(`[Socket] Device join request - socket: ${socket.id}, deviceId: ${deviceId}, userId: ${socket.user.id}`);
+          
+          const data = await this.authService.canAccessDevice(socket.user.id, deviceId)
+          if (!data) {
+            this.logger.warn(`[Socket] Access denied for device ${deviceId} - user ${socket.user.id}`);
+            return socket.emit("error", { message: "Forbidden", code: "FORBIDDEN" });
+          }
+
+          const room = this.roomForDevice(data.org.id, data.cluster.id, deviceId);
+          await socket.join(room);
+          this.logger.info(`[Socket] Socket ${socket.id} joined room: ${room}`);
 
           // Track subscription
           socket.subscriptions.devices.add(deviceId);
@@ -134,14 +158,17 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
           }
           this.clientTracker.devices.get(deviceId)?.add(socket.id);
 
+          const activeCount = this.clientTracker.devices.get(deviceId)?.size || 1;
+          this.logger.info(`[Socket] Device ${deviceId} now has ${activeCount} active subscribers`);
+
           socket.emit("joinedDevice", {
-            orgId,
-            clusterId,
+            orgId: data.org.id,
+            clusterId: data.cluster.id,
             deviceId,
-            activeClients: this.clientTracker.devices.get(deviceId)?.size || 1
+            activeClients: activeCount
           });
         } catch (error) {
-          this.logger.error(`Error joining device: ${error}`);
+          this.logger.error(`[Socket] Error joining device: ${error}`);
           socket.emit("error", { message: "Failed to join device", code: "JOIN_FAILED" });
         }
       });
@@ -149,6 +176,14 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
       // Handle disconnection and cleanup
       socket.on("disconnect", () => {
         this.logger.info(`Client disconnected: ${socket.id}`);
+
+        // Cleanup org subscriptions
+        socket.subscriptions.organizations.forEach(orgId => {
+          this.clientTracker.organizations.get(orgId)?.delete(socket.id);
+          if (this.clientTracker.organizations.get(orgId)?.size === 0) {
+            this.clientTracker.organizations.delete(orgId);
+          }
+        });
 
         // Cleanup cluster subscriptions
         socket.subscriptions.clusters.forEach(clusterId => {
@@ -172,16 +207,39 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
   }
 
   // --- Outbound publishing ---
-  async publishTelemetry(message: RealtimeMessage<DeviceTelemetry>): Promise<void> {
-    this.io
-      .to(this.roomForCluster(message.eventType, message.clusterId))
-      .volatile.emit("telemetry", message);
+  async publishTelemetry(message: RealtimeMessage<TelemetryGroupDto>): Promise<void> {
+    // Emit to both cluster and device rooms for subscribers at different levels
+    const roomsToEmit: string[] = [];
+    
+    if (message.clusterId) {
+      roomsToEmit.push(this.roomForCluster(message.orgId, message.clusterId));
+    }
+    
+    if (message.deviceId && message.clusterId) {
+      roomsToEmit.push(this.roomForDevice(message.orgId, message.clusterId, message.deviceId));
+    }
+
+    if (roomsToEmit.length > 0) {
+      this.logger.debug(`Publishing telemetry to rooms: ${roomsToEmit.join(", ")}`);
+      this.io
+        .to(roomsToEmit)
+        .emit(
+          DeviceTelemetryReceivedEvent.eventName,
+          message
+        );
+    }
   }
 
   async publishEvent(payload: RealtimeMessage): Promise<void> {
-    this.io
-      .to(this.roomForCluster(payload.orgId, payload.clusterId))
-      .emit("event", payload);
+    const rooms: string[] = [];
+    rooms.push(this.roomForOrg(payload.orgId))
+    payload.clusterId && rooms.push(this.roomForCluster(payload.orgId, payload.clusterId))
+    payload.deviceId && rooms.push(this.roomForDevice(payload.orgId, payload.clusterId!, payload.deviceId))
+    this.io.to(rooms).emit("device.event", payload);
+  }
+
+  private roomForOrg(orgId: string) {
+    return `org:${orgId}`;
   }
 
   private roomForCluster(orgId: string, clusterId: string) {
@@ -190,5 +248,9 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
 
   private roomForDevice(orgId: string, clusterId: string, deviceId: string) {
     return `org:${orgId}:cluster:${clusterId}:device:${deviceId}`;
+  }
+
+  private roomForSensors(orgId: string, clusterId: string, deviceId: string, sensorId: string) {
+    return `org:${orgId}:cluster:${clusterId}:device:${deviceId}:sensor:${sensorId}`;
   }
 }

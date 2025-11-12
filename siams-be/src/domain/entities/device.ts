@@ -17,10 +17,16 @@ export class Device extends Entity<Device, string> {
     this.name = opts.name ?? `${opts.model}-${this.firmwareVersion}`;
   }
 
-  static markSeen(ts: Date = new Date(), online?: boolean): Partial<Device> {
+  static markOffline(): Partial<Device> {
+    return {
+      status: 'offline',
+    }
+  }
+
+  static markSeen(ts: Date = new Date()): Partial<Device> {
     return {
       lastSeen: ts,
-      status: !!online ? 'online' : 'offline',
+      status: 'online',
     }
   }
 

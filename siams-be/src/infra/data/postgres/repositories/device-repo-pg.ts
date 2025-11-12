@@ -33,7 +33,7 @@ export class DeviceRepositoryPg
           clusterId: row[mapping.clusterId],
           name: row[mapping.name],
           model: row[mapping.model],
-          geom: row[mapping.model],
+          geom: row[mapping.geom],
           firmwareVersion: row[mapping.firmwareVersion],
           status: row[mapping.status],
           lastSeen: row[mapping.lastSeen],

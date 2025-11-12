@@ -19,12 +19,12 @@ export class GetAllActuatorsUC implements IUseCase<GetAllActuatorsResponse> {
     }
 
     const user = this.authService.verifyToken(value.token!)
-    const device = await this.authService.canAccessDevice(user.id, value.deviceId!);
-    if (!device) {
+    const data = await this.authService.canAccessDevice(user.id, value.deviceId!);
+    if (!data) {
       throw new UnauthorizedError();
     }
 
-    const actuators = await this.actuatorRepo.findAllBy({ deviceId: device.id }) ?? []
+    const actuators = await this.actuatorRepo.findAllBy({ deviceId: data.device.id }) ?? []
     return actuators
   }
 }
