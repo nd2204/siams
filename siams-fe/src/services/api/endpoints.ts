@@ -11,7 +11,7 @@ export const ENDPOINTS = {
     BY_ID: (id: string) => `/devices/${id}`,
     SENSORS: (id: string) => `devices/${id}/sensors`,
     ACTUATORS: (id: string) => `devices/${id}/actuators`,
-    TELEMETRY: (id: string, sensorId: string) => `/devices/${id}/sensors/${sensorId}/telemetry/$`,
+    TELEMETRY: (id: string, sensorId: string) => `/devices/${id}/sensors/${sensorId}/telemetry`,
     STATUS: (id: string) => `devices/${id}/status`,
     COMMANDS: (id: string) => `/devices/${id}/commands`
   },
