@@ -2,24 +2,24 @@ import type { IPaginated } from "./paginated";
 
 // Data types for the farm IoT system
 export type SensorType =
-  | 'temperature'
-  | 'humidity'
-  | 'soil_moisture'
-  | 'ph'
-  | 'light'
-  | 'pressure'
-  | 'npk'
-  | 'wind_speed';
+  | 'TEMPERATURE'
+  | 'HUMIDITY'
+  | 'MOISTURE'
+  | 'PH'
+  | 'LIGHT_INTENSITY'
+  | 'PRESSURE'
+  | 'NPK'
+  | 'WIND_SPEED';
 
 export type ActuatorType =
-  | 'valve'
-  | 'pump'
-  | 'fan'
-  | 'heater'
-  | 'cooler'
-  | 'led_light'
-  | 'motor'
-  | 'relay';
+  | 'VALVE'
+  | 'PUMP'
+  | 'FAN'
+  | 'HEATER'
+  | 'COOLER'
+  | 'LED_LIGHT'
+  | 'MOTOR'
+  | 'RELAY';
 
 export type ParamType = "int" | "number" | "string" | "boolean"
 

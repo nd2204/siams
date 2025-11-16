@@ -178,12 +178,12 @@ const CommandView = ({
                 `p-3 border-2 rounded-xl bg-gradient-to-br`,
                 selectedItem.type === 'sensor' ? 'from-accent-blue/20'
                   : selectedItem.type === 'actuator' ? 'from-accent-green/20'
-                    : 'from-accent-green',
+                    : 'from-accent-blue/20',
                 'to-card'
               )}>
                 {selectedItem.type === 'sensor' ? <Radio className={`w-6 h-6 text-accent-aqua`} />
-                  : selectedItem.type === 'actuator' ? <Radio className={`w-6 h-6 text-accent-green`} />
-                    : <Radio className={`w-6 h-6 text-accent-blue`} />
+                  : selectedItem.type === 'actuator' ? <Power className={`w-6 h-6 text-accent-green`} />
+                    : <Terminal className={`w-6 h-6 text-accent-blue`} />
                 }
               </div>
               <div className="flex-1">

@@ -1,8 +1,8 @@
 import { GalleryVerticalEnd } from "lucide-react"
 import { Outlet } from "react-router"
 import { GradFlow } from 'gradflow'
-import { useTheme } from "@/components/ThemeProvider"
 import { FieldDescription } from "@/components/ui/field"
+import { useTheme } from "@/hooks/use-theme"
 
 export default function AuthLayout() {
   const { theme } = useTheme()
