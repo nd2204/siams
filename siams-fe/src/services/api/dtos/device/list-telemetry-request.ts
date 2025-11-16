@@ -1,7 +1,8 @@
 export interface ListTelemtryPayload {
   from: Date,
   to: Date,
-  groupBy: "minute" | "hour" | "day" | "week" | "month"
+  groupBy: "second" | "minute" | "hour" | "day" | "week" | "month",
+  limit?: number
 }
 
 export interface ListTelemtryRequest {

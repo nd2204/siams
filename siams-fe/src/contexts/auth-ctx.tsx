@@ -51,7 +51,6 @@ export const AuthProvider = (props: Props) => {
     setToken(null);
     setActiveOrg(null);
     setIsAuthenticated(false);
-    alert("cleaned session")
   }, [])
 
   // Helper to persist session
@@ -65,7 +64,6 @@ export const AuthProvider = (props: Props) => {
       expiresAt: Date.now() + 24 * 60 * 60 * 1000
     };
     localStorage.setItem("session", JSON.stringify(session));
-    console.log(session)
     setUser(userData);
     setToken(token);
     setActiveOrg(session.activeOrg ?? null);
@@ -109,7 +107,6 @@ export const AuthProvider = (props: Props) => {
         setActiveOrg(session.activeOrg ?? null);
         setIsAuthenticated(true);
       } catch (error) {
-        alert(`Failed to restore session: ${JSON.stringify(error, null, 2)}`);
         cleanSession();
       } finally {
         setLoading(false);
@@ -164,7 +161,6 @@ export const AuthProvider = (props: Props) => {
       persistSession(user, token, newRefreshToken);
       return true;
     } catch (error) {
-      console.error("Failed to refresh token:", error);
       cleanSession();
       return false;
     }

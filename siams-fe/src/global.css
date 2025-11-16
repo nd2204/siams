@@ -32,6 +32,7 @@
   --color-accent-purple: var(--accent-purple);
   --color-accent-aqua: var(--accent-aqua);
   --color-accent-red: var(--accent-red);
+  --color-accent-orange: var(--accent-orange);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -52,9 +53,10 @@
   --accent-blue: oklch(0.6836 0.0358 175.04);
   --accent-yellow: oklch(0.8325 0.1595 82.99);
   --accent-green: oklch(0.7652 0.1581 110.83);
-  --accent-red: oklch(0.6597 0.2175 30.39);
+  --accent-red: oklch(0.6768 0.1615 25.42);
   --accent-aqua: oklch(0.7555 0.1078 137.68);
   --accent-purple: oklch(0.7054 0.0976 2.19);
+  --accent-orange: oklch(0.7311 0.182 51.69);
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -94,9 +96,10 @@
   --accent-blue: oklch(0.6836 0.0358 175.04);
   --accent-yellow: oklch(0.8325 0.1595 82.99);
   --accent-green: oklch(0.7652 0.1581 110.83);
-  --accent-red: oklch(0.6597 0.2175 30.39);
+  --accent-red: oklch(0.6768 0.1615 25.42);
   --accent-aqua: oklch(0.7555 0.1078 137.68);
   --accent-purple: oklch(0.7054 0.0976 2.19);
+  --accent-orange: oklch(0.7311 0.182 51.69);
   --background: oklch(0.18 0 164.58);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);

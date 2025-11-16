@@ -17,7 +17,6 @@ export default function ProtectedRoute({ children }: Props) {
   }
 
   if (!isAuthenticated) {
-    alert("user is not authenticated")
     return <Navigate to="/auth" replace />
   }
 
