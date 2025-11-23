@@ -12,6 +12,7 @@ class ApiClient {
     this.instance = axios.create({
       baseURL,
       timeout: 10000,
+      withCredentials: true,
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -32,6 +33,16 @@ class ApiClient {
     }
   }
 
+  private csrfToken: string | null = null;
+  setCsrfToken(token: string | null) {
+    this.csrfToken = token;
+    if (token) {
+      this.instance.defaults.headers.common['X-CSRF-Token'] = token;
+    } else {
+      delete this.instance.defaults.headers.common['X-CSRF-Token'];
+    }
+  }
+
   private handleRequest = (config: InternalAxiosRequestConfig) => {
     const session = localStorage.getItem("session");
     if (session) {
@@ -39,6 +50,11 @@ class ApiClient {
       if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
       }
+    }
+    // Attach CSRF token for unsafe methods if available
+    const method = (config.method || 'get').toLowerCase();
+    if (['post','put','patch','delete'].includes(method) && this.csrfToken) {
+      config.headers['X-CSRF-Token'] = this.csrfToken;
     }
     return config;
   }
