@@ -2,9 +2,7 @@
 import { Server as IOServer, Socket } from "socket.io";
 import { Server as HttpServer } from "node:http"
 import { IRealtimeClient, RealtimeMessage } from "@domain/interfaces/realtime-client";
-import { DeviceTelemetry } from "@domain/entities";
 import { AuthResponse } from "@feature/user/dtos/auth-response";
-import { IClusterRepository, IDeviceRepository, IOrganizationUserRepository } from "@domain/repositories";
 import { ILogger } from "@shared/interfaces";
 import { UserClaims } from "@feature/user/dtos/user-claims";
 import { IAuthService } from "@domain/services/auth-service";
@@ -51,8 +49,12 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
   start(httpServer: HttpServer) {
     this.io = new IOServer(httpServer, {
       cors: {
-        origin: process.env.FE_HOST || "*",
-        methods: ["GET", "POST"]
+        origin: [
+          'http://127.0.0.1:33445',
+          'http://localhost:33445',
+          'http://192.168.1.16:33445',
+        ],
+        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
       }
     });
 
@@ -140,7 +142,7 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
       socket.on("joinDevice", async ({ deviceId }) => {
         try {
           this.logger.info(`[Socket] Device join request - socket: ${socket.id}, deviceId: ${deviceId}, userId: ${socket.user.id}`);
-          
+
           const data = await this.authService.canAccessDevice(socket.user.id, deviceId)
           if (!data) {
             this.logger.warn(`[Socket] Access denied for device ${deviceId} - user ${socket.user.id}`);
@@ -210,17 +212,18 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
   async publishTelemetry(message: RealtimeMessage<TelemetryGroupDto>): Promise<void> {
     // Emit to both cluster and device rooms for subscribers at different levels
     const roomsToEmit: string[] = [];
-    
+
     if (message.clusterId) {
       roomsToEmit.push(this.roomForCluster(message.orgId, message.clusterId));
     }
-    
+
     if (message.deviceId && message.clusterId) {
       roomsToEmit.push(this.roomForDevice(message.orgId, message.clusterId, message.deviceId));
     }
 
     if (roomsToEmit.length > 0) {
-      this.logger.debug(`Publishing telemetry to rooms: ${roomsToEmit.join(", ")}`);
+      // this.logger.info({ msg: `${JSON.stringify(this.clientTracker.devices.get(message.deviceId!), null, 2)}` });
+      // this.logger.info({ msg: `Publishing event [${DeviceTelemetryReceivedEvent.eventName}] to rooms: ${JSON.stringify(roomsToEmit.join(", "), null, 2)}`, obj: message });
       this.io
         .to(roomsToEmit)
         .emit(

@@ -10,7 +10,7 @@ export class DeviceRegisteredEventHandler implements IDomainEventHandler<DeviceR
   async handle(event: DeviceRegisteredEvent): Promise<void> {
     const message: RealtimeMessage<DeviceRegisteredPayload> = {
       orgId: event.orgId,
-      clusterId: event.orgId,
+      clusterId: event.clusterId,
       eventType: event.name,
       data: event.payload,
       ts: event.ts
