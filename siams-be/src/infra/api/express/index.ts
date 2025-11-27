@@ -5,27 +5,50 @@ import { IError } from '@shared/interfaces'
 import routes from './routes'
 import express from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import csurf from 'csurf'
 import methodOverride from 'method-override'
 import config from '@/config'
+import helmet from 'helmet'
 // import swaggerUi from 'swagger-ui-express'
 // import swaggerDocument from '@config/swagger.json'
 
 const app: express.Application = express()
 
-app.use(logger())
-app.use(express.json())
 app.use(
+  // logger(),
+  express.json(),
+  // Enable CSP
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'none'"],
+    }
+  }),
+  // parse cookies - needed for CSRF when using cookie storage
+  cookieParser(),
+  // CSRF protection - use cookie-based tokens (double submit cookie)
+  // token will be available via req.csrfToken() and verified for state-changing methods
+  csurf({
+    cookie: { httpOnly: true, secure: config.app.isProduction() }
+  }),
+  // CORS protection
   cors({
     origin: [
+      config.app.feHost || 'http://192.168.1.16:33445',
       'http://127.0.0.1:33445',
       'http://localhost:33445',
-      'http://192.168.1.16:33445',
     ],
-    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     credentials: true,
-  })
-)
-app.use(express.urlencoded({ extended: false }))
+    maxAge: 500
+  }),
+  express.urlencoded({ extended: false })
+);
 
 // if (!config.app.isProduction()) {
 //   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -41,7 +64,12 @@ app.use((req: express.Request, res: express.Response) => {
 })
 
 app.use(methodOverride())
-app.use((err: IError, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+app.use((
+  err: IError,
+  _req: express.Request,
+  res: express.Response,
+  _next: express.NextFunction
+) => {
   res.status(err.httpStatus || 500).send({
     error: err.name,
     message: err.message,

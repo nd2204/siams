@@ -72,6 +72,18 @@ export function authRouter(): Router {
     }
   })
 
+  router.get("/refresh", async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const token = getAuthToken(req)
+    } catch (err) {
+      return next(err)
+    }
+  })
+
   router.put("/me", async (
     req: Request,
     res: Response,
