@@ -11,7 +11,7 @@ export class DeviceTelemetryReceivedEventHandler implements IDomainEventHandler<
   async handle(event: DeviceTelemetryReceivedEvent): Promise<void> {
     const message: RealtimeMessage<TelemetryGroupDto> = {
       orgId: event.orgId,
-      clusterId: event.orgId,
+      clusterId: event.clusterId,
       deviceId: event.deviceId,
       eventType: event.name,
       data: event.payload,
