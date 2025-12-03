@@ -143,3 +143,4 @@ siams-mqtt-broker/config/pwfile
 build/
 siams-be/package-lock.json
 siams-node-sim/presets
+.DS_Store
