@@ -98,8 +98,7 @@ export const AuthProvider = (props: Props) => {
 
         // reconnect socket
         if (token) {
-          const socket = createSocket(token);
-          socket.connect();
+          createSocket(token);
         }
 
         setUser(session.user);
@@ -121,11 +120,8 @@ export const AuthProvider = (props: Props) => {
       setLoading(true);
       const { user, token, refreshToken } = await authService.signin({ email, password });
       persistSession(user, token, refreshToken, user.organizations?.at(0));
-
-      // Create & connect socket after login
-      const socket = createSocket(token);
-      socket.connect();
-
+      // create socket
+      createSocket(token);
       return { success: true };
     } catch (error) {
       const err = error as AxiosError;

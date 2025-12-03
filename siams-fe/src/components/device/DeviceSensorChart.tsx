@@ -1,15 +1,12 @@
 import { memo, useMemo } from 'react';
-import { Card } from '@/components/ui/card';
 import {
-  LineChart,
   AreaChart,
   Area,
-  BarChart,
   XAxis,
   CartesianGrid,
   YAxis,
 } from 'recharts';
-import type { Sensor, SensorType } from '@/types/device';
+import type { Sensor, SensorType } from '@/types/device/index';
 import { useDeviceTelemetry } from '@/hooks/queries/use-device-telemetry';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '../ui/chart';
 
@@ -89,7 +86,7 @@ export function SensorChart({
     return { from, to: new Date() };
   }, []);
 
-  const { data } = useDeviceTelemetry(sensor.deviceId, sensor.id, {
+  const { data } = useDeviceTelemetry(sensor.device_id, sensor.id, {
     from: dateRange.from,
     to: dateRange.to,
     groupBy: "second",

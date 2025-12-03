@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "../ui/field";
+import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSet } from "../ui/field";
 import { Button } from "../ui/button";
 import { clusterServices } from "@/services/api/cluster-service";
 import type { CreateClusterRequest } from "@/services/api/dtos/cluster/create-cluster-request";

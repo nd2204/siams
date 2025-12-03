@@ -1,15 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import {
-  Terminal,
-  Power,
-  Info,
-  Play,
-  Settings,
-  ChevronRight,
-  Zap,
-  Radio,
-} from 'lucide-react';
-import type { Actuator, Command, CommandDesc, Device, Sensor } from '@/types/device';
+import type { Actuator, Command, CommandDesc, Device, DeviceCommandPayload, Sensor } from '@/types/device/index';
 import { Card } from '@/components/ui/card';
 import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
@@ -21,23 +11,23 @@ import { useDeviceActuators } from '@/hooks/queries/use-device-actuator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { cn } from '@/lib/utils';
 import { useDeviceCommandSender } from '@/hooks/mutations/use-device-command-sender';
-import type { DeviceCommandPayload } from '@/services/api/dtos/device/device-send-command-request';
 import { SmartInput } from './SmartInput';
 import { Label } from '../ui/label';
 import { toast } from 'sonner';
 import type { AxiosError } from 'axios';
+import {
+  Terminal,
+  Power,
+  Info,
+  Play,
+  Settings,
+  ChevronRight,
+  Zap,
+  Radio,
+} from 'lucide-react';
 
-type SensorCommand = Sensor & {
-  localId: number;
-  commandId: string;
-  commands: CommandDesc[];
-};
-
-type ActuatorCommand = Actuator & {
-  localId: number;
-  commandId: string;
-  commands: CommandDesc[];
-};
+type SensorCommand = Sensor & Command;
+type ActuatorCommand = Actuator & Command;
 
 type SelectedItem = {
   type: 'sensor' | 'actuator' | 'device'
@@ -45,9 +35,7 @@ type SelectedItem = {
   selectedCommand: CommandDesc | null
 }
 
-type DeviceCommandsPanelProps = {
-  device: Device,
-}
+type DeviceCommandsPanelProps = { device: Device }
 
 interface ActuatorCommandsSectionProps {
   actuatorCommands: ActuatorCommand[];
@@ -84,7 +72,7 @@ const ActuatorCommandsSection = ({ actuatorCommands, selectedItem, onSelect }: A
                 )} />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-xs font-mono">Local ID: {actuator.localId}</span>
+                <span className="text-muted-foreground text-xs font-mono">Local ID: {actuator.local_id}</span>
                 <Badge variant='outline' className="text-xs font-mono font-semibold text-muted-foreground"
                 >
                   {actuator.commands.length} {actuator.commands.length <= 1 ? "cmd" : "cmds"}
@@ -135,7 +123,7 @@ const DeviceCommandsSection = ({ deviceCommands, commands, selectedItem, onSelec
                     }`} />
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground text-xs font-mono">Local ID: {command.localId}</span>
+                  <span className="text-muted-foreground text-xs font-mono">Local ID: {command.local_id}</span>
                   <Badge variant='outline' className="text-xs font-mono font-semibold text-muted-foreground"
                   >
                     {command.commands.length} {command.commands.length <= 1 ? "cmd" : "cmds"}
@@ -156,7 +144,7 @@ interface CommandViewProps {
   onSelectCommandAction: (value: string) => void;
   paramValues: Record<string, number | string | boolean>;
   handleParamChange: (name: string, value: any) => void;
-  executeCommand: (localId: number, action: string) => void;
+  executeCommand: (local_id: number, action: string) => void;
 }
 
 const CommandView = ({
@@ -193,8 +181,8 @@ const CommandView = ({
                     {selectedItem.type}
                   </Badge>
                 </div>
-                {selectedItem.data && 'localId' in selectedItem.data && (
-                  <p className="text-muted-foreground text-sm font-mono">Local ID: {selectedItem.data.localId}</p>
+                {selectedItem.data && 'local_id' in selectedItem.data && (
+                  <p className="text-muted-foreground text-sm font-mono">Local ID: {selectedItem.data.local_id}</p>
                 )}
               </div>
             </div>
@@ -310,7 +298,7 @@ const CommandView = ({
               <Button
                 variant={"ghost"}
                 className="w-full py-2 hover:rounded-none hover:cursor-pointer"
-                onClick={() => executeCommand(selectedItem.data.localId, selectedItem.selectedCommand!.action)}
+                onClick={() => executeCommand(selectedItem.data.local_id, selectedItem.selectedCommand!.action)}
                 disabled={device.status === 'offline'}
               >
                 <Play className="w-4 h-4 mr-2" />
@@ -362,7 +350,7 @@ const CommandList = ({
         </div>
         <p className="text-muted-foreground text-sm">Select a command to configure</p>
       </div>
-      <ScrollArea className="bg-card h-[calc(600px-88px)]">
+      <ScrollArea className="bg-background h-[calc(600px-88px)]">
         <div className="p-4 space-y-4">
           {/* Actuators Section */}
           <ActuatorCommandsSection
@@ -406,22 +394,22 @@ export function DeviceCommandsPanel({ device }: DeviceCommandsPanelProps) {
       params: paramValues
     }
 
-    alert(JSON.stringify(payload))
-
     toast.promise(
       commandSender.mutateAsync({
-        deviceId: device.id,
+        device_id: device.id,
         payload
       }),
       {
         loading: "Sending command...",
         success: (data) => {
-          if (data.success) {
-            return `${data.message}`
-          }
+          console.log(data)
+          return data.message
         },
         error: (err: AxiosError) => {
-          return err?.message || "Send command failed. Please try again."
+          if (err && err.status === 422) {
+            return "Invalid command payload"
+          }
+          return "Send command failed. Please try again."
         }
       }
     )
@@ -449,32 +437,30 @@ export function DeviceCommandsPanel({ device }: DeviceCommandsPanelProps) {
     if (isLoading) return { actuatorCommands: [], deviceCommands: [] };
 
     sensors.forEach((s) => {
-      const cmd = commands.find((c) => c.localId === s.localId);
+      const cmd = commands.find((c) => c.local_id === s.local_id);
       if (cmd && cmd.commands.length > 0) {
         sc.push({
           ...s,
-          localId: cmd.localId,
-          commandId: cmd.id,
+          local_id: cmd.local_id,
           commands: cmd.commands,
         });
       }
     });
 
     actuators.forEach((a) => {
-      const cmd = commands.find((c) => c.localId === a.localId);
+      const cmd = commands.find((c) => c.local_id === a.local_id);
       if (cmd && cmd.commands.length > 0) {
         ac.push({
           ...a,
-          localId: cmd.localId,
-          commandId: cmd.id,
+          local_id: cmd.local_id,
           commands: cmd.commands,
         });
       }
     });
 
     const dc = commands.filter(
-      (cmd) => (!sensors.some((s) => s.localId === cmd.localId) &&
-        !actuators.some((a) => a.localId === cmd.localId))
+      (cmd) => (!sensors.some((s) => s.local_id === cmd.local_id) &&
+        !actuators.some((a) => a.local_id === cmd.local_id))
     );
 
     return { actuatorCommands: ac, deviceCommands: dc };
@@ -491,26 +477,28 @@ export function DeviceCommandsPanel({ device }: DeviceCommandsPanelProps) {
   };
 
   return (
-    <Card className="overflow-hidden bg-background p-0 divide-y divide-border">
-      <div className="grid grid-cols-12 divide-x divide-border h-[600px]">
-        <CommandList
-          actuatorCommands={actuatorCommands}
-          deviceCommands={deviceCommands}
-          commands={commands}
-          selectedItem={selectedItem}
-          onSelectActuator={handleSelectActuator}
-          onSelectDevice={handleSelectDevice}
-        />
-        <CommandView
-          selectedItem={selectedItem}
-          device={device}
-          onSelectCommandAction={onSelectCommandAction}
-          paramValues={paramValues}
-          handleParamChange={handleParamChange}
-          executeCommand={executeCommand}
-        />
-      </div>
-    </Card>
+    <>
+      <Card className="overflow-hidden p-0 divide-y divide-border">
+        <div className="grid grid-cols-12 divide-x divide-border h-[600px]">
+          <CommandList
+            actuatorCommands={actuatorCommands}
+            deviceCommands={deviceCommands}
+            commands={commands}
+            selectedItem={selectedItem}
+            onSelectActuator={handleSelectActuator}
+            onSelectDevice={handleSelectDevice}
+          />
+          <CommandView
+            selectedItem={selectedItem}
+            device={device}
+            onSelectCommandAction={onSelectCommandAction}
+            paramValues={paramValues}
+            handleParamChange={handleParamChange}
+            executeCommand={executeCommand}
+          />
+        </div>
+      </Card>
+    </>
   );
 }
 

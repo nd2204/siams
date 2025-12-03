@@ -1,7 +1,7 @@
 import React, { memo, useCallback } from 'react'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import type { ParamDesc } from '@/types/device'
+import type { ParamDesc } from '@/types/device/device-command'
 
 type SupportedType = 'string' | 'number' | 'int' | 'boolean'
 

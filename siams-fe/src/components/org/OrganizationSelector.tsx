@@ -3,7 +3,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { roleSanitized } from "@/services/api/dtos/auth/user-data";
-import { Kbd } from "../ui/kbd";
 import { Badge } from "../ui/badge";
 
 export default function OrganizationSelector() {

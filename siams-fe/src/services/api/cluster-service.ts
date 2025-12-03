@@ -1,6 +1,7 @@
 import { apiClient } from "@/services/api/client";
 import { ENDPOINTS } from "@/services/api/endpoints";
-import type { Cluster, Device } from "@/types/device";
+import type { Device } from "@/types/device/index";
+import type { Cluster } from "@/types/cluster";
 import type { IPaginated } from "@/types/paginated";
 import type { CreateClusterRequest } from "./dtos/cluster/create-cluster-request";
 import type { CreateClusterResponse } from "./dtos/cluster/create-cluster-response";

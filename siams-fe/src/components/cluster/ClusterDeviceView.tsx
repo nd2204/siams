@@ -1,4 +1,4 @@
-import type { Cluster } from "@/types/device";
+import type { Cluster } from "@/types/cluster";
 import { Card } from "../ui/card";
 import ClusterDeviceEmpty from "./ClusterDeviceEmpty";
 import { useAuth } from "@/hooks/use-auth"

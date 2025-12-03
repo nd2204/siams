@@ -1,4 +1,4 @@
-import type { Sensor } from "@/types/device";
+import type { Sensor } from "@/types/device/index";
 import { Card } from "../ui/card";
 import {
   Activity,
@@ -52,7 +52,7 @@ const SensorCard = memo(function SensorCard({ sensor }: { sensor: Sensor }) {
     <Card
       key={sensor.id}
       className={cn(
-        "p-4 bg-background overflow-hidden relative hover:shadow-lg transition-all cursor-pointer"
+        "p-4 bg-card overflow-hidden relative hover:shadow-lg transition-all cursor-pointer"
       )}
     >
       {/* Header */}
@@ -66,7 +66,7 @@ const SensorCard = memo(function SensorCard({ sensor }: { sensor: Sensor }) {
               {sensor.name}
             </div>
             <div className="text-muted-foreground text-xs font-mono">
-              Local Id: {sensor.localId}
+              Local Id: {sensor.local_id}
             </div>
           </div>
         </div>

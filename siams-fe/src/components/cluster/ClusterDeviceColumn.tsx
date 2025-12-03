@@ -1,4 +1,4 @@
-import type { Device } from "@/types/device";
+import type { Device } from "@/types/device/index";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "../ui/badge";
 import { IconLink } from "@tabler/icons-react";
@@ -6,31 +6,7 @@ import { IconLink } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils";
 import { Link } from "react-router";
-
-function formatLastSeenTime(pastDate: Date) {
-  const now = new Date();
-  const secondsElapsed = Math.floor((now.getTime() - pastDate.getTime()) / 1000); // Difference in seconds
-
-  const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-
-  // Define time intervals in seconds
-  const minute = 60;
-  const hour = 3600;
-  const day = 86400;
-
-  if (secondsElapsed < minute) {
-    return formatter.format(-secondsElapsed, 'second');
-  } else if (secondsElapsed < hour) {
-    const minutes = Math.floor(secondsElapsed / minute);
-    return formatter.format(-minutes, 'minute');
-  } else if (secondsElapsed < day) {
-    const hours = Math.floor(secondsElapsed / hour);
-    return formatter.format(-hours, 'hour');
-  } else {
-    // For longer periods, you might want a specific date format
-    return pastDate.toLocaleDateString();
-  }
-}
+import { formatLastSeenTime } from "@/utils/time-utils";
 
 export const clusterDeviceColumns: ColumnDef<Device>[] = [
   {
@@ -68,7 +44,7 @@ export const clusterDeviceColumns: ColumnDef<Device>[] = [
     cell: ({ row }) => (
       <Badge variant="outline" className="rounded-full">
         <span className="font-mono text-muted-foreground">
-          {row.original.firmwareVersion}
+          {row.original.fw_ver}
         </span>
       </Badge>
     )
@@ -78,7 +54,7 @@ export const clusterDeviceColumns: ColumnDef<Device>[] = [
     header: "Last Seen",
     cell: ({ row }) => (
       <div>
-        {formatLastSeenTime(new Date(row.original.lastSeen))}
+        {formatLastSeenTime(new Date(row.original.last_seen_at))}
       </div>
     )
   },

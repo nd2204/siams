@@ -5,10 +5,11 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
+import { Toaster } from "@/components/ui/sonner"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/hooks/use-auth"
 import { cn } from "@/lib/utils"
-import { Suspense, useState } from "react"
+import { Suspense } from "react"
 import { Outlet } from "react-router"
 
 export default function MainLayout() {
@@ -29,7 +30,7 @@ export default function MainLayout() {
       }
       defaultOpen={true}
     >
-      <MainSidebar variant="floating" />
+      <MainSidebar variant="sidebar" />
       <SidebarInset className={cn(
         "overflow-hidden",
         !activeOrg && "border-dashed"
@@ -46,6 +47,13 @@ export default function MainLayout() {
             <OrganizationEmpty />
           </>
         }
+        <Toaster
+          position="bottom-center"
+          richColors={true}
+          closeButton={true}
+          duration={5000}
+          expand={true}
+        />
       </SidebarInset>
     </SidebarProvider>
   )

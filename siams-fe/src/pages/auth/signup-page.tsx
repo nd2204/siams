@@ -6,47 +6,69 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
+import { formReducer, ValidationInput } from "@/components/ui/validation-input"
 import { useAuth } from "@/hooks/use-auth"
-import { useRef, useState } from "react"
+import type { ValidationError } from "@/types/validation-error"
+import { useReducer, useState } from "react"
 import { Link, useNavigate } from "react-router"
+import { toast } from "sonner"
+
+type FormField = "name" | "email" | "password" | "confirmPassword"
 
 export default function SignupPage() {
-  const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+  const [form, dispatch] = useReducer(formReducer<FormField>, {
+    name: { value: "", error: false, error_msg: null },
+    email: { value: "", error: false, error_msg: null },
+    password: { value: "", error: false, error_msg: null },
+    confirmPassword: { value: "", error: false, error_msg: null }
+  });
   const [loading, setLoading] = useState(false)
   const { signup } = useAuth()
-  const formValidRef = useRef(false)
   const navigate = useNavigate()
 
-  const validateForm = () => {
-    if (form.confirmPassword !== form.password) {
-      alert("password does not match")
-      formValidRef.current = false
-      return;
+  const formValid = () => {
+    if (form.confirmPassword.value !== form.password.value) {
+      dispatch({
+        type: 'SET_ERROR',
+        field: "confirmPassword",
+        error_msg: "password does not match"
+      })
+      return false;
     }
-    formValidRef.current = true
+    return true;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!formValid()) return;
     setLoading(true)
     const result = await signup(
-      form.name ?? form.email.split("@")[0],
-      form.email,
-      form.password
+      form.name.value ?? form.email.value.split("@")[0],
+      form.email.value,
+      form.password.value
     )
-    if (result.error) {
-      if (typeof result.error === 'string') {
-        alert(result.error)
-      } else {
-        // TODO: handle validation error from backend
-        alert(JSON.stringify(result.error))
-      }
-    } else {
-      navigate("/")
-    }
     setLoading(false)
+    const error = result.error;
+    if (!error) {
+      navigate("/");
+      return;
+    }
+
+    if (typeof error === 'string') {
+      toast.error(result.error)
+    } else {
+      if (error.status == 422) {
+        const validation_error: ValidationError = error as ValidationError;
+        validation_error.details.forEach((d) => {
+          // I'm assuming the validation field match the formField
+          dispatch({ type: 'SET_ERROR', field: d.field as FormField, error_msg: d.message })
+        })
+      } else {
+        error.message && toast.error(error.message);
+        toast.error(JSON.stringify(error))
+      }
+    }
   }
 
   return (
@@ -60,66 +82,73 @@ export default function SignupPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                <Input
-                  id="name"
-                  type="text"
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="John Doe" />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  placeholder="m@example.com"
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  required
-                />
-              </Field>
-              <Field>
-                <Field className="grid grid-cols-2 gap-4">
-                  <Field>
-                    <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input
-                      id="password"
-                      onChange={(e) => setForm({ ...form, password: e.target.value })}
-                      placeholder="Password"
-                      type="password"
-                      required />
-                  </Field>
-                  <Field>
-                    <FieldLabel htmlFor="confirm-password">
-                      Confirm Password
-                    </FieldLabel>
-                    <Input
-                      id="confirm-password"
-                      placeholder="Confirm"
-                      type="password"
-                      onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
-                      required />
-                  </Field>
+            <fieldset disabled={loading}>
+              <FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="name">Full Name</FieldLabel>
+                  <ValidationInput
+                    fieldName="name"
+                    fieldData={form.name}
+                    dispatch={dispatch}
+                    id="name"
+                    type="text"
+                    placeholder="John Doe" />
                 </Field>
-                <FieldDescription>
-                  Must be at least 8 characters long.
-                </FieldDescription>
-              </Field>
-              <Field>
-                <Button
-                  onClick={validateForm}
-                  variant="outline"
-                  type="submit"
-                  disabled={loading}>
-                  {loading ? <Spinner /> : " Create Account "}
-                </Button>
-                <FieldDescription className="text-center">
-                  Already have an account? <Link to="/auth">Sign in</Link>
-                </FieldDescription>
-              </Field>
-            </FieldGroup>
+                <Field>
+                  <ValidationInput
+                    fieldLabel="Email"
+                    fieldName="email"
+                    fieldData={form.email}
+                    dispatch={dispatch}
+                    placeholder="m@example.com"
+                    value={form.email.value}
+                    id="email"
+                    type="email"
+                  />
+                </Field>
+                <Field>
+                  <Field className="grid grid-cols-2 gap-4">
+                    <Field>
+                      <ValidationInput
+                        fieldLabel="Password"
+                        id="password"
+                        placeholder="Password"
+                        type="password"
+                        fieldName={"password"}
+                        fieldData={form.password}
+                        dispatch={dispatch}
+                        required />
+                    </Field>
+                    <Field>
+                      <ValidationInput
+                        fieldLabel="Confirm Password"
+                        id="confirm-password"
+                        placeholder="Confirm"
+                        type="password"
+                        fieldName={"confirmPassword"}
+                        fieldData={form.confirmPassword}
+                        dispatch={dispatch}
+                        required
+                      />
+                    </Field>
+                  </Field>
+                  <FieldDescription>
+                    Must be at least 8 characters long.
+                  </FieldDescription>
+                </Field>
+                <Field>
+                  <Button
+                    variant="outline"
+                    type="submit"
+                  >
+                    {loading ? <>Creating <Spinner /></> : " Create Account "}
+                  </Button>
+                  <FieldDescription className="text-center">
+                    Already have an account? <Link to="/auth">Sign in</Link>
+                  </FieldDescription>
+                </Field>
+              </FieldGroup>
+            </fieldset>
           </form>
         </CardContent>
       </Card>

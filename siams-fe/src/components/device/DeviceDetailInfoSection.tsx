@@ -1,23 +1,15 @@
 import {
   IconCode,
-  IconCpu,
-  IconDeviceHeartMonitorFilled,
-  IconRadio,
-  IconShredder,
-  IconTrendingDown,
-  IconTrendingUp
 } from "@tabler/icons-react"
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import { cn } from '@/lib/utils';
 import { Separator } from "../ui/separator";
-import { useDeviceByCluster } from "@/hooks/queries/use-device-by-cluster";
-import type { Device } from "@/types/device";
+import type { Device } from "@/types/device/index";
 import { useDeviceSensors } from "@/hooks/queries/use-device-sensor";
 import { useDeviceActuators } from "@/hooks/queries/use-device-actuator";
 import { useDeviceCommand } from "@/hooks/queries/use-device-command";

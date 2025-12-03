@@ -5,6 +5,7 @@ export const QUERIES = {
     SENSORS: (id?: string) => ['devices', id, 'sensors'],
     ACTUATORS: (id?: string) => ['devices', id, 'actuators'],
     COMMANDS: (id?: string) => ['devices', id, 'commands'],
+    STATUS: (id: string) => ['devices', id, 'status'],
     TELEMETRY: (id?: string, sensorId?: string) => ['devices', id, 'sensors', sensorId, 'telemetry'],
   },
   CLUSTER: {

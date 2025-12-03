@@ -7,7 +7,6 @@ import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle }
 import { useClusterDetail } from "@/hooks/queries/use-cluster-detail"
 import { cn } from "@/lib/utils"
 import { IconKey, IconMapPin, IconStack2 } from "@tabler/icons-react"
-import { ShieldAlertIcon } from "lucide-react"
 import { useParams } from "react-router"
 
 export default function ClusterDetailPage() {

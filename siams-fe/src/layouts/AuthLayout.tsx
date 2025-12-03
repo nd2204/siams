@@ -2,6 +2,7 @@ import { GalleryVerticalEnd } from "lucide-react"
 import { Outlet } from "react-router"
 import { GradFlow } from 'gradflow'
 import { FieldDescription } from "@/components/ui/field"
+import { Toaster } from "@/components/ui/sonner"
 import { useTheme } from "@/hooks/use-theme"
 
 export default function AuthLayout() {
@@ -45,6 +46,13 @@ export default function AuthLayout() {
           </div>
         </div>
       </main>
+      <Toaster
+        position="bottom-center"
+        richColors={true}
+        closeButton={true}
+        duration={5000}
+        expand={true}
+      />
     </div>
   )
 }

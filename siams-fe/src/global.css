@@ -100,9 +100,9 @@
   --accent-aqua: oklch(0.7555 0.1078 137.68);
   --accent-purple: oklch(0.7054 0.0976 2.19);
   --accent-orange: oklch(0.7311 0.182 51.69);
-  --background: oklch(0.18 0 164.58);
+  --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.18 0 164.58);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);

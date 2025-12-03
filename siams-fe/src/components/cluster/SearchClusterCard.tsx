@@ -1,4 +1,3 @@
-import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { useMap } from 'react-leaflet';
 import { Card } from '../ui/card';
@@ -7,9 +6,8 @@ import { Search } from 'lucide-react';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemSeparator, ItemTitle } from '../ui/item';
 import React from 'react';
 import { useClusterByOrg } from '@/hooks/queries/use-cluster-by-org';
-import type { Cluster } from '@/types/device';
+import type { Cluster } from '@/types/cluster';
 import { Spinner } from '../ui/spinner';
-import { useAuth } from '@/hooks/use-auth';
 import { Button } from '../ui/button';
 import { IconExternalLink, IconMapPin, IconMapPinFilled, IconMapPinOff, IconScanPosition } from '@tabler/icons-react';
 import { ButtonGroup } from '../ui/button-group';

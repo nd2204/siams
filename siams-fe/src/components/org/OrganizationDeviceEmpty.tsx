@@ -6,12 +6,10 @@ import { Badge } from "../ui/badge";
 import { useState } from "react";
 import { Spinner } from "../ui/spinner";
 
-export default function ClusterDeviceEmpty({
-  clusterId,
+export default function OrganizationDeviceEmpty({
   orgId,
   onRefresh
 }: {
-  clusterId: string,
   orgId: string,
   onRefresh?: () => void
 }) {
@@ -25,17 +23,13 @@ export default function ClusterDeviceEmpty({
         </EmptyMedia>
         <EmptyTitle>No Device Connected</EmptyTitle>
         <EmptyDescription>
-          Connect your device to the cluster using the following identifiers.
+          Connect your device to the organization using the following identifiers.
         </EmptyDescription>
       </EmptyHeader>
 
       <EmptyContent>
         <div className="">
           <div className="flex flex-col gap-2">
-            <span className="text-muted-foreground text-xs font-semibold font-mono">Cluster ID</span>
-            <Badge variant="outline" className="text-muted-foreground font-mono font-semibold p-1.5">
-              {clusterId}
-            </Badge>
             <span className="text-muted-foreground text-xs font-semibold font-mono pt-2">Organization ID</span>
             <Badge variant="outline" className="text-muted-foreground font-mono font-semibold p-1.5">
               {orgId}

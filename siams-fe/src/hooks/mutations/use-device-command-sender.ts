@@ -1,5 +1,5 @@
 import { deviceService } from "@/services/api/device-service"
-import type { DeviceSendCommandRequest } from "@/services/api/dtos/device/device-send-command-request"
+import type { DeviceSendCommandRequest } from "@/types/device/index";
 import { useMutation } from "@tanstack/react-query"
 
 export const useDeviceCommandSender = () => {
