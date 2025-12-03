@@ -1,6 +1,6 @@
 "use client"
 
-import { IconBook2, IconCirclePlusFilled, IconMail } from "@tabler/icons-react"
+import { IconBook2, IconMail } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,10 +13,8 @@ import {
 } from "@/components/ui/sidebar"
 import type { NavItem } from "@/types/navigations"
 import { useLocation, useNavigate } from "react-router"
-import { Kbd, KbdGroup } from "../ui/kbd"
+import { Kbd } from "../ui/kbd"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group"
-import { Input } from "../ui/input"
-
 
 export function NavMain({ items }: { items: NavItem[] }) {
   const location = useLocation()

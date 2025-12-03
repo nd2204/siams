@@ -1,6 +1,5 @@
 import { Navigate, Outlet } from "react-router";
 import { useAuth } from "@/hooks/use-auth";
-import { Spinner } from "./ui/spinner";
 
 interface Props {
   roles?: string[];

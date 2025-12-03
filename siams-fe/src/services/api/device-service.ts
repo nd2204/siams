@@ -1,11 +1,16 @@
 import { apiClient } from "@/services/api/client";
 import { ENDPOINTS } from "@/services/api/endpoints";
-import type { IPaginated } from "@/types/paginated";
-import type { Actuator, Command, Device, DeviceStatus, DeviceTelemetry, Sensor } from "@/types/device";
-import type { DeviceSendCommandRequest } from "./dtos/device/device-send-command-request";
-import type { DeviceSendCommandResponse } from "./dtos/device/device-send-command-response";
-import type { ListTelemtryRequest } from "./dtos/device/list-telemetry-request";
-import type { ListTelemtryResponse } from "./dtos/device/list-telemetry-response";
+import type {
+  Actuator,
+  Command,
+  Device,
+  DeviceStatus,
+  Sensor,
+  DeviceSendCommandRequest,
+  DeviceSendCommandResponse,
+  ListTelemtryRequest,
+  ListTelemtryResponse
+} from "@/types/device/index";
 
 export const deviceService = {
   async getAll(): Promise<Device[]> {
@@ -17,7 +22,7 @@ export const deviceService = {
   },
 
   async sendCommand(req: DeviceSendCommandRequest): Promise<DeviceSendCommandResponse> {
-    return apiClient.post<DeviceSendCommandResponse>(ENDPOINTS.DEVICE.COMMANDS(req.deviceId), req)
+    return apiClient.post<DeviceSendCommandResponse>(ENDPOINTS.DEVICE.COMMANDS(req.device_id), req)
   },
 
   async listCommands(id: string): Promise<Command[]> {
@@ -32,11 +37,11 @@ export const deviceService = {
     return apiClient.get<Actuator[]>(ENDPOINTS.DEVICE.ACTUATORS(id))
   },
 
-  async getTelemetry(req: ListTelemtryRequest): Promise<ListTelemtryResponse> {
+  async listTelemetry(req: ListTelemtryRequest): Promise<ListTelemtryResponse> {
     return apiClient.post<ListTelemtryResponse>(ENDPOINTS.DEVICE.TELEMETRY(req.deviceId, req.sensorId), req.payload)
   },
 
-  async getStatus(id: string): Promise<IPaginated<DeviceStatus>> {
-    return apiClient.get<IPaginated<DeviceStatus>>(ENDPOINTS.DEVICE.STATUS(id))
+  async getLatestStatus(id: string): Promise<DeviceStatus> {
+    return apiClient.get<DeviceStatus>(ENDPOINTS.DEVICE.STATUS(id))
   }
 };

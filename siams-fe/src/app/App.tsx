@@ -5,9 +5,9 @@ import { ThemeProvider } from "@/components/ThemeProvider"
 import { routes } from './routes';
 import { AuthProvider } from '@/contexts/auth-ctx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from "@/components/ui/sonner"
 import { useEffect } from 'react'
 import { apiClient } from '@/services/api/client'
+import { SocketProvider } from '@/contexts/socket-ctx';
 
 const router = createBrowserRouter(routes)
 const queryClient = new QueryClient();
@@ -29,12 +29,13 @@ export default function App() {
   }, []);
   return (
     <StrictMode>
-      <Toaster />
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-          </QueryClientProvider>
+          <SocketProvider>
+            <QueryClientProvider client={queryClient}>
+              <RouterProvider router={router} />
+            </QueryClientProvider>
+          </SocketProvider>
         </AuthProvider>
       </ThemeProvider>
     </StrictMode>

@@ -4,7 +4,7 @@ import DeviceDetailPage from '@/pages/dashboard/DeviceDetailPage';
 import UserProfilePage from '@/pages/dashboard/UserProfilePage';
 import type { AppRouteObject } from '@/types/navigations';
 import { lazy } from 'react';
-import { IconChartBar, IconContainer, IconCpu2, IconHelp, IconLayoutDashboard, IconSearch, IconSettings, IconStack2, IconUsers } from '@tabler/icons-react';
+import { IconChartBar, IconCpu2, IconHelp, IconLayoutDashboard, IconSearch, IconSettings, IconStack2, IconUsers } from '@tabler/icons-react';
 
 // Layouts
 const AuthLayout = lazy(() => import('@/layouts/AuthLayout'));

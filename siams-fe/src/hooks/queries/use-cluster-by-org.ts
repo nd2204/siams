@@ -1,4 +1,4 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { orgServices } from "@/services/api/org-service";
 import { QUERIES } from './query-keys';
 

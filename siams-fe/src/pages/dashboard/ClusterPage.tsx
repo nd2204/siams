@@ -1,16 +1,14 @@
 import { Card, CardContent } from '@/components/ui/card';
 import ClusterMapView from '@/components/cluster/ClusterMapView';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
 import { Field, FieldSet } from '@/components/ui/field';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { IconList, IconMap } from '@tabler/icons-react';
 import ClusterCreateButton from '@/components/cluster/ClusterCreateButton';
-import ClusterAggregateInfoSection from '@/components/cluster/ClusterAggregateInfoSection';
 
 export default function ClusterPage() {
-  const [query, setQuery] = useState('');
-  const [currentView, setCurrentView] = useState('list-view');
+  // const [query, setQuery] = useState('');
+  // const [currentView, setCurrentView] = useState('list-view');
   // useEffect(() => {
   // }, [])
 

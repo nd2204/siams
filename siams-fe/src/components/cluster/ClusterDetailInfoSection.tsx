@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card"
 import { cn } from '@/lib/utils';
 import { Separator } from "../ui/separator";
-import type { Cluster } from "@/types/device";
+import type { Cluster } from "@/types/cluster";
 import { useDeviceByCluster } from "@/hooks/queries/use-device-by-cluster";
 
 export default function ClusterDetailInfoSection({ cluster }: { cluster: Cluster }) {

@@ -11,7 +11,7 @@ export const createSocket = (token: string) => {
       extraHeaders: {
         "ngrok-skip-browser-warning": "true"
       },
-      autoConnect: true,
+      autoConnect: false,
       auth: { token },
       reconnection: true,
       reconnectionDelay: 1000,
