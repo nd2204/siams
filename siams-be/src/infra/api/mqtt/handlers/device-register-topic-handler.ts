@@ -1,8 +1,10 @@
 import { topics } from "@config/mqtt-topics";
+import { OutboxTypeConstants } from "@domain/entities/outbox";
 import { DeviceRegisteredEvent } from "@domain/events/device-registered-event";
 import { IMqttHandler, IMqttClient } from "@domain/interfaces";
-import { IEventBus } from "@domain/interfaces/events";
-import { RegisterDevicePayload } from "@feature/device/dtos/register-device-request";
+import { IOutboxRepository } from "@domain/repositories/outbox-repo";
+import { IDeviceEventPublisher } from "@domain/services/device-event-publisher";
+import { SignedDevicePayload } from "@feature/device/dtos";
 import { RegisterDeviceUC } from "@feature/device/register-device";
 import { IError, ILogger } from "@shared/interfaces";
 
@@ -12,36 +14,40 @@ type RegisterParams = {
   clusterId: string;
 };
 
-export class DeviceRegisterHandler implements IMqttHandler<RegisterDevicePayload, RegisterParams> {
+/**
+ * MQTT handler for device registration with signed payload validation.
+ * 
+ * Integration pattern for other handlers:
+ * 1. Inject signedPayloadValidator and handler-specific validator
+ * 2. Call signedPayloadValidator.validate(payload) to extract and parse payload
+ * 3. Handle validation errors
+ * 4. Call use-case with validated and parsed payload
+ */
+export class DeviceRegisterHandler implements IMqttHandler<SignedDevicePayload, RegisterParams> {
   pattern = topics.deviceRegister.pattern
   topic = topics.deviceRegister.topic;
 
   constructor(
     private readonly useCase: RegisterDeviceUC,
-    private readonly eventBus: IEventBus,
     private readonly logger: ILogger
   ) { }
 
-  async handle(client: IMqttClient, params: RegisterParams, payload: RegisterDevicePayload): Promise<void> {
+  async handle(client: IMqttClient, params: RegisterParams, payload: SignedDevicePayload): Promise<void> {
     const orgId = params.orgId;
-    const clusterId = params.clusterId;
     const tempId = params.tempId;
 
     const ackTopic = topics.deviceRegisterAck.create({
       orgId: params.orgId,
-      clusterId: params.clusterId,
       tempId: tempId
     });
 
     try {
-      // xử lý usecase
-      const res = await this.useCase.call({ orgId, clusterId, payload });
-      // publish ACK
+      // Call use-case with parsed payload from wrapper
+      const res = await this.useCase.call({ orgId, payload });
+
+      // Publish ACK
       await client.publish(ackTopic, res);
-      // Broadcast event
-      await this.eventBus.publish(new DeviceRegisteredEvent(
-        orgId, clusterId, { deviceId: res.deviceId }
-      ));
+
       this.logger.info({ msg: `Acked: ${tempId}` });
     } catch (error: unknown) {
       const err = error as IError

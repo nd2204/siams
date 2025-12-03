@@ -63,4 +63,9 @@ export class SMLogger implements ILogger {
   }
 }
 
+export const http_logger = pino({
+  level: process.env.LOG_LEVEL ?? "warn",
+  timestamp: pino.stdTimeFunctions.epochTime,
+}, stream());
+
 export const sm_logger_internal = logger;

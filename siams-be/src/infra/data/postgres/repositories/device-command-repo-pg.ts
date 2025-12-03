@@ -12,20 +12,21 @@ export class DeviceCommandRepositoryPg
       id: "id",
       name: "name",
       type: "type",
-      deviceId: "device_id",
-      localId: "local_id",
-      commands: "commands_desc",
+      device_id: "device_id",
+      local_id: "local_id",
+      commands: "commands",
     }
 
     super(pool, "commands", mapping,
-      (row) => new DeviceCommand({
-        id: row[mapping.id],
-        name: row[mapping.name],
-        type: row[mapping.type],
-        deviceId: row[mapping.deviceId],
-        localId: row[mapping.localId],
-        commands: row[mapping.commands],
-      }),
+      PostgresRepositoryBase.createRowMapper(mapping),
+      // (row) => new DeviceCommand({
+      //   id: row[mapping.id],
+      //   name: row[mapping.name],
+      //   type: row[mapping.type],
+      //   device_id: row[mapping.device_id],
+      //   local_id: row[mapping.local_id],
+      //   commands: row[mapping.commands],
+      // }),
       ["commands"]
     )
   }

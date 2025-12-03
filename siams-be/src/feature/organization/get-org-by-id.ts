@@ -1,7 +1,8 @@
 import { IOrganizationRepository } from "@domain/repositories";
 import { Organization } from "@domain/entities";
 import { IUseCase } from "@shared/interfaces";
-import { NotFoundError, ValidationError } from "@shared/errors";
+import { ValidationError } from "@shared/errors";
+import { OrganizationNotFoundError } from "@domain/errors";
 
 export class GetOrganizationByIdUC implements IUseCase<Organization> {
 
@@ -13,7 +14,7 @@ export class GetOrganizationByIdUC implements IUseCase<Organization> {
     if (!id) throw new ValidationError("Organization's id is required");
     const result = await this.repo.findOneBy({ id });
     if (!result) {
-      throw new NotFoundError(`Cannot find Organization with id=${id}`)
+      throw new OrganizationNotFoundError(id)
     }
     return result;
   }

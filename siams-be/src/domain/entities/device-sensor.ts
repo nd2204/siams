@@ -15,13 +15,13 @@ export type SensorType =
 export type SensorStatus = 'online' | 'offline' | 'removed'
 
 export class DeviceSensor extends Entity<DeviceSensor, string> {
-  declare deviceId: string;
-  declare localId: number;
+  declare device_id: string;
+  declare local_id: number;
   declare name: string;
   declare type: SensorType;
   declare unit: string;
   declare status: SensorStatus;
-  declare lastSeen: Date;
+  declare last_seen_at: Date;
 
   // calibration?: { offset?: number; scale?: number };
   //

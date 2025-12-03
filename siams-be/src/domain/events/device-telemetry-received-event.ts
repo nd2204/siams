@@ -1,17 +1,14 @@
-import { DeviceTelemetry } from "@domain/entities";
+import { DeviceEventTypeConstants } from "@domain/entities/device-event";
 import { IDomainEvent } from "@domain/interfaces/events";
-import { TelemetryGroupDto } from "@feature/device/dtos/telemtry-dto";
+import { TelemetryGroupDto } from "@feature/device/dtos";
 
 export class DeviceTelemetryReceivedEvent implements IDomainEvent<TelemetryGroupDto> {
-  static readonly eventName = "device.telemetry"
-
-  name = DeviceTelemetryReceivedEvent.eventName;
+  name = DeviceEventTypeConstants.DeviceTelemetryReceived;
   ts = Date.now();
 
   constructor(
+    public payload: TelemetryGroupDto,
     public orgId: string,
-    public clusterId: string,
     public deviceId: string,
-    public payload: TelemetryGroupDto
   ) { }
 }

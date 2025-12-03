@@ -1,10 +1,10 @@
 import { createClusterValidator } from "./cluster/create-cluster-validator";
 import { listClusterByOrgIdValidator } from "./cluster/list-cluster-by-org-id-validator";
-import { registerDeviceValidator } from "./device/register-device-validator";
+import { registerDevicePayloadValidator, registerDeviceValidator } from "./device/device-register-validator";
 import { createOrganizationValidator } from "./organization/create-org-validator";
-import { deviceStatusValidator } from "./telemetry/device-status-validator";
-import { deviceTelemetryValidator } from "./telemetry/device-telemetry-validator";
-import { deviceVerifyValidator } from "./device/device-verify-validator";
+import { pushStatusPayloadValidator, pushStatusValidator } from "./telemetry/device-status-validator";
+import { pushTelemetryPayloadValidator, pushTelemetryValidator } from "./telemetry/push-telemetry-validator";
+import { deviceVerifyPayloadValidator, deviceVerifyValidator } from "./device/device-verify-validator";
 import { registerUserValidator } from "./user/register-user-validator";
 import { loginValidator } from "./user/login-validator";
 import { listDevicesByClusterIdValidator } from "./cluster/list-device-by-cluster-id-validator";
@@ -16,18 +16,32 @@ import { getAllCommandsValidator } from "./device/get-all-commands-validator";
 import { getAllActuatorsValidator } from "./device/get-all-actuators-validator";
 import { listTelemetryValidator } from "./device/list-telemetry-validator";
 import { deviceSendCommandValidator } from "./device/send-command-validator";
+import { publishDeviceEventValidator } from "./device/publish-device-event-validator";
+import { signedPayloadValidator } from "./device/signed-payload-validator";
+import { getDeviceStatusValidator } from "./device/get-device-status-validator";
 
 export const device = {
+  telemetry: {
+    pushTelemetryValidator,
+    pushTelemetryPayloadValidator,
+    listTelemetryValidator,
+  },
+  status: {
+    pushStatusValidator,
+    pushStatusPayloadValidator,
+    getDeviceStatusValidator
+  },
+  signedPayloadValidator,
   registerDeviceValidator,
-  deviceStatusValidator,
-  deviceTelemetryValidator,
+  registerDevicePayloadValidator,
   deviceVerifyValidator,
+  deviceVerifyPayloadValidator,
   getDeviceByIdValidator,
   getAllSensorsValidator,
   getAllCommandsValidator,
   getAllActuatorsValidator,
-  listTelemetryValidator,
-  deviceSendCommandValidator
+  deviceSendCommandValidator,
+  publishDeviceEventValidator
 }
 
 export const cluster = {
@@ -40,10 +54,6 @@ export const cluster = {
 export const user = {
   registerUserValidator,
   loginValidator
-}
-
-export const telemetry = {
-  deviceStatusValidator,
 }
 
 export const organization = {

@@ -30,8 +30,8 @@ export class ListDeviceByOrgIdUC implements IUseCase<IPaginated<Device>> {
       throw new ValidationError("Invalid request", errors);
     }
 
-    return await this.deviceRepo.listByOrg(
-      value.orgId!,
+    return await this.deviceRepo.listBy(
+      { org_id: value.orgId },
       value.page ?? 1,
       value.perPage ?? 10
     )

@@ -1,8 +1,10 @@
+import { SignedDevicePayload } from "./signed-device-payload";
+
 export interface DeviceVerifyRequest {
   deviceId?: string,
-  payload?: DeviceVerifyPayload,
+  payload?: SignedDevicePayload,
 }
 
 export interface DeviceVerifyPayload {
-  firmwareVersion: string
+  fw_ver: string
 }

@@ -1,6 +1,6 @@
 // src/infra/workers/OutboxWorker.ts
 import { IMqttClient } from "@/domain/interfaces";
-import { topics } from "@config/mqtt-topics";
+import { OutboxEntry } from "@domain/entities";
 import { IOutboxRepository } from "@domain/repositories/outbox-repo";
 import { ILogger } from "@shared/interfaces";
 
@@ -35,20 +35,40 @@ export class OutboxWorker {
     console.log("Stopped");
   }
 
+  private async process_command_outbox(entry: OutboxEntry): Promise<void> {
+    const topic = entry.payload.topic;
+    const payload = entry.payload.data;
+    try {
+      await this.mqttClient.publish(topic, payload, { qos: 1 });
+      await this.outboxRepo.markAsPublished(entry.id);
+      this.logger.info({ msg: `Tx [${topic}]:`, obj: payload });
+    } catch (err: any) {
+      this.logger.error({ msg: `Failed to publish id=${entry.id}`, obj: err });
+      await this.outboxRepo.markAsFailed(entry.id);
+    }
+  }
+
+  private async process_anchor_event(entry: OutboxEntry): Promise<void> {
+    // this.logger.info({ obj: entry.payload });
+    // throw new UnimplementedError(this.process_anchor_event.name);
+  }
+
+  private async process_anchor_batch(entry: OutboxEntry): Promise<void> {
+    // this.logger.info({ obj: entry.payload });
+    // throw new UnimplementedError(this.process_anchor_batch.name);
+  }
+
   private async processBatch(): Promise<void> {
     const entries = await this.outboxRepo.listPending(100);
     if (entries.length === 0) return;
 
-    this.logger.info(`Processing ${entries.length} entries`);
+    // this.logger.info(`Processing ${entries.length} entries`);
 
     for (const entry of entries) {
-      try {
-        await this.mqttClient.publish(entry.topic, entry.payload, { qos: 1 });
-        await this.outboxRepo.markAsPublished(entry.id);
-        this.logger.info({ msg: `Tx [${entry.topic}]:`, obj: entry.payload });
-      } catch (err: any) {
-        this.logger.error({ msg: `Failed to publish id=${entry.id}`, obj: err });
-        await this.outboxRepo.markAsFailed(entry.id);
+      switch (entry.type) {
+        case 'device.command': await this.process_command_outbox(entry); break;
+        case 'anchor.batch': await this.process_anchor_batch(entry); break;
+        case 'anchor.event': await this.process_anchor_event(entry); break;
       }
     }
   }

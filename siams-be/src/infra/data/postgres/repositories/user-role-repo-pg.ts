@@ -2,7 +2,6 @@ import { Permission, Role } from "@domain/entities";
 import { type Pool } from "pg";
 import { PostgresRepositoryBase } from "@infra/data/postgres/postgres-repo-base";
 import { IRoleRepository } from "@domain/repositories";
-import { RoleName } from "@domain/entities/user-role";
 import { PermissionKey } from "@domain/entities/user-permission";
 
 export class RoleRepositoryPg

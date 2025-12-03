@@ -22,7 +22,9 @@ export class RegisterUserUC implements IUseCase<AuthResponse> {
 
     const user = await this.repo.findOneBy({ email: value.email })
     if (user) {
-      throw new ValidationError("User with this email already exists")
+      throw new ValidationError("User with this email already exists", [{
+        field: "email", message: "User with this email already exists"
+      }])
     }
 
     const { password: password_hashed, salt } = await this.encryptPassword(value.password!);

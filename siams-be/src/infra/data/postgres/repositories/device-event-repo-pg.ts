@@ -11,30 +11,18 @@ export class DeviceEventRepositoryPg
   constructor(pool: Pool) {
     const mapping: Record<keyof DeviceEvent, string> = {
       id: "id",
-      deviceId: "device_id",
-      clusterId: "cluster_id",
-      orgId: "org_id",
-      type: "event_type",
-      message: "message",
-      timestamp: "timestamp",
-      severity: "severity",
-      title: "title",
-      payload: "payload"
+      device_id: "device_id",
+      cluster_id: "cluster_id",
+      org_id: "org_id",
+      event_type: "event_type",
+      event_uuid: "event_uuid",
+      raw_payload: "raw_payload",
+      data_hash: "data_hash",
+      created_at: "created_at"
     }
 
-    super(pool, "alert", mapping, (row) => {
-      return new DeviceEvent({
-        id: row[mapping.id],
-        deviceId: row[mapping.deviceId],
-        clusterId: row[mapping.clusterId],
-        orgId: row[mapping.orgId],
-        type: row[mapping.type],
-        message: row[mapping.message],
-        timestamp: row[mapping.timestamp],
-        severity: row[mapping.severity],
-        title: row[mapping.title],
-        payload: row[mapping.payload]
-      })
+    super(pool, "device_events", mapping, (row) => {
+      return new DeviceEvent(row)
     })
   }
 

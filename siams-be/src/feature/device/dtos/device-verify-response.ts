@@ -1,4 +1,4 @@
 export interface DeviceVerifyResponse {
-  status: string,
-  reason?: string
+  ok: boolean,
+  error?: string
 }

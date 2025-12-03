@@ -10,39 +10,33 @@ export class DeviceSensorRepositoryPg
   constructor(pool: Pool) {
     const mapping: Record<keyof DeviceSensor, string> = {
       id: "id",
-      deviceId: "device_id",
-      localId: "local_id",
+      device_id: "device_id",
+      local_id: "local_id",
       type: "type",
       unit: "unit",
       status: "status",
-      lastSeen: "last_seen_at",
+      last_seen_at: "last_seen_at",
       name: "name"
     }
 
-    super(pool, "sensors", mapping, (row: any) => {
-      return new DeviceSensor({
-        id: row[mapping.id],
-        deviceId: row[mapping.deviceId],
-        localId: row[mapping.localId],
-        type: row[mapping.type],
-        unit: row[mapping.unit],
-        name: row[mapping.name],
-        status: row[mapping.status],
-        lastSeen: row[mapping.lastSeen],
+    super(
+      pool,
+      "sensors",
+      mapping,
+      (row: any) => new DeviceSensor({
+        id: row["id"],
+        device_id: row["device_id"],
+        local_id: row[mapping.local_id],
+        type: row["type"],
+        unit: row["unit"],
+        status: row["status"],
+        last_seen_at: row["last_seen_at"],
+        name: row["name"]
       })
-    })
+    )
   }
 
   async upsert(payload: Partial<DeviceSensor>): Promise<DeviceSensor> {
-    const existing = await this.findOneBy({
-      localId: payload.localId!,
-      deviceId: payload.deviceId!
-    })
-    if (!existing) {
-      return await this.create(payload);
-    } else {
-      const omittedPayload = payload as Omit<DeviceSensor, "id">
-      return await this.update(existing.id, omittedPayload);
-    }
+    return super.upsert(payload, ["device_id", "local_id"])
   }
 }

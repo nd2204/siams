@@ -10,8 +10,8 @@ export class DeviceActuatorRepositoryPg
   constructor(pool: Pool) {
     const mapping: Record<keyof DeviceActuator, string> = {
       id: "id",
-      deviceId: "device_id",
-      localId: "local_id",
+      device_id: "device_id",
+      local_id: "local_id",
       type: "type",
       name: "name",
       status: "status",
@@ -21,26 +21,20 @@ export class DeviceActuatorRepositoryPg
       pool,
       "actuators",
       mapping,
-      (row) => new DeviceActuator({
-        id: row[mapping.id],
-        deviceId: row[mapping.deviceId],
-        localId: row[mapping.localId],
-        type: row[mapping.type],
-        name: row[mapping.name],
-        status: row[mapping.status],
-      })
+      PostgresRepositoryBase.createRowMapper(mapping)
     )
   }
   async upsert(payload: Partial<DeviceActuator>): Promise<DeviceActuator> {
-    const existing = await this.findOneBy({
-      localId: payload.localId!,
-      deviceId: payload.deviceId!
-    })
-    if (!existing) {
-      return await this.create(payload);
-    } else {
-      const omittedPayload = payload as Omit<DeviceActuator, "id">
-      return await this.update(existing.id, omittedPayload);
-    }
+    return super.upsert(payload, ["local_id", "device_id"])
+    // const existing = await this.findOneBy({
+    //   localId: payload.localId!,
+    //   deviceId: payload.deviceId!
+    // })
+    // if (!existing) {
+    //   return await this.create(payload);
+    // } else {
+    //   const omittedPayload = payload as Omit<DeviceActuator, "id">
+    //   return await this.update(existing.id, omittedPayload);
+    // }
   }
 }

@@ -1,6 +1,5 @@
 import { IPaginated, IRequest } from '@shared/interfaces'
 import { GetClusterByIdUC } from '@feature/cluster/get-by-id'
-import { ListDeviceByClusterIdUC } from '@feature/device/list-devices-by-cluster-id'
 import { Device } from '@domain/entities'
 import { ListDeviceByClusterIdRequest } from '@feature/device/dtos/list-by-cluster-id-request'
 import { GetClusterByIdRequest } from '@feature/cluster/dtos/get-cluster-by-id-request'
@@ -8,6 +7,9 @@ import { CreateClusterUC } from '@feature/cluster/create-cluster'
 import { CreateClusterRequest } from '@feature/cluster/dtos/create-cluster-request'
 import { CreateClusterResponse } from '@feature/cluster/dtos/create-cluster-response'
 import { ClusterDTO } from '@feature/cluster/dtos/cluster-dto'
+import {
+  ListDeviceByClusterIdUC
+} from '@feature/device'
 
 export class ClusterController {
   constructor(

@@ -1,4 +1,4 @@
-import { DeviceStatus } from "@domain/entities";
+import { Device, DeviceStatus } from "@domain/entities";
 import { PostgresRepositoryBase } from "../postgres-repo-base";
 import { IDeviceStatusRepository } from "@domain/repositories/device-status-repo";
 import { Pool } from "pg";
@@ -10,7 +10,7 @@ export class DeviceStatusRepositoryPg
   constructor(pool: Pool) {
     const mapping: Record<keyof DeviceStatus, string> = {
       id: "id",
-      deviceId: "device_id",
+      device_id: "device_id",
       cpuUsage: "cpu_usage",
       memUsage: "memory_usage",
       wifiRssi: "wifi_strength",
@@ -20,13 +20,25 @@ export class DeviceStatusRepositoryPg
     super(pool, "device_status", mapping, (row) => {
       return new DeviceStatus({
         id: row[mapping.id],
-        deviceId: row[mapping.deviceId],
-        cpuUsage: row[mapping.cpuUsage],
-        memUsage: row[mapping.memUsage],
-        wifiRssi: row[mapping.wifiRssi],
+        device_id: row[mapping.device_id],
+        cpuUsage: Number(row[mapping.cpuUsage]),
+        memUsage: Number(row[mapping.memUsage]),
+        wifiRssi: Number(row[mapping.wifiRssi]),
         timestamp: row[mapping.timestamp],
         online: row[mapping.online]
       })
     })
+
+  }
+
+  async getLatest(device_id: Device["id"]): Promise<DeviceStatus> {
+    const query = `
+      SELECT * FROM ${this.tableName}
+      WHERE ${this.columns.device_id}=$1
+      ORDER BY ${this.columns.timestamp} DESC
+      LIMIT 1
+    `;
+    const res = await this.pool.query(query, [device_id]);
+    return this.toEntity(res.rows[0]);
   }
 }

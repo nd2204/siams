@@ -1,51 +1,37 @@
-import { DeviceSendCommandUC } from "@feature/device/device-send-command"
-import { DeviceSendCommandRequest } from "@feature/device/dtos/device-send-command-request"
-import { DeviceSendCommandResponse } from "@feature/device/dtos/device-send-command-response"
-import { GetAllActuatorsRequest } from "@feature/device/dtos/get-all-actuators-request"
-import { GetAllActuatorsResponse } from "@feature/device/dtos/get-all-actuators-response"
-import { GetAllCommandsResponse } from "@feature/device/dtos/get-all-commands-response"
-import { GetAllSensorsRequest } from "@feature/device/dtos/get-all-sensors-request"
-import { GetAllSensorsResponse } from "@feature/device/dtos/get-all-sensors-response"
-import { GetDeviceByIdRequest } from "@feature/device/dtos/get-device-by-id-request"
-import { GetDeviceByIdResponse } from "@feature/device/dtos/get-device-by-id-response"
-import { ListTelemetryRequest } from "@feature/device/dtos/list-telemetry-request"
-import { ListTelemetryResponse } from "@feature/device/dtos/list-telemetry-response"
-import { GetAllActuatorsUC } from "@feature/device/get-all-actuators"
-import { GetAllCommandsUC } from "@feature/device/get-all-commands"
-import { GetAllSensorsUC } from "@feature/device/get-all-sensors"
-import { GetDeviceByIdUC } from "@feature/device/get-by-id"
-import { ListTelemetryUC } from "@feature/device/list-telemetry"
+import * as DeviceFeature from "@feature/device"
+import * as DeviceDTOs from '@feature/device/dtos'
 import { IRequest } from "@shared/interfaces"
 
 export class DeviceController {
   constructor(
-    private readonly getByIdUC: GetDeviceByIdUC,
-    private readonly getAllSensorsUC: GetAllSensorsUC,
-    private readonly getAllActuatorsUC: GetAllActuatorsUC,
-    private readonly getAllCommandsUC: GetAllCommandsUC,
-    private readonly listTelemetryUC: ListTelemetryUC,
-    private readonly deviceSendCommandUC: DeviceSendCommandUC,
+    private readonly getByIdUC: DeviceFeature.GetDeviceByIdUC,
+    private readonly getAllSensorsUC: DeviceFeature.GetAllSensorsUC,
+    private readonly getAllActuatorsUC: DeviceFeature.GetAllActuatorsUC,
+    private readonly getAllCommandsUC: DeviceFeature.GetAllCommandsUC,
+    private readonly listTelemetryUC: DeviceFeature.ListTelemetryUC,
+    private readonly deviceSendCommandUC: DeviceFeature.DeviceSendCommandUC,
+    private readonly getLatestStatusUC: DeviceFeature.GetDeviceStatusUC,
   ) { }
 
-  async getById(req: IRequest): Promise<GetDeviceByIdResponse> {
-    const request: GetDeviceByIdRequest = {
+  async getById(req: IRequest): Promise<DeviceDTOs.GetDeviceByIdResponse> {
+    const request: DeviceDTOs.GetDeviceByIdRequest = {
       token: req.token,
       deviceId: req.params?.id as string
     }
     return await this.getByIdUC.call(request)
   }
 
-  async sendCommand(req: IRequest): Promise<DeviceSendCommandResponse> {
-    const request: DeviceSendCommandRequest = {
+  async sendCommand(req: IRequest): Promise<DeviceDTOs.DeviceSendCommandResponse> {
+    const request: DeviceDTOs.DeviceSendCommandRequest = {
       token: req.token,
-      deviceId: req.params?.id as string,
+      device_id: req.params?.id as string,
       payload: req.body?.payload
     }
     return await this.deviceSendCommandUC.call(request)
   }
 
-  async listTelemetry(req: IRequest): Promise<ListTelemetryResponse> {
-    const request: ListTelemetryRequest = {
+  async listTelemetry(req: IRequest): Promise<DeviceDTOs.ListTelemetryResponse> {
+    const request: DeviceDTOs.ListTelemetryRequest = {
       token: req.token,
       deviceId: req.params?.id as string,
       sensorId: req.params?.sensorId as string,
@@ -56,27 +42,35 @@ export class DeviceController {
     return await this.listTelemetryUC.call(request)
   }
 
-  async getAllSensors(req: IRequest): Promise<GetAllSensorsResponse> {
-    const request: GetAllSensorsRequest = {
+  async getAllSensors(req: IRequest): Promise<DeviceDTOs.GetAllSensorsResponse> {
+    const request: DeviceDTOs.GetAllSensorsRequest = {
       token: req.token,
       deviceId: req.params?.id as string
     }
     return await this.getAllSensorsUC.call(request)
   }
 
-  async getAllActuators(req: IRequest): Promise<GetAllActuatorsResponse> {
-    const request: GetAllActuatorsRequest = {
+  async getAllActuators(req: IRequest): Promise<DeviceDTOs.GetAllActuatorsResponse> {
+    const request: DeviceDTOs.GetAllActuatorsRequest = {
       token: req.token,
       deviceId: req.params?.id as string
     }
     return await this.getAllActuatorsUC.call(request)
   }
 
-  async getAllCommands(req: IRequest): Promise<GetAllCommandsResponse> {
-    const request: GetAllActuatorsRequest = {
+  async getAllCommands(req: IRequest): Promise<DeviceDTOs.GetAllCommandsResponse> {
+    const request: DeviceDTOs.GetAllActuatorsRequest = {
       token: req.token,
       deviceId: req.params?.id as string
     }
     return await this.getAllCommandsUC.call(request)
+  }
+
+  async getLatestStatus(req: IRequest): Promise<DeviceDTOs.GetDeviceStatusResponse | null> {
+    const request: DeviceDTOs.GetDeviceStatusRequest = {
+      token: req.token,
+      device_id: req.params?.id as string
+    }
+    return await this.getLatestStatusUC.call(request)
   }
 }
