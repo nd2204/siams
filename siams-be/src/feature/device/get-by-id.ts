@@ -1,6 +1,6 @@
 import { IUseCase, IValidator } from "@shared/interfaces";
-import { GetDeviceByIdResponse } from "./dtos/get-device-by-id-response";
-import { GetDeviceByIdRequest } from "./dtos/get-device-by-id-request";
+import { GetDeviceByIdResponse } from "./dtos/get-by-id-response";
+import { GetDeviceByIdRequest } from "./dtos/get-by-id-request";
 import { IAuthService } from "@domain/services/auth-service";
 import { UnauthorizedError, ValidationError } from "@shared/errors";
 

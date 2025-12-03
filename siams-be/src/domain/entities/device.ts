@@ -1,20 +1,43 @@
 // import { ActuationIntent, ThresholdEvaluatorService } from "@domain/services/threshold-evaluator";
 // import { Threshold, Schedule } from "@domain/value-objects";
 import { Entity } from "@domain/interfaces";
+import { Cluster } from "./cluster";
+import { Organization } from "./organization";
 
 export class Device extends Entity<Device, string> {
+
+  // metadata
   declare name?: string;
-  declare clusterId: string;
   declare model: string;
-  declare geom: object; // geojson
-  declare firmwareVersion: string;
+  declare fw_ver: string;
+  declare deleted?: boolean;
+
+  // device identity
+  declare org_id: Organization["id"];
+  declare cluster_id?: Cluster["id"];
+  declare hardware_id: string;
+
+  // Trust & provenance
+  declare trust_level: 'SIGNED' | 'SECRET' | 'PROVCODE' | 'EPHEMERAL';
+  declare pubkey?: string;
+  declare device_secret?: string
+  declare prov_onchain?: boolean;
+  declare prov_status?: "PROVISIONED" | "PENDING" | "REVOKED"
+
+  // Status
   declare status: 'offline' | 'online' | 'unregistered';
-  declare lastSeen?: Date;
-  declare createdAt?: Date;
+  declare last_seen_at?: Date;
+
+  // Audit
+  declare created_at?: Date;
+  declare updated_at?: Date;
+
+  // Geospatial
+  declare geom: object; // geojson
 
   constructor(opts: Device) {
     super(opts);
-    this.name = opts.name ?? `${opts.model}-${this.firmwareVersion}`;
+    this.name = opts.name ?? `${opts.model}-${this.fw_ver}`;
   }
 
   static markOffline(): Partial<Device> {
@@ -25,7 +48,7 @@ export class Device extends Entity<Device, string> {
 
   static markSeen(ts: Date = new Date()): Partial<Device> {
     return {
-      lastSeen: ts,
+      last_seen_at: ts,
       status: 'online',
     }
   }

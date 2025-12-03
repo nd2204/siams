@@ -22,59 +22,60 @@ function defineTopic<P extends string, T extends string>(
 
 export const topics = {
   deviceRegister: defineTopic(
-    "org/:orgId/cluster/:clusterId/register/:tempId",
-    "org/+/cluster/+/register/+",
+    "org/:orgId/register/:tempId",
+    "org/+/register/+",
   ),
   deviceRegisterAck: defineTopic(
-    "org/:orgId/cluster/:clusterId/register-ack/:tempId",
-    "org/+/cluster/+/register-ack/+"
+    "org/:orgId/register-ack/:tempId",
+    "org/+/register-ack/+"
   ),
   deviceVerify: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/verify",
-    "org/+/cluster/+/device/+/verify",
+    "org/:orgId/device/:deviceId/verify",
+    "org/+/device/+/verify",
   ),
   deviceVerifyAck: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/verify-ack",
-    "org/+/cluster/+/device/+/verify-ack",
+    "org/:orgId/device/:deviceId/verify-ack",
+    "org/+/device/+/verify-ack",
   ),
   deviceCommand: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/command",
-    "org/+/cluster/+/device/+/command",
+    "org/:orgId/device/:deviceId/command",
+    "org/+/device/+/command",
   ),
   deviceCommandAck: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/command-ack",
-    "org/+/cluster/+/device/+/command-ack",
+    "org/:orgId/device/:deviceId/command-ack",
+    "org/+/device/+/command-ack",
   ),
   deviceStatus: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/status",
-    "org/+/cluster/+/device/+/status",
+    "org/:orgId/device/:deviceId/status",
+    "org/+/device/+/status",
   ),
   deviceTelemetry: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/telemetry",
-    "org/+/cluster/+/device/+/telemetry",
+    "org/:orgId/device/:deviceId/telemetry",
+    "org/+/device/+/telemetry",
   ),
   deviceConfig: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/config",
-    "org/+/cluster/+/device/+/config",
+    "org/:orgId/device/:deviceId/config",
+    "org/+/device/+/config",
   ),
   deviceConfigAck: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/config-ack",
-    "org/+/cluster/+/device/+/config-ack",
+    "org/:orgId/device/:deviceId/config-ack",
+    "org/+/device/+/config-ack",
   ),
   deviceConfigSync: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/config/syncack",
-    "org/+/cluster/+/device/+/config/sync",
+    "org/:orgId/device/:deviceId/config/syncack",
+    "org/+/device/+/config/sync",
   ),
   deviceConfigSyncAck: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/config/sync-ack",
-    "org/+/cluster/+/device/+/config/sync-ack",
+    "org/:orgId/device/:deviceId/config/sync-ack",
+    "org/+/device/+/config/sync-ack",
   ),
   deviceEvent: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/event",
-    "org/+/cluster/+/device/+/event",
+    "org/:orgId/device/:deviceId/event",
+    "org/+/device/+/event",
   ),
   deviceEventAck: defineTopic(
-    "org/:orgId/cluster/:clusterId/device/:deviceId/event-ack",
-    "org/+/cluster/+/device/+/event-ack",
+    "org/:orgId/device/:deviceId/event-ack",
+    "org/+/device/+/event-ack",
   )
 }
+

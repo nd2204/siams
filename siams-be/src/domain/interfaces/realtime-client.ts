@@ -1,5 +1,4 @@
-import { DeviceTelemetry } from "@domain/entities";
-import { TelemetryGroupDto } from "@feature/device/dtos/telemtry-dto";
+import { TelemetryGroupDto } from "@feature/device/dtos";
 
 export interface RealtimeMessage<TData = any> {
   orgId: string,
@@ -13,5 +12,5 @@ export interface RealtimeMessage<TData = any> {
 
 export interface IRealtimeClient {
   publishTelemetry(message: RealtimeMessage<TelemetryGroupDto>): Promise<void>;
-  publishEvent(message: RealtimeMessage): Promise<void>;
+  publishDeviceEvent(message: RealtimeMessage): Promise<void>;
 }

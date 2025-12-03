@@ -1,18 +1,17 @@
+import { DeviceEventType, DeviceEventTypeConstants } from "@domain/entities/device-event";
 import { IDomainEvent } from "@domain/interfaces/events";
 
 export interface DeviceRegisteredPayload {
-  deviceId: string;
+  device_id: string;
 }
 
 export class DeviceRegisteredEvent implements IDomainEvent<DeviceRegisteredPayload> {
-  static readonly eventName = "device.created";
-
-  name = DeviceRegisteredEvent.eventName;
+  name: DeviceEventType = DeviceEventTypeConstants.DeviceRegistered;
   ts = Date.now();
 
   constructor(
-    public orgId: string,
-    public clusterId: string,
-    public payload: DeviceRegisteredPayload
+    public payload: DeviceRegisteredPayload,
+    public org_id: string,
+    public cluster_id?: string
   ) { }
 }

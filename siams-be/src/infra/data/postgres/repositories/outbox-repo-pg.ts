@@ -9,25 +9,20 @@ export class OutboxRepositoryPg
 
   constructor(pool: Pool) {
     const mapping: Record<keyof OutboxEntry, string> = {
-      aggregateType: "aggregate_type",
-      aggregateId: "aggregate_id",
-      topic: "topic",
+      type: "type",
       payload: "payload",
       status: "status",
-      sentAt: "sent_at",
-      createdAt: "created_at",
-      id: "id"
+      id: "id",
+      attempts: "attempts",
+      locked_by: "locked_by",
+      locket_at: "locked_at",
+      scheduled_at: "scheduled_at",
+      last_attempt_at: "last_attempt_at",
+      sent_at: "sent_at",
+      created_at: "created_at"
     }
     super(pool, "outbox", mapping, (row: any) => {
-      return new OutboxEntry({
-        aggregateType: row[mapping.aggregateType],
-        aggregateId: row[mapping.aggregateId],
-        topic: row[mapping.topic],
-        payload: row[mapping.payload],
-        status: row[mapping.status],
-        createdAt: row[mapping.createdAt],
-        id: row[mapping.id]
-      })
+      return new OutboxEntry(row)
     }, ["payload"])
   }
 

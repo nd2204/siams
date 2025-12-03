@@ -1,7 +1,7 @@
 import { topics } from "@config/mqtt-topics";
 import { IMqttHandler, IMqttClient } from "@domain/interfaces";
-import { DeviceStatusPayload } from "@feature/telemetry/dtos/device-status-request";
-import { ReceiveDeviceStatusUC } from "@feature/telemetry/receive-device-status";
+import { SignedDevicePayload } from "@feature/device/dtos";
+import { ReceiveDeviceStatusUC } from "@feature/device/status/receive-device-status";
 import { ILogger } from "@shared/interfaces";
 
 type DeviceParams = {
@@ -10,7 +10,7 @@ type DeviceParams = {
   clusterId: string;
 };
 
-export class DeviceStatusHandler implements IMqttHandler<DeviceStatusPayload, DeviceParams> {
+export class DeviceStatusHandler implements IMqttHandler<SignedDevicePayload, DeviceParams> {
   topic = topics.deviceStatus.topic;
   pattern = topics.deviceStatus.pattern
 
@@ -19,10 +19,11 @@ export class DeviceStatusHandler implements IMqttHandler<DeviceStatusPayload, De
     private readonly logger: ILogger
   ) { }
 
-  async handle(_client: IMqttClient, params: DeviceParams, payload: DeviceStatusPayload): Promise<void> {
+  async handle(_client: IMqttClient, params: DeviceParams, payload: SignedDevicePayload): Promise<void> {
     try {
       await this.useCase.call({
         deviceId: params.deviceId,
+        orgId: params.orgId,
         payload
       })
     } catch (error) {

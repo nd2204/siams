@@ -1,7 +1,7 @@
 import { DeviceTelemetryReceivedEvent } from "@domain/events/device-telemetry-received-event";
 import { IDomainEventHandler } from "@domain/interfaces/events";
 import { IRealtimeClient, RealtimeMessage } from "@domain/interfaces/realtime-client";
-import { TelemetryGroupDto } from "@feature/device/dtos/telemtry-dto";
+import { TelemetryGroupDto } from "@feature/device/telemetry/dtos/telemtry-dto";
 
 export class DeviceTelemetryReceivedEventHandler implements IDomainEventHandler<DeviceTelemetryReceivedEvent> {
   constructor(
@@ -11,7 +11,6 @@ export class DeviceTelemetryReceivedEventHandler implements IDomainEventHandler<
   async handle(event: DeviceTelemetryReceivedEvent): Promise<void> {
     const message: RealtimeMessage<TelemetryGroupDto> = {
       orgId: event.orgId,
-      clusterId: event.clusterId,
       deviceId: event.deviceId,
       eventType: event.name,
       data: event.payload,

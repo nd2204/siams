@@ -3,11 +3,12 @@ import { Entity } from "@domain/interfaces";
 export class DeviceTelemetry extends Entity<DeviceTelemetry, number> {
   declare sensorId: string; // the device that this telemetry originate
   declare timestamp: Date;   // time when the telemetry arrived to server
+  declare raw_payload: string;
   declare value: number;
 }
 
 export class DeviceStatus extends Entity<DeviceStatus, number> {
-  declare deviceId: string;  // the device that this telemetry originate
+  declare device_id: string;  // the device that this telemetry originate
   declare cpuUsage?: number; // normalized [0..1]
   declare memUsage?: number; // normalized [0..1], true value based on device metadata
   declare wifiRssi?: number;

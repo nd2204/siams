@@ -13,45 +13,42 @@ export class DeviceRepositoryPg
   ) {
     const mapping: Record<keyof Device, string> = {
       id: "id",
-      clusterId: "cluster_id",
       name: "device_name",
+      cluster_id: "cluster_id",
+      org_id: "org_id",
       model: "model",
       geom: "geom",
-      firmwareVersion: "firmware_version",
+      fw_ver: "fw_ver",
       status: "status",
-      lastSeen: "last_seen_at",
-      createdAt: "created_at",
+      pubkey: "pubkey",
+      prov_status: "prov_status",
+      last_seen_at: "last_seen_at",
+      created_at: "created_at",
+      hardware_id: "hardware_id",
+      trust_level: "trust_level",
+      updated_at: "updated_at",
+      device_secret: "device_secret",
+      prov_onchain: "prov_onchain",
+      deleted: "deleted"
     }
 
     super(
       pool,
       "devices",
       mapping,
-      (row: any) => {
-        return new Device({
-          id: row[mapping.id],
-          clusterId: row[mapping.clusterId],
-          name: row[mapping.name],
-          model: row[mapping.model],
-          geom: row[mapping.geom],
-          firmwareVersion: row[mapping.firmwareVersion],
-          status: row[mapping.status],
-          lastSeen: row[mapping.lastSeen],
-          createdAt: row[mapping.createdAt]
-        })
-      },
+      PostgresRepositoryBase.createRowMapper(mapping),
       undefined,
       ["geom"]
     )
   }
+
   async listByOrg(orgId: string, page: number, perPage: number): Promise<IPaginated<Device>> {
     const offset = (page - 1) * perPage;
 
     const countResult = await this.pool.query(
       `SELECT COUNT(*) as total 
        FROM devices d
-       JOIN clusters c ON d.cluster_id = c.id
-       WHERE c.org_id = $1`,
+       WHERE d.org_id = $1`,
       [orgId]
     );
 

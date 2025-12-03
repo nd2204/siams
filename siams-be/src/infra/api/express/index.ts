@@ -16,7 +16,7 @@ import helmet from 'helmet'
 const app: express.Application = express()
 
 app.use(
-  // logger(),
+  logger(),
   express.json(),
   // Enable CSP
   helmet.contentSecurityPolicy({

@@ -1,12 +1,11 @@
 import { topics } from "@config/mqtt-topics";
 import { IMqttHandler, IMqttClient } from "@domain/interfaces";
 import { VerifyDeviceUC } from "@feature/device/verify-device";
-import { DeviceVerifyPayload } from "@feature/device/dtos/device-verify-request";
 import { IError, ILogger } from "@shared/interfaces";
 import { DeviceParams } from "./params";
-import { IValidationResult } from "@shared/interfaces/validator";
+import { SignedDevicePayload } from "@feature/device/dtos";
 
-export class DeviceVerifyHandler implements IMqttHandler<DeviceVerifyPayload, DeviceParams> {
+export class DeviceVerifyHandler implements IMqttHandler<SignedDevicePayload, DeviceParams> {
   pattern = topics.deviceVerify.pattern
   topic = topics.deviceVerify.topic;
 
@@ -15,10 +14,9 @@ export class DeviceVerifyHandler implements IMqttHandler<DeviceVerifyPayload, De
     private readonly logger: ILogger
   ) { }
 
-  async handle(client: IMqttClient, params: DeviceParams, payload: DeviceVerifyPayload): Promise<void> {
+  async handle(client: IMqttClient, params: DeviceParams, payload: SignedDevicePayload): Promise<void> {
     const ackTopic = topics.deviceVerifyAck.create({
       orgId: params.orgId,
-      clusterId: params.clusterId,
       deviceId: params.deviceId
     });
 

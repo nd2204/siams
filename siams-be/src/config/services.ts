@@ -20,6 +20,11 @@ import { RoleRepositoryPg } from "@infra/data/postgres/repositories/user-role-re
 import { OrganizationUserRepositoryPg } from "@infra/data/postgres/repositories/organization-user-repo-pg"
 import { OutboxRepositoryPg } from "@infra/data/postgres/repositories/outbox-repo-pg"
 import { NodeEventBus } from "@infra/events/node-event-bus"
+import { DeviceEventRepositoryPg } from "@infra/data/postgres/repositories/device-event-repo-pg"
+import { CryptoService } from "@infra/services/crypto-service-impl"
+import { app } from "./app"
+import { DeviceEventPublisher } from "@infra/services/device-event-publisher-impl"
+import { SignatureVerificationService } from "@infra/services/signature-verification-service-impl"
 import { AuthService } from "@infra/services/auth-services-impl"
 
 const orgRepo = new OrganizationRepositoryPg(pool)
@@ -33,6 +38,7 @@ const clusterCredRepo = new ClusterCredentialRepositoryPg(pool)
 
 // Device aggregate
 const deviceRepo = new DeviceRepositoryPg(pool)
+const deviceEventRepo = new DeviceEventRepositoryPg(pool)
 const deviceStatusRepo = new DeviceStatusRepositoryPg(pool)
 const deviceSensorRepo = new DeviceSensorRepositoryPg(pool)
 const deviceActuatorRepo = new DeviceActuatorRepositoryPg(pool)
@@ -42,6 +48,21 @@ const outboxRepo = new OutboxRepositoryPg(pool);
 
 const authService = new AuthService(orgRepo, orgUserRepo, clusterRepo, deviceRepo, verifyToken)
 const eventBus = new NodeEventBus()
+const cryptoService = new CryptoService(app);
+const deviceEventPublisher = new DeviceEventPublisher(
+  deviceEventRepo,
+  eventBus,
+  cryptoService,
+  outboxRepo,
+  validators.device.publishDeviceEventValidator,
+  new SMLogger("infra:service:DeviceService")
+)
+const signatureVerificationService = new SignatureVerificationService(
+  deviceRepo,
+  cryptoService,
+  validators.device.signedPayloadValidator,
+  new SMLogger("infra:service:SignatureVerificationService")
+)
 
 export const services = {
   device: {
@@ -52,8 +73,12 @@ export const services = {
       actuators: deviceActuatorRepo,
       telemetry: deviceTelemetryRepo,
       commands: deviceCommandRepo,
+      event: deviceEventRepo
     },
     validators: validators.device,
+    services: {
+      deviceEventPublisher, signatureVerificationService
+    },
   },
   user: {
     repositories: {
@@ -81,6 +106,7 @@ export const services = {
   },
   authService,
   eventBus,
+  cryptoService,
   utils: {
     encryptPassword,
     issueToken,

@@ -82,9 +82,10 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
     };
   }
 
-  async create(payload: Partial<T>): Promise<T> {
+  async upsert(payload: Partial<T>, conflict_keys: (keyof T)[]): Promise<T> {
     const keys = Object.keys(payload) as (keyof T)[];
     const cols = keys.map(k => this.getColumn(k));
+    const conflict_cols = conflict_keys.map(k => this.getColumn(k))
     const placeholders: string[] = []
     const values: any[] = []
     let i = 1;
@@ -105,7 +106,44 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
       }
     });
 
-    const sql = `INSERT INTO ${this.tableName} (${cols.join(",")}) VALUES (${placeholders.join(",")}) RETURNING *`;
+    const update_cols = cols.filter(col => !conflict_cols.includes(col));
+
+    const sql = `
+      INSERT INTO ${this.tableName} (${cols.join(",")})
+      VALUES (${placeholders.join(",")})
+      ON CONFLICT (${conflict_cols.join(",")})
+      DO UPDATE SET
+        ${update_cols.map(col => `${col} = EXCLUDED.${col}`).join(", ")}
+      RETURNING *
+    `;
+    const res = await this.pool.query(sql, values);
+    return this.toEntity(this.postProcessGeometry(res.rows[0]));
+  }
+
+  async create(payload: Partial<T>): Promise<T> {
+    const keys = Object.keys(payload) as (keyof T)[];
+    const cols = keys.map(k => this.getColumn(k));
+    const placeholders: string[] = []
+    const values: any[] = []
+    let i = 1;
+    keys.forEach((k) => {
+      const col = this.getColumn(k);
+      const val = (payload as any)[k];
+
+      if (this.jsonColumns.has(col)) {
+        placeholders.push(`$${i++}:: jsonb`);
+        values.push(JSON.stringify(val));
+      } else if (this.geometryColumns.has(col)) {
+        const v = val as { lat: number, lon: number };
+        placeholders.push(`ST_SetSRID(ST_MakePoint($${i++}, $${i++}), 4326)`);
+        values.push(v.lon, v.lat)
+      } else {
+        placeholders.push(`$${i++} `)
+        values.push(val)
+      }
+    });
+
+    const sql = `INSERT INTO ${this.tableName} (${cols.join(",")}) VALUES(${placeholders.join(",")}) RETURNING * `;
     const res = await this.pool.query(sql, values);
     return this.toEntity(this.postProcessGeometry(res.rows[0]));
   }
@@ -150,6 +188,25 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
     return ", " + Array.from(this.geometryColumns)
       .map(col => `ST_AsGeoJSON(${col}) as ${col}_geojson`)
       .join(", ");
+  }
+
+  static createRowMapper<T>(mapping: Record<keyof T, string>): (row: any) => T {
+    // Return the dynamic callback function
+    return (row: any): T => {
+      const keys = Object.keys(mapping) as (keyof T)[];
+
+      const transformedRow = keys.reduce((acc, currentKey) => {
+        const sourceColumnName = mapping[currentKey];
+        acc[currentKey] = row[sourceColumnName];
+        if (sourceColumnName === 'local_id') {
+          row[sourceColumnName]
+        }
+
+        return acc;
+      }, {} as T);
+
+      return transformedRow;
+    };
   }
 
   private postProcessGeometry(row: any): any {

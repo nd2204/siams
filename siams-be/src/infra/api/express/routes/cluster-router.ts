@@ -3,7 +3,7 @@ import { getAuthToken } from "../get-auth-token";
 import { ClusterController } from "@adapters/http/v1/controllers/cluster-controller";
 import { GetClusterByIdUC } from "@feature/cluster/get-by-id";
 import { services } from "@config/services";
-import { ListDeviceByClusterIdUC } from "@feature/device/list-devices-by-cluster-id";
+import { ListDeviceByClusterIdUC } from "@feature/device/list-by-cluster-id";
 import { CreateClusterUC } from "@feature/cluster/create-cluster";
 
 const controller = new ClusterController(

@@ -1,7 +1,7 @@
 import { DeviceTelemetry } from "@domain/entities";
 import { IDeviceTelemetryRepository } from "@domain/repositories";
-import { GroupByDateType } from "@feature/device/dtos/list-telemetry-request";
-import { TelemetryGroupDto } from "@feature/device/dtos/telemtry-dto";
+import { GroupByDateType } from "@feature/device/telemetry/dtos/list-telemetry-request";
+import { TelemetryGroupDto } from "@feature/device/telemetry/dtos/telemtry-dto";
 import { PostgresRepositoryBase } from "@infra/data/postgres/postgres-repo-base";
 import { Pool } from "pg";
 
@@ -16,17 +16,16 @@ export class DeviceTelemetryRepositoryPg
       id: "id",
       value: "value",
       sensorId: "sensor_id",
-      timestamp: "timestamp"
+      timestamp: "timestamp",
+      raw_payload: "raw_payload"
     }
 
-    super(pool, "telemetry", mapping, (row) => {
-      return new DeviceTelemetry({
-        id: row[mapping.id],
-        value: row[mapping.value],
-        sensorId: row[mapping.sensorId],
-        timestamp: row[mapping.timestamp]
-      })
-    })
+    super(
+      pool,
+      "telemetry",
+      mapping,
+      PostgresRepositoryBase.createRowMapper(mapping)
+    )
   }
 
   async listByRange(
@@ -46,8 +45,8 @@ export class DeviceTelemetryRepositoryPg
         MAX(value) AS max_value,
         COUNT(*) AS samples
       FROM telemetry
-      WHERE sensor_id = $1 AND ${this.columns.timestamp} BETWEEN $2 AND $3
-      GROUP BY sensor_id, bucket
+      WHERE ${this.columns.sensorId} = $1 AND ${this.columns.timestamp} BETWEEN $2 AND $3
+      GROUP BY ${this.columns.sensorId}, bucket
       ORDER BY bucket ASC
       LIMIT $4
     `;

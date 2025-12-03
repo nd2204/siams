@@ -1,11 +1,22 @@
 import { Entity } from "@domain/interfaces";
 
+export const OutboxTypeConstants = {
+  DeviceCommand: "device.command",
+  AnchorEvent: "anchor.event",
+  AnchorBatch: "anchor.batch",
+} as const;
+
+type OutboxType = typeof OutboxTypeConstants[keyof typeof OutboxTypeConstants]
+
 export class OutboxEntry extends Entity<OutboxEntry, string> {
-  declare aggregateType: string;
-  declare aggregateId: string;
-  declare topic: string;
+  declare type: OutboxType;
   declare payload: any;
-  declare status: 'PENDING' | 'SENT' | 'FAILED';
-  declare sentAt?: Date;
-  declare createdAt?: Date;
+  status?: 'PENDING' | 'SENT' | 'FAILED' = 'PENDING';
+  declare attempts?: number;
+  declare locked_by?: string;
+  declare locket_at?: Date;
+  declare scheduled_at?: Date;
+  declare last_attempt_at?: Date;
+  declare sent_at?: Date;
+  declare created_at?: Date;
 }
