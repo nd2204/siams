@@ -1,7 +1,7 @@
 // src/infra/realtime/SocketIoRealtimeClient.ts
 import { Server as IOServer, Socket } from "socket.io";
 import { Server as HttpServer } from "node:http"
-import { IRealtimeClient, RealtimeMessage } from "@domain/interfaces/realtime-client";
+import { IRealtimeClient, DeviceRealtimeMessage } from "@domain/interfaces/realtime-client";
 import { AuthResponse } from "@feature/user/dtos/auth-response";
 import { ILogger } from "@shared/interfaces";
 import { UserClaims } from "@feature/user/dtos/user-claims";
@@ -10,7 +10,7 @@ import { IEventBus } from "@domain/interfaces/events";
 import { DeviceRegisteredEventHandler } from "./handlers/device-registered-handler";
 import { DeviceTelemetryReceivedEventHandler } from "./handlers/device-telemetry-received-handler";
 import { TelemetryGroupDto } from "@feature/device/telemetry/dtos/telemtry-dto";
-import { DeviceEventTypeConstants } from "@domain/entities/device-event";
+import { DeviceEventType, DeviceEventTypeConstants } from "@domain/entities/device-event";
 import { DeviceStatusReceivedEventHandler } from "./handlers/device-status-received-handler";
 
 interface AuthenticatedSocket extends Socket {
@@ -212,25 +212,14 @@ export class SocketIoRealtimeClient implements IRealtimeClient {
   }
 
   // --- Outbound publishing ---
-  async publishTelemetry(message: RealtimeMessage<TelemetryGroupDto>): Promise<void> {
-    // Emit to both cluster and device rooms for subscribers at different levels
-    const roomsToEmit: string[] = [];
-    message.clusterId && roomsToEmit.push(this.roomForCluster(message.orgId, message.clusterId));
-    message.deviceId && roomsToEmit.push(this.roomForDevice(message.orgId, message.deviceId));
-    if (roomsToEmit.length > 0) {
-      // this.logger.info({ msg: `${JSON.stringify(this.clientTracker.devices.get(message.deviceId!), null, 2)}` });
-      // this.logger.info({ msg: `Publishing event [${message.eventType}] to rooms: ${JSON.stringify(roomsToEmit.join(", "), null, 2)}`, obj: message });
-      this.io
-        .to(roomsToEmit)
-        .emit(message.eventType, message);
-    }
-  }
-
-  async publishDeviceEvent(message: RealtimeMessage): Promise<void> {
-    const rooms: string[] = [this.roomForOrg(message.orgId)];
-    message.clusterId && rooms.push(this.roomForCluster(message.orgId, message.clusterId))
-    message.deviceId && rooms.push(this.roomForDevice(message.orgId, message.deviceId))
-    this.io.to(rooms).emit(message.eventType, message);
+  async publishDeviceEvent<T extends DeviceEventType>(message: DeviceRealtimeMessage<T>): Promise<void> {
+    const p = message.event_payload
+    const rooms: string[] = [
+      this.roomForDevice(p.org_id, p.device_id),
+      this.roomForOrg(p.org_id)
+    ];
+    p.cluster_id && rooms.push(this.roomForCluster(p.org_id, p.cluster_id))
+    this.io.to(rooms).emit(message.event_name, message);
   }
 
   private roomForOrg(orgId: string) {

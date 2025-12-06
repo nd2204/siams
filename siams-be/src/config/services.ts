@@ -54,7 +54,6 @@ const deviceEventPublisher = new DeviceEventPublisher(
   eventBus,
   cryptoService,
   outboxRepo,
-  validators.device.publishDeviceEventValidator,
   new SMLogger("infra:service:DeviceService")
 )
 const signatureVerificationService = new SignatureVerificationService(

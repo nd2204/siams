@@ -1,16 +1,16 @@
 import EventEmitter from "events";
-import { IEventBus, IDomainEvent, IDomainEventHandler } from "@/domain/interfaces/events";
+import { IEventBus, DomainEvent, IDomainEventHandler } from "@/domain/interfaces/events";
 
 export class NodeEventBus implements IEventBus {
   private ee = new EventEmitter();
 
-  async publish(event: IDomainEvent): Promise<void> {
+  async publish(event: DomainEvent): Promise<void> {
     // publish asynchronously, but don't block
-    process.nextTick(() => this.ee.emit(event.name, event));
+    process.nextTick(() => this.ee.emit(event.event_name, event));
   }
 
-  subscribe(eventName: string, handler: IDomainEventHandler): void {
-    this.ee.on(eventName, (payload: any) => {
+  subscribe(event_name: string, handler: IDomainEventHandler): void {
+    this.ee.on(event_name, (payload: any) => {
       try {
         const res = handler.handle(payload);
         if (res && typeof (res as Promise<any>).catch === "function") {

@@ -2,6 +2,7 @@
 import { IMqttClient } from "@/domain/interfaces";
 import { OutboxEntry } from "@domain/entities";
 import { IOutboxRepository } from "@domain/repositories/outbox-repo";
+import { IBlockchainService } from "@domain/services/blockchain-service";
 import { ILogger } from "@shared/interfaces";
 
 export class OutboxWorker {
@@ -10,6 +11,7 @@ export class OutboxWorker {
 
   constructor(
     private readonly outboxRepo: IOutboxRepository,
+    // private readonly blockchainService: IBlockchainService,
     private readonly logger: ILogger,
     private readonly pollInterval = 3000
   ) { }

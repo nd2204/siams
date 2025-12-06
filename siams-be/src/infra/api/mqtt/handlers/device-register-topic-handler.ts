@@ -1,9 +1,5 @@
 import { topics } from "@config/mqtt-topics";
-import { OutboxTypeConstants } from "@domain/entities/outbox";
-import { DeviceRegisteredEvent } from "@domain/events/device-registered-event";
 import { IMqttHandler, IMqttClient } from "@domain/interfaces";
-import { IOutboxRepository } from "@domain/repositories/outbox-repo";
-import { IDeviceEventPublisher } from "@domain/services/device-event-publisher";
 import { SignedDevicePayload } from "@feature/device/dtos";
 import { RegisterDeviceUC } from "@feature/device/register-device";
 import { IError, ILogger } from "@shared/interfaces";

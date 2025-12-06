@@ -1,6 +1,6 @@
 import { DeviceTelemetry } from "@domain/entities";
+import { GroupByDateType } from "@domain/interfaces/group-by-date";
 import { IDeviceTelemetryRepository } from "@domain/repositories";
-import { GroupByDateType } from "@feature/device/telemetry/dtos/list-telemetry-request";
 import { TelemetryGroupDto } from "@feature/device/telemetry/dtos/telemtry-dto";
 import { PostgresRepositoryBase } from "@infra/data/postgres/postgres-repo-base";
 import { Pool } from "pg";
@@ -45,8 +45,8 @@ export class DeviceTelemetryRepositoryPg
         MAX(value) AS max_value,
         COUNT(*) AS samples
       FROM telemetry
-      WHERE ${this.columns.sensorId} = $1 AND ${this.columns.timestamp} BETWEEN $2 AND $3
-      GROUP BY ${this.columns.sensorId}, bucket
+      WHERE sensor_id = $1 AND ${this.columns.timestamp} BETWEEN $2 AND $3
+      GROUP BY sensor_id, bucket
       ORDER BY bucket ASC
       LIMIT $4
     `;

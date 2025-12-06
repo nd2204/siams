@@ -1,6 +1,7 @@
 import { type Pool } from "pg";
 import { IRepository, IPaginated } from "@shared/interfaces";
 import { NotFoundError } from "@shared/errors";
+import { GroupByDateType } from "@domain/interfaces/group-by-date";
 
 export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
   protected readonly jsonColumns: Set<string> = new Set();
@@ -65,7 +66,12 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
   async listBy(filters: Partial<T>, page: number, perPage: number): Promise<IPaginated<T>> {
     const { whereClause, values } = this.buildWhere(filters);
 
-    const sql = `SELECT *${this.geometrySelectSql()} FROM ${this.tableName} ${whereClause} OFFSET $${values.length + 1} LIMIT $${values.length + 2}`;
+    const sql = `
+      SELECT *${this.geometrySelectSql()}
+      FROM ${this.tableName} ${whereClause}
+      OFFSET $${values.length + 1}
+      LIMIT $${values.length + 2}
+    `;
     const countSql = `SELECT COUNT(*) FROM ${this.tableName} ${whereClause}`;
 
     const offset = (page - 1) * perPage;
@@ -183,7 +189,7 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
   }
 
   /** Add geometry column projections as GeoJSON */
-  private geometrySelectSql(): string {
+  protected geometrySelectSql(): string {
     if (this.geometryColumns.size === 0) return '';
     return ", " + Array.from(this.geometryColumns)
       .map(col => `ST_AsGeoJSON(${col}) as ${col}_geojson`)
@@ -209,7 +215,7 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
     };
   }
 
-  private postProcessGeometry(row: any): any {
+  protected postProcessGeometry(row: any): any {
     const row_copy = { ...row }
     for (const col of this.geometryColumns) {
       const geojson = row_copy[`${col}_geojson`];
@@ -219,5 +225,17 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
       }
     }
     return row_copy;
+  }
+
+  protected buildGroupByDateExpression(granularity: GroupByDateType, ts_col: string) {
+    switch (granularity) {
+      case "second": return `date_trunc('second', ${ts_col})`;
+      case "minute": return `date_trunc('minute', ${ts_col})`;
+      case "hour": return `date_trunc('hour', ${ts_col})`;
+      case "week": return `date_trunc('week', ${ts_col})`;
+      case "month": return `date_trunc('month', ${ts_col})`;
+      case "day":
+      default: return `date_trunc('day', ${ts_col})`;
+    }
   }
 }

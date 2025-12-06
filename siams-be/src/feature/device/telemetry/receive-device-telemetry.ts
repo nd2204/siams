@@ -5,7 +5,7 @@ import { NotFoundError, ValidationError } from "@shared/errors";
 import { DeviceTelemetry } from "@domain/entities";
 import { ISignatureVerificationService } from "@domain/services/signature-verification-service";
 import { IDeviceEventPublisher } from "@domain/services/device-event-publisher";
-import { DeviceTelemetryReceivedEvent } from "@domain/events/device-telemetry-received-event";
+import { DeviceTelemetryReceivedEvent } from "@domain/events/device";
 
 export class ReceiveDeviceTelemetryUC implements IUseCase<DeviceTelemetry> {
   constructor(
@@ -47,22 +47,19 @@ export class ReceiveDeviceTelemetryUC implements IUseCase<DeviceTelemetry> {
       value: p.value!,
     })
 
-    const telemetryGroup: DeviceTelemetryReceivedEvent["payload"] = {
-      bucket: telemetry.timestamp.toISOString(),
-      sensorId: telemetry.sensorId,
-      avgValue: telemetry.value,
-      minValue: telemetry.value,
-      maxValue: telemetry.value,
-      count: 1
-    }
+    await this.deviceEventPubliser.publish(
+      new DeviceTelemetryReceivedEvent({
+        bucket: telemetry.timestamp.toISOString(),
+        sensorId: telemetry.sensorId,
+        avgValue: telemetry.value,
+        minValue: telemetry.value,
+        maxValue: telemetry.value,
+        count: 1,
+        device_id: r.deviceId,
+        org_id: r.orgId,
+      }),
+    )
 
-    await this.deviceEventPubliser.publish({
-      event_payload: telemetryGroup,
-      device_id: r.deviceId,
-      org_id: r.orgId,
-      store_event: false,
-      event_type: "device.telemetry"
-    })
     return telemetry;
   }
 }

@@ -1,7 +1,7 @@
 import { Entity } from "@domain/interfaces";
 
 export const OutboxTypeConstants = {
-  DeviceCommand: "device.command",
+  SentDeviceCommand: "device.command",
   AnchorEvent: "anchor.event",
   AnchorBatch: "anchor.batch",
 } as const;
@@ -12,11 +12,11 @@ export class OutboxEntry extends Entity<OutboxEntry, string> {
   declare type: OutboxType;
   declare payload: any;
   status?: 'PENDING' | 'SENT' | 'FAILED' = 'PENDING';
-  declare attempts?: number;
+  attempts?: number = 0;
   declare locked_by?: string;
   declare locket_at?: Date;
   declare scheduled_at?: Date;
   declare last_attempt_at?: Date;
   declare sent_at?: Date;
-  declare created_at?: Date;
+  created_at?: Date = new Date();
 }

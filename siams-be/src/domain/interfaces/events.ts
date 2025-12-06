@@ -4,20 +4,22 @@
 import type { Threshold } from "@domain/value-objects";
 
 export interface IEventBus {
-  publish<T extends IDomainEvent>(event: T): Promise<void>;
-  subscribe<T extends IDomainEvent>(
-    eventName: T["name"],
+  publish<T extends DomainEvent>(event: T): Promise<void>;
+  subscribe<T extends DomainEvent>(
+    event_name: T["event_name"],
     handler: IDomainEventHandler<T>
   ): void;
 }
 
-export interface IDomainEvent<TPayload = any> {
-  name: string,
-  ts: number,
-  payload: TPayload
+export class DomainEvent<TPayload = any, TEventType extends string = string> {
+  public readonly ts: number = Date.now();
+  constructor(
+    public readonly event_payload: TPayload,
+    public readonly event_name: TEventType
+  ) { }
 }
 
-export interface IDomainEventHandler<TEvent = IDomainEvent> {
+export interface IDomainEventHandler<TEvent = DomainEvent> {
   handle(event: TEvent): Promise<void>
 }
 

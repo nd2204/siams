@@ -8,7 +8,7 @@ import { GetAllActuatorsUC } from "@feature/device/actuator/get-all-actuators";
 import { GetAllCommandsUC } from "@feature/device/command/get-all-commands";
 import { ListTelemetryUC } from "@feature/device/telemetry/list-telemetry";
 import { DeviceSendCommandUC } from "@feature/device/command/device-send-command";
-import { GetDeviceStatusUC } from "@feature/device";
+import { GetDeviceStatusUC, ListRecentDeviceEventUC } from "@feature/device";
 
 const controller = new DeviceController(
   new GetDeviceByIdUC(
@@ -45,6 +45,11 @@ const controller = new DeviceController(
     services.device.repositories.status,
     services.authService,
     services.device.validators.status.getDeviceStatusValidator,
+  ),
+  new ListRecentDeviceEventUC(
+    services.device.repositories.event,
+    services.authService,
+    services.device.validators.event.listRecentDeviceEventValidator
   )
 )
 
@@ -188,7 +193,7 @@ export function deviceRouter(): Router {
     }
   })
 
-
+  // GET: Get all device sensors
   router.get("/:id/sensors", async (
     req: Request,
     res: Response,
@@ -198,6 +203,25 @@ export function deviceRouter(): Router {
       const token = getAuthToken(req)
       const result = await controller.getAllSensors({
         token: token,
+        params: req.params
+      })
+      res.send(result)
+    } catch (err) {
+      return next(err)
+    }
+  })
+
+  // POST: List device events
+  router.post("/:id/events", async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const token = getAuthToken(req)
+      const result = await controller.listEvent({
+        token: token,
+        body: req.body,
         params: req.params
       })
       res.send(result)

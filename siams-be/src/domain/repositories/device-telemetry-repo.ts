@@ -1,6 +1,7 @@
 import { IRepository } from "@/shared/interfaces";
 import { DeviceTelemetry } from "@domain/entities";
-import { GroupByDateType, TelemetryGroupDto } from "@feature/device/dtos";
+import { GroupByDateType } from "@domain/interfaces/group-by-date";
+import { TelemetryGroupDto } from "@feature/device/dtos";
 
 export interface IDeviceTelemetryRepository extends IRepository<DeviceTelemetry> {
   listByRange(

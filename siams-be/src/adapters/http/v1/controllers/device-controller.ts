@@ -11,6 +11,7 @@ export class DeviceController {
     private readonly listTelemetryUC: DeviceFeature.ListTelemetryUC,
     private readonly deviceSendCommandUC: DeviceFeature.DeviceSendCommandUC,
     private readonly getLatestStatusUC: DeviceFeature.GetDeviceStatusUC,
+    private readonly listRecentDeviceEventUC: DeviceFeature.ListRecentDeviceEventUC,
   ) { }
 
   async getById(req: IRequest): Promise<DeviceDTOs.GetDeviceByIdResponse> {
@@ -72,5 +73,15 @@ export class DeviceController {
       device_id: req.params?.id as string
     }
     return await this.getLatestStatusUC.call(request)
+  }
+
+  async listEvent(req: IRequest): Promise<DeviceDTOs.ListRecentDeviceEventResponse> {
+    const request: DeviceDTOs.ListRecentDeviceEventRequest = {
+      token: req.token,
+      device_id: req.params?.id as string,
+      page: req.body.page as number,
+      perPage: req.body.perPage as number,
+    }
+    return await this.listRecentDeviceEventUC.call(request)
   }
 }

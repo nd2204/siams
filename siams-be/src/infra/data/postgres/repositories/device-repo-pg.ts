@@ -56,7 +56,7 @@ export class DeviceRepositoryPg
 
     const result = await this.pool.query(
       `SELECT d.* 
-       FROM devices d
+       FROM ${this.tableName} d
        JOIN clusters c ON d.cluster_id = c.id
        WHERE c.org_id = $1
        ORDER BY d.created_at DESC

@@ -1,6 +1,6 @@
-import { DeviceRegisteredEvent, DeviceRegisteredPayload } from "@domain/events/device-registered-event";
+import { DeviceRegisteredEvent } from "@domain/events/device/";
 import { IDomainEventHandler } from "@domain/interfaces/events";
-import { IRealtimeClient, RealtimeMessage } from "@domain/interfaces/realtime-client";
+import { IRealtimeClient } from "@domain/interfaces/realtime-client";
 
 export class DeviceRegisteredEventHandler implements IDomainEventHandler<DeviceRegisteredEvent> {
   constructor(
@@ -8,13 +8,6 @@ export class DeviceRegisteredEventHandler implements IDomainEventHandler<DeviceR
   ) { }
 
   async handle(event: DeviceRegisteredEvent): Promise<void> {
-    const message: RealtimeMessage<DeviceRegisteredPayload> = {
-      orgId: event.org_id,
-      clusterId: event.cluster_id,
-      eventType: event.name,
-      data: event.payload,
-      ts: event.ts
-    }
-    await this.client.publishDeviceEvent(message)
+    await this.client.publishDeviceEvent(event)
   }
 }

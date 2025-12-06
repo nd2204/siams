@@ -4,8 +4,8 @@ export interface PushStatusPayload {
   cpu?: number,
   mem?: number,
   wifi?: number,
-  online?: boolean,
-  ts?: number
+  online: boolean,
+  ts: number
 }
 
 export interface PushStatusRequest {

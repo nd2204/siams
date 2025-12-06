@@ -1,12 +1,13 @@
 import { IDeviceStatusRepository } from "@domain/repositories/device-status-repo";
 import { IUseCase, IValidator } from "@shared/interfaces";
-import { NotFoundError, ValidationError } from "@shared/errors";
+import { ValidationError } from "@shared/errors";
 import { IDeviceRepository } from "@domain/repositories";
 import { Device, DeviceStatus } from "@domain/entities";
 import { PushStatusPayload, PushStatusRequest } from "./dtos";
 import { ISignatureVerificationService } from "@domain/services/signature-verification-service";
 import { IDeviceEventPublisher } from "@domain/services/device-event-publisher";
 import { DeviceNotFoundError } from "@domain/errors";
+import { DeviceOfflineEvent, DeviceOnlineEvent, DeviceStatusReceivedEvent } from "@domain/events/device";
 
 export class ReceiveDeviceStatusUC implements IUseCase<DeviceStatus> {
   constructor(
@@ -36,12 +37,28 @@ export class ReceiveDeviceStatusUC implements IUseCase<DeviceStatus> {
       Number.MAX_VALUE // ignore maxAge for lwt payload
     )
 
-    await this.deviceRepo.update(
-      device.id,
-      (!!p.online) ? Device.markSeen(new Date()) : Device.markOffline()
-    )
+    const isDeviceOnline = device.status !== "offline" && device.status !== "unregistered"
+    // device online state change
+    if (isDeviceOnline !== p.online) {
+      await this.deviceEventPublisher.publish((!!p.online)
+        ? new DeviceOnlineEvent({
+          org_id: device.org_id,
+          device_id: device.id,
+        })
+        : new DeviceOfflineEvent({
+          org_id: device.org_id,
+          device_id: device.id,
+        }),
+        { store_event: { raw_payload: r.payload.raw_payload } }
+      );
 
-    const status = await this.statusRepo.create({
+      await this.deviceRepo.update(
+        device.id,
+        (!!p.online) ? Device.markSeen(new Date(p.ts)) : Device.markOffline()
+      )
+    }
+
+    const savedStatus = await this.statusRepo.create({
       device_id: device.id,
       cpuUsage: p.cpu,
       memUsage: p.mem,
@@ -50,14 +67,18 @@ export class ReceiveDeviceStatusUC implements IUseCase<DeviceStatus> {
       timestamp: new Date(p.ts!)
     })
 
-    await this.deviceEventPublisher.publish({
+    const event = new DeviceStatusReceivedEvent({
+      cpu: savedStatus.cpuUsage,
+      mem: savedStatus.memUsage,
+      wifi: savedStatus.wifiRssi,
+      online: false,
+      ts: savedStatus.timestamp,
       org_id: device.org_id,
-      device_id: device.id,
-      store_event: false,
-      event_type: "device.status",
-      event_payload: status
-    });
+      device_id: device.id
+    })
 
-    return status;
+    await this.deviceEventPublisher.publish(event);
+
+    return savedStatus;
   }
 }

@@ -17,6 +17,7 @@ import { ISignatureVerificationService } from "@domain/services/signature-verifi
 import { IDeviceEventPublisher } from "@domain/services/device-event-publisher";
 import { ClusterNotFoundError } from "@domain/errors/cluster-not-found";
 import { OrganizationNotFoundError } from "@domain/errors";
+import { DeviceRegisteredEvent } from "@domain/events/device";
 
 /* TODO: Add Unit of work */
 export class RegisterDeviceUC implements IUseCase<DeviceRegisterResponse> {
@@ -68,6 +69,8 @@ export class RegisterDeviceUC implements IUseCase<DeviceRegisterResponse> {
       geom: { lon: p.lon, lat: p.lat },
       fw_ver: p.fw_ver,
       status: "offline",
+      prov_status: "PROVISIONED",
+      prov_onchain: false
     })
 
     let response: DeviceRegisterResponse = {
@@ -129,15 +132,13 @@ export class RegisterDeviceUC implements IUseCase<DeviceRegisterResponse> {
     }
 
     // Publish device event
-    this.deviceEventPublisher.publish({
-      org_id: org.id,
-      device_id: device.id,
-      cluster_id: device.cluster_id,
-      store_event: true,
-      raw_payload: r.payload.raw_payload,
-      event_type: "device.registered",
-      event_payload: { device_id: device.id }
-    })
+    this.deviceEventPublisher.publish(
+      new DeviceRegisteredEvent({
+        device_id: device.id,
+        org_id: org.id
+      }),
+      { store_event: { raw_payload: r.payload.raw_payload } }
+    )
 
     return response;
   }

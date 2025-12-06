@@ -41,7 +41,7 @@ export class DeviceSendCommandUC implements IUseCase<DeviceSendCommandResponse> 
     // 4. Add to Outbox
     await this.outboxRepo.create(new OutboxEntry({
       id: v4(),
-      type: OutboxTypeConstants.DeviceCommand,
+      type: OutboxTypeConstants.SentDeviceCommand,
       status: "PENDING",
       payload: {
         topic: topics.deviceCommand.create({

@@ -16,9 +16,9 @@ import { getAllCommandsValidator } from "./device/get-all-commands-validator";
 import { getAllActuatorsValidator } from "./device/get-all-actuators-validator";
 import { listTelemetryValidator } from "./device/list-telemetry-validator";
 import { deviceSendCommandValidator } from "./device/send-command-validator";
-import { publishDeviceEventValidator } from "./device/publish-device-event-validator";
 import { signedPayloadValidator } from "./device/signed-payload-validator";
 import { getDeviceStatusValidator } from "./device/get-device-status-validator";
+import { listRecentDeviceEventValidator } from "./device/list-recent-event-validator";
 
 export const device = {
   telemetry: {
@@ -31,6 +31,9 @@ export const device = {
     pushStatusPayloadValidator,
     getDeviceStatusValidator
   },
+  event: {
+    listRecentDeviceEventValidator
+  },
   signedPayloadValidator,
   registerDeviceValidator,
   registerDevicePayloadValidator,
@@ -41,7 +44,6 @@ export const device = {
   getAllCommandsValidator,
   getAllActuatorsValidator,
   deviceSendCommandValidator,
-  publishDeviceEventValidator
 }
 
 export const cluster = {
