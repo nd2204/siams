@@ -14,3 +14,13 @@ export interface Cluster {
     createdAt: string;
   };
 }
+
+export interface AddDeviceToClusterRequest {
+  cluster_id: string;
+  device_id: string;
+}
+
+export interface AddDeviceToClusterResponse {
+  success: boolean,
+  message: string
+}

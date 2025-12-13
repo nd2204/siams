@@ -2,14 +2,17 @@ import { Permission, Role } from "@domain/entities";
 import { type Pool } from "pg";
 import { PostgresRepositoryBase } from "@infra/data/postgres/postgres-repo-base";
 import { IRoleRepository } from "@domain/repositories";
-import { PermissionKey } from "@domain/entities/user-permission";
+import { RoleId } from "@domain/entities/user-role";
+import { RoleIdPermissionMap, RoleNamePermissionMap } from "@domain/repositories/user-role-repo";
 
 export class RoleRepositoryPg
   extends PostgresRepositoryBase<Role>
   implements IRoleRepository {
 
+  private _perms_cache: RoleIdPermissionMap | null = null
+
   constructor(
-    protected readonly pool: Pool
+    protected readonly pool: Pool,
   ) {
     const mapping: Record<keyof Role, string> = {
       id: "id",
@@ -30,21 +33,60 @@ export class RoleRepositoryPg
     )
   }
 
-  async getRolePermissionMap(): Promise<Record<string, PermissionKey[]>> {
+  async getRoleIdPermissionMap(): Promise<RoleIdPermissionMap> {
+    if (this._perms_cache) {
+      return this._perms_cache;
+    }
+
     const sql = `
-      SELECT r.name AS role_name, p.key AS permission_key
+      SELECT 
+        r.${this.columns.id} as role_id,
+        r.${this.columns.name} AS role_name,
+        p.key AS permission_key
       FROM roles r
       JOIN role_permissions rp ON rp.role_id = r.id
       JOIN permissions p ON p.id = rp.permission_id
       ORDER BY r.name
     `;
     const res = await this.pool.query(sql);
-    const map: Record<string, PermissionKey[]> = {};
+    const map: RoleIdPermissionMap = {};
+
+    for (const row of res.rows) {
+      const id = row.role_id as RoleId
+      if (!map[id]) map[id] = { permissions: new Set(), role_name: row.role_name };
+      map[id].permissions.add(row.permission_key);
+    }
+
+    this._perms_cache = map;
+    return map;
+  }
+
+  async getRoleNamePermissionMap(): Promise<RoleNamePermissionMap> {
+    const sql = `
+      SELECT
+        r.${this.columns.name} AS role_name,
+        p.key AS permission_key,
+        p.description AS permission_description
+      FROM roles r
+      JOIN role_permissions rp ON rp.role_id = r.id
+      JOIN permissions p ON p.id = rp.permission_id
+      ORDER BY r.name
+    `;
+    const res = await this.pool.query(sql);
+
+    const map: RoleNamePermissionMap = {
+      SUPER_ADMIN: new Set(),
+      ORG_OWNER: new Set(),
+      ORG_ADMIN: new Set(),
+      ORG_OPERATOR: new Set(),
+      ORG_VIEWER: new Set()
+    };
 
     for (const row of res.rows) {
       if (!map[row.role_name]) map[row.role_name] = [];
-      map[row.role_name].push(row.permission_key);
+      map[row.role_name].add(row.permission_key);
     }
+
     return map;
   }
 

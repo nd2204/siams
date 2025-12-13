@@ -13,18 +13,28 @@ export const ENDPOINTS = {
     ACTUATORS: (id: string) => `devices/${id}/actuators`,
     TELEMETRY: (id: string, sensorId: string) => `/devices/${id}/sensors/${sensorId}/telemetry`,
     STATUS: (id: string) => `devices/${id}/status`,
-    COMMANDS: (id: string) => `/devices/${id}/commands`
+    COMMANDS: (id: string) => `/devices/${id}/commands`,
+    EVENTS: (id: string) => `/devices/${id}/events`,
   },
   CLUSTER: {
     ROOT: "/clusters",
-    LIST_DEVICES: (clusterId: string) => `/clusters/${clusterId}/devices`,
     BY_ID: (id: string) => `/clusters/${id}`,
+    DEVICES: (id: string) => `/clusters/${id}/devices`,
+    DEVICE_ID: (id: string, device_id: string) => `/clusters/${id}/devices/${device_id}`,
   },
   ORG: {
     ROOT: "/orgs",
-    LIST_DEVICES: (orgId: string) => `/orgs/${orgId}/devices`,
-    LIST_CLUSTERS: (orgId: string) => `/orgs/${orgId}/clusters`,
-    LIST_USERS: (orgId: string) => `/orgs/${orgId}/users`,
-    GET_USER_BY_ID: (orgId: string, uid: string) => `/orgs/${orgId}/users/${uid}`
+    DEVICES: (orgId: string) => `/orgs/${orgId}/devices`,
+    CLUSTERS: (orgId: string) => `/orgs/${orgId}/clusters`,
+    USERS: (orgId: string) => `/orgs/${orgId}/users`,
+    USER_BY_ID: (orgId: string, uid: string) => `/orgs/${orgId}/users/${uid}`,
+    INVITE: (orgId: string) => `/orgs/${orgId}/invite`
   },
+  USER: {
+    ROOT: "/users",
+    BY_ID: (id: string) => `/users/${id}`,
+  },
+  MISC: {
+    VERIFY: "/verify"
+  }
 };

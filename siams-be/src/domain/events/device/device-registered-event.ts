@@ -6,7 +6,7 @@ export interface DeviceRegisteredEventPayload
   extends IDeviceEventPayload { }
 
 export class DeviceRegisteredEvent extends DomainEvent<DeviceRegisteredEventPayload> {
-  constructor(public payload: DeviceRegisteredEventPayload) {
+  constructor(payload: DeviceRegisteredEventPayload) {
     super(payload, DeviceEventTypeConstants.DeviceRegistered)
   }
 }

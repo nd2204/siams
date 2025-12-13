@@ -1,10 +1,8 @@
-import { User } from "@/domain/entities";
 import { IUseCase, IValidator } from "@/shared/interfaces";
 import { AuthResponse } from "@/feature/user/dtos/auth-response"
 import { IOrganizationRepository, IOrganizationUserRepository, IRoleRepository, IUserRepository } from "@/domain/repositories";
 import { UnauthorizedError, ValidationError } from "@/shared/errors";
 import { UserLoginRequest } from "./dtos/user-login-request";
-import { PermissionKey } from "@domain/entities/user-permission";
 
 export class LoginUserUC implements IUseCase<AuthResponse> {
   constructor(
@@ -43,7 +41,7 @@ export class LoginUserUC implements IUseCase<AuthResponse> {
     if (orgUsers && orgUsers.length > 0) {
       for (let i = 0; i < orgUsers.length; i++) {
         const role = await this.roleRepo.findOneBy({ id: orgUsers[i].roleId })
-        const map = await this.roleRepo.getRolePermissionMap()
+        const map = await this.roleRepo.getRoleNamePermissionMap()
         const org = await this.orgRepo.findOneBy({ id: orgUsers[i].orgId })
         if (!role || !map) {
           throw new Error("Role and permissions does not exists");

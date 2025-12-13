@@ -13,7 +13,7 @@ export interface DeviceTelemetryReceivedEventPayload
 }
 
 export class DeviceTelemetryReceivedEvent extends DomainEvent<DeviceTelemetryReceivedEventPayload> {
-  constructor(public payload: DeviceTelemetryReceivedEventPayload) {
+  constructor(payload: DeviceTelemetryReceivedEventPayload) {
     super(payload, DeviceEventTypeConstants.DeviceTelemetryReceived);
   }
 }

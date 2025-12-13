@@ -19,6 +19,7 @@ import { deviceSendCommandValidator } from "./device/send-command-validator";
 import { signedPayloadValidator } from "./device/signed-payload-validator";
 import { getDeviceStatusValidator } from "./device/get-device-status-validator";
 import { listRecentDeviceEventValidator } from "./device/list-recent-event-validator";
+import { listOrgUserValidator } from "./organization/list-org-user-validator";
 
 export const device = {
   telemetry: {
@@ -60,5 +61,6 @@ export const user = {
 
 export const organization = {
   createOrganizationValidator,
-  listDeviceByOrgIdValidator
+  listDeviceByOrgIdValidator,
+  listOrgUserValidator
 }

@@ -1,5 +1,5 @@
 import { useDeviceSensors } from "@/hooks/queries/use-device-sensor";
-import { memo, useCallback, useState } from "react";
+import { memo, useState } from "react";
 import type { Device, Sensor } from "@/types/device/index";
 import { BarChart3, Grid3x3, List, Pause, Play, Radio } from "lucide-react";
 import { Badge } from "../ui/badge";
@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import DeviceSensorTelemtryGridView from "./DeviceSensorTelemetryGridView";
 import { DeviceSocketTelemetryBridge } from "./DeviceSocketTelemetryBridge";
-import type { TimeRange } from "@/utils/time-filter";
+import type { TimeRange } from "@/utils/time-utils";
 
 type ViewMode = 'grid' | 'list' | 'compact';
 

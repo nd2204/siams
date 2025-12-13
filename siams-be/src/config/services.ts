@@ -10,7 +10,8 @@ import {
   DeviceActuatorRepositoryPg,
   DeviceStatusRepositoryPg,
   DeviceTelemetryRepositoryPg,
-  DeviceCommandRepositoryPg
+  DeviceCommandRepositoryPg,
+  AnchorRepositoryPg
 } from "@infra/data/postgres/repositories"
 
 import { pool } from '@infra/data/postgres/pool-pg'
@@ -26,11 +27,14 @@ import { app } from "./app"
 import { DeviceEventPublisher } from "@infra/services/device-event-publisher-impl"
 import { SignatureVerificationService } from "@infra/services/signature-verification-service-impl"
 import { AuthService } from "@infra/services/auth-services-impl"
+import { FakeEmailService } from "@infra/email/fake-email-service"
+import { EthereumBlockchainService } from "@infra/blockchain/ethereum-blockchain-service"
+import { ethers } from "ethers"
 
-const orgRepo = new OrganizationRepositoryPg(pool)
-const orgUserRepo = new OrganizationUserRepositoryPg(pool)
-const userRepo = new UserRepositoryPg(pool)
 const roleRepo = new RoleRepositoryPg(pool)
+const orgRepo = new OrganizationRepositoryPg(pool)
+const orgUserRepo = new OrganizationUserRepositoryPg(pool, roleRepo)
+const userRepo = new UserRepositoryPg(pool)
 
 // Cluster aggregate
 const clusterRepo = new ClusterRepositoryPg(pool)
@@ -46,7 +50,24 @@ const deviceTelemetryRepo = new DeviceTelemetryRepositoryPg(pool)
 const deviceCommandRepo = new DeviceCommandRepositoryPg(pool)
 const outboxRepo = new OutboxRepositoryPg(pool);
 
-const authService = new AuthService(orgRepo, orgUserRepo, clusterRepo, deviceRepo, verifyToken)
+// Blockchain aggregate
+const anchorRepo = new AnchorRepositoryPg(pool);
+
+// Initialize blockchain service (Ethereum/Polygon)
+const provider = new ethers.JsonRpcProvider(app.blockchain.providerUrl);
+const wallet = new ethers.Wallet(app.blockchain.privateKey, provider);
+let blockchainService: EthereumBlockchainService =
+  new EthereumBlockchainService(
+    provider,
+    wallet,
+    anchorRepo,
+    app,
+    new SMLogger("infra:service:EthereumBlockchainService")
+  );
+
+// const emailService = new NodemailerEmailService(app.email);
+const emailService = new FakeEmailService();
+const authService = new AuthService(orgRepo, orgUserRepo, clusterRepo, deviceRepo, roleRepo, verifyToken)
 const eventBus = new NodeEventBus()
 const cryptoService = new CryptoService(app);
 const deviceEventPublisher = new DeviceEventPublisher(
@@ -103,9 +124,18 @@ export const services = {
   outbox: {
     repository: outboxRepo
   },
+  blockchain: {
+    repositories: {
+      anchor: anchorRepo
+    },
+    services: {
+      blockchain: blockchainService,
+    }
+  },
   authService,
   eventBus,
   cryptoService,
+  emailService,
   utils: {
     encryptPassword,
     issueToken,

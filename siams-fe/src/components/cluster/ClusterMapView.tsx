@@ -38,10 +38,10 @@ export default function ClusterMapView() {
         {farms.map(f => (
           <Polygon key={f.id} positions={f.area} pathOptions={{ color: 'green' }} />
         ))}
-        <div className="absolute top-4 left-4 z-[1000]">
+        <div className="absolute top-4 left-4 z-1000">
           {activeOrg && <SearchClusterCard orgId={activeOrg.id} />}
         </div>
-        <div className="absolute right-4 top-4 z-[1000]">
+        <div className="absolute right-4 top-4 z-1000">
           <div className="bg-background [--radius:9999px]" >
 
           </div>

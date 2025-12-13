@@ -1,11 +1,12 @@
 import { IPaginated, IRequest } from '@shared/interfaces'
 import { Cluster, Device, Organization } from '@domain/entities'
-import { CreateOrganizationRequest, CreateOrganizationResponse } from '@feature/organization/dtos';
+import { CreateOrganizationRequest, CreateOrganizationResponse, ListOrgUserRequest, ListOrgUserResponse } from '@feature/organization/dtos';
 import { CreateOrganizationUC } from '@feature/organization/create-org';
 import { GetOrganizationByIdUC } from '@feature/organization/get-org-by-id';
 import { ListClusterByOrgIdUC } from '@feature/cluster/list-clusters-by-org-id';
 import { ListClusterByOrgIdRequest } from '@feature/cluster/dtos/list-cluster-by-org-id-request';
 import { ListDeviceByOrgIdUC } from '@feature/device/list-by-org-id';
+import { ListOrgUserUC } from '@feature/organization/list-org-user';
 
 export class OrganizationController {
 
@@ -13,7 +14,8 @@ export class OrganizationController {
     private createOrgUC: CreateOrganizationUC,
     private getOrgByIdUC: GetOrganizationByIdUC,
     private listClusterByOrgIdUC: ListClusterByOrgIdUC,
-    private listDeviceByOrgIdUC: ListDeviceByOrgIdUC
+    private listDeviceByOrgIdUC: ListDeviceByOrgIdUC,
+    private listOrgUsersUC: ListOrgUserUC
   ) { }
 
   async create(req: IRequest): Promise<CreateOrganizationResponse> {
@@ -40,6 +42,15 @@ export class OrganizationController {
     return await this.listDeviceByOrgIdUC.call(request)
   }
 
+  async listOrgUsers(req: IRequest): Promise<ListOrgUserResponse> {
+    const request: ListOrgUserRequest = {
+      token: req.token as string,
+      page: req.body?.page as number,
+      perPage: req.body?.perPage as number,
+      org_id: req.params?.id as string
+    }
+    return await this.listOrgUsersUC.call(request)
+  }
 
   async listClusterByOrgId(req: IRequest): Promise<IPaginated<Cluster>> {
     const request: ListClusterByOrgIdRequest = {

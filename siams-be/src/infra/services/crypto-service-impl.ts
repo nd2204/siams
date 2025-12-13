@@ -6,6 +6,12 @@ import { canonicalize as jc_canonicalize } from "json-canonicalize";
 export class CryptoService implements ICryptoService {
   constructor(private config: IAppConfig) { }
 
+  generate_token(): string {
+    return crypto
+      .randomBytes(32)
+      .toString('hex')
+  }
+
   canonicalize(payload: any): string {
     return jc_canonicalize(payload);
   }

@@ -1,7 +1,6 @@
 import { DeviceEvent } from "@domain/entities";
 import { IDeviceEventRepository } from "@domain/repositories";
 import { PostgresRepositoryBase } from "@infra/data/postgres/postgres-repo-base";
-import { IPaginated } from "@shared/interfaces";
 import { IBucketOf } from "@shared/interfaces/bucket";
 import { Pool } from "pg";
 
@@ -27,32 +26,14 @@ export class DeviceEventRepositoryPg
     })
   }
 
-  async listRecentBy(filters: Partial<DeviceEvent>, page: number, perPage: number): Promise<IPaginated<DeviceEvent>> {
-    const { whereClause, values } = this.buildWhere(filters);
-
-    const sql = `
-      SELECT *${this.geometrySelectSql()}
-      FROM ${this.tableName} ${whereClause}
-      ORDER BY ${this.columns.created_at} DESC
-      OFFSET $${values.length + 1}
-      LIMIT $${values.length + 2}
-    `;
-    const countSql = `
-      SELECT COUNT(*)
-      FROM ${this.tableName} ${whereClause}
-    `;
-
-    const offset = (page - 1) * perPage;
-    const res = await this.pool.query(sql, [...values, offset, perPage]);
-    const countRes = await this.pool.query(countSql, values);
-
-    return {
-      data: res.rows.map(r => this.toEntity(this.postProcessGeometry(r))),
-      pagination: {
-        total: parseInt(countRes.rows[0].count, 10),
-        page,
-        perPage,
-      }
-    };
+  async listRecentBy(filters: Partial<DeviceEvent>, perBucket?: number): Promise<IBucketOf<DeviceEvent>[]> {
+    const ret = await this.groupByDateBuckets({
+      tsColumn: this.columns.created_at,
+      granularity: "day",
+      limitPerBucket: perBucket,
+      filters
+    })
+    console.log(ret)
+    return ret;
   }
 }

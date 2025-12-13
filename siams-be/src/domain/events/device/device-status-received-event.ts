@@ -12,7 +12,7 @@ export interface DeviceStatusReceivedEventPayload
 }
 
 export class DeviceStatusReceivedEvent extends DomainEvent<DeviceStatusReceivedEventPayload> {
-  constructor(public payload: DeviceStatusReceivedEventPayload) {
+  constructor(payload: DeviceStatusReceivedEventPayload) {
     super(payload, DeviceEventTypeConstants.DeviceStatusReceived);
   }
 }

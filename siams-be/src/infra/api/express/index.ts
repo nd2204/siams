@@ -33,12 +33,13 @@ app.use(
   cookieParser(),
   // CSRF protection - use cookie-based tokens (double submit cookie)
   // token will be available via req.csrfToken() and verified for state-changing methods
-  csurf({
-    cookie: { httpOnly: true, secure: config.app.isProduction() }
-  }),
+  // csurf({
+  //   cookie: { httpOnly: true, secure: config.app.isProduction() }
+  // }),
   // CORS protection
   cors({
     origin: [
+      "*",
       config.app.feHost || 'http://192.168.1.16:33445',
       'http://127.0.0.1:33445',
       'http://localhost:33445',

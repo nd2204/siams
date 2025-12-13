@@ -30,3 +30,45 @@ export function formatLastSeenTime(pastDate: Date) {
   }
 }
 
+export function MilitaryTimeFromISO(iso: string, options?: Partial<Intl.DateTimeFormatOptions>): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+
+  options = {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false, // Force 24-hour format
+    ...options // overwrite default
+  };
+
+  // Use 'en-GB' locale as it defaults to a 24-hour clock, 
+  // ensuring consistency even if 'hour12: false' is ignored by some environments.
+  return new Intl.DateTimeFormat('en-GB', options).format(d);
+}
+
+export function LocaleTimeStringFromISO(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleTimeString();
+}
+
+export function LocaleDateStringFromISO(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString();
+}
+
+export function FormatRelativeDayFromISO(iso: string): string {
+  const now = Date.now();
+  const isoDate = new Date(iso)
+  const diffInMilliseconds = isoDate.getTime() - now;
+  const diffInDays = Math.round(diffInMilliseconds / (1000 * 60 * 60 * 24)) + 1;
+
+  const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+
+  if (diffInDays !== 0 && diffInDays < -1) {
+    return isoDate.toLocaleDateString()
+  }
+  return rtf.format(diffInDays, 'day');
+};

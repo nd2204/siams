@@ -2,7 +2,6 @@
 export const RadialChart = ({
   value,
   label,
-  color,
   icon: Icon
 }: {
   value: number; label?: string; color: string; icon: any

@@ -1,10 +1,9 @@
 import { DeviceEvent } from "@domain/entities";
-import { IPaginated } from "@shared/interfaces";
-import { IPaginatedRequest } from "@shared/interfaces/paginated-request";
+import { IBucketOf, IBucketRequest } from "@shared/interfaces/bucket";
 
-export interface ListRecentDeviceEventRequest extends IPaginatedRequest {
+export interface ListRecentDeviceEventRequest extends IBucketRequest {
   token?: string
   device_id: string
 }
 
-export type ListRecentDeviceEventResponse = IPaginated<DeviceEvent>
+export type ListRecentDeviceEventResponse = IBucketOf<DeviceEvent>[]

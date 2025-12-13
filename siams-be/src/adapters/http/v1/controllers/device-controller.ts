@@ -79,8 +79,7 @@ export class DeviceController {
     const request: DeviceDTOs.ListRecentDeviceEventRequest = {
       token: req.token,
       device_id: req.params?.id as string,
-      page: req.body.page as number,
-      perPage: req.body.perPage as number,
+      perBucket: req.body.perBucket && Number(req.body.perBucket),
     }
     return await this.listRecentDeviceEventUC.call(request)
   }

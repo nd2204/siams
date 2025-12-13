@@ -8,7 +8,9 @@ export type RoleName =
   | 'ORG_OPERATOR' // 'Organization operator: manage devices and act on behalf of org'
   | 'ORG_VIEWER'   // 'Organization viewer: read-only access'
 
-export class Role extends Entity<Role, string> {
+export type RoleId = string
+
+export class Role extends Entity<Role, RoleId> {
   declare name: RoleName;
   declare description: string;
   declare isGlobal: boolean;

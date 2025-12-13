@@ -4,7 +4,9 @@ import { Entity } from "@domain/interfaces";
 import { Cluster } from "./cluster";
 import { Organization } from "./organization";
 
-export class Device extends Entity<Device, string> {
+export type DeviceId = string
+
+export class Device extends Entity<Device, DeviceId> {
 
   // metadata
   declare name?: string;

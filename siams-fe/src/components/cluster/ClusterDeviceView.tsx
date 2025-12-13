@@ -25,7 +25,7 @@ export default function ClusterDeviceView({ cluster }: { cluster: Cluster }) {
 
   if (isPending) {
     return (
-      <Skeleton />
+      <Skeleton className="flex flex-1" />
     )
   }
 
@@ -44,7 +44,7 @@ export default function ClusterDeviceView({ cluster }: { cluster: Cluster }) {
           </div>
         </div>
       ) : (
-        <Card className="@container/card flex flex-1 bg-background overflow-hidden pt-2 pb-0 gap-0 border-dashed">
+        <Card className="@container/card flex flex-1 bg-background overflow-hidden pt-2 pb-0 gap-0 border-dashed border-2">
           <ClusterDeviceEmpty clusterId={cluster.id} orgId={activeOrg!.id} onRefresh={onRefresh} />
         </Card>
       )}

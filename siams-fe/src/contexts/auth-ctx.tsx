@@ -1,6 +1,7 @@
 import { authService } from "@/services/api/auth-service";
-import type { OrganizationUserData, UserData } from "@/services/api/dtos/auth/user-data";
 import { createSocket } from "@/services/realtime/socket-client";
+import type { UserOrgInfo } from "@/types/organization";
+import type { UserData } from "@/types/user";
 import type { AxiosError } from "axios";
 import React, { createContext, useCallback, useEffect, useState } from "react"
 
@@ -8,11 +9,11 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthContextType {
   user: UserData | null;
-  activeOrg: OrganizationUserData | null;
+  activeOrg: UserOrgInfo | null;
   isAuthenticated: boolean;
   loading: boolean;
   token: string | null;
-  setOrg: (org: OrganizationUserData | null) => void
+  setOrg: (org: UserOrgInfo | null) => void
   login: (email: string, password: string) => Promise<{ success: boolean, error?: any }>;
   signup: (name: string, email: string, password: string) => Promise<{ success: boolean, error?: any }>;
   logout: () => void;
@@ -28,7 +29,7 @@ interface StoredSession {
   token: string;
   refreshToken?: string;
   expiresAt: number; // timestamp
-  activeOrg?: OrganizationUserData | null;
+  activeOrg?: UserOrgInfo | null;
 }
 
 // Helper to check if stored session is valid
@@ -41,7 +42,7 @@ const isValidSession = (session: StoredSession | null): boolean => {
 export const AuthProvider = (props: Props) => {
   const [user, setUser] = useState<UserData | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [activeOrg, setActiveOrg] = useState<OrganizationUserData | null>(null);
+  const [activeOrg, setActiveOrg] = useState<UserOrgInfo | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -54,7 +55,7 @@ export const AuthProvider = (props: Props) => {
   }, [])
 
   // Helper to persist session
-  const persistSession = useCallback((userData: UserData, token: string, refreshToken?: string, org?: OrganizationUserData | null) => {
+  const persistSession = useCallback((userData: UserData, token: string, refreshToken?: string, org?: UserOrgInfo | null) => {
     const session: StoredSession = {
       user: userData,
       token,
@@ -71,7 +72,7 @@ export const AuthProvider = (props: Props) => {
   }, [activeOrg]);
 
   // Allow user to select or change active organization
-  const setOrg = (org: OrganizationUserData | null) => {
+  const setOrg = (org: UserOrgInfo | null) => {
     setActiveOrg(org);
     const storedSession = localStorage.getItem("session");
     if (storedSession) {

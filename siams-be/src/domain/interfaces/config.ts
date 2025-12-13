@@ -6,6 +6,14 @@ export interface IAppConfig {
   logFile: string,
   bootLogFile: string,
   beSecret: string,
+  email: {
+    host: string,
+    port: number,
+    secure: boolean,
+    user: string,
+    pass: string,
+    from: string
+  },
   mqtt: { url: string },
   database: {
     host: string,
@@ -13,5 +21,10 @@ export interface IAppConfig {
     user: string,
     password: string,
     dbName: string,
+  },
+  blockchain: {
+    contractAddr: string,
+    providerUrl: string,
+    privateKey: string
   }
 }

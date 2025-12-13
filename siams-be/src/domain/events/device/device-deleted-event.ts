@@ -5,7 +5,7 @@ import { IDeviceEventPayload } from "./device-event-payload";
 export interface DeviceDeletedEventPayload extends IDeviceEventPayload { }
 
 export class DeviceDeletedEvent extends DomainEvent<DeviceDeletedEventPayload> {
-  constructor(payload: DeviceDeletedEventPayload,) {
+  constructor(payload: DeviceDeletedEventPayload) {
     super(payload, DeviceEventTypeConstants.DeviceRegistered)
   }
 }

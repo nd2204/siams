@@ -7,7 +7,7 @@ const AnchorTypeConstants = {
   DEVICE_TELEMETRY_BATCH: 'device.telemetry.batch',
 } as const;
 
-type AnchorType = typeof AnchorTypeConstants[keyof typeof AnchorTypeConstants]
+export type AnchorType = typeof AnchorTypeConstants[keyof typeof AnchorTypeConstants]
 
 export class Anchor extends Entity<Anchor, number> {
   declare anchor_uuid: string;

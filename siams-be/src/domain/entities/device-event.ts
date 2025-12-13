@@ -1,6 +1,7 @@
 import { Entity } from "@domain/interfaces";
 
 export const DeviceEventTypeConstants = {
+  DeviceCommandAck: "device.command.ack",
   DeviceRegistered: "device.registered",
   DeviceTelemetryReceived: "device.telemetry",
   DeviceStatusReceived: "device.status",

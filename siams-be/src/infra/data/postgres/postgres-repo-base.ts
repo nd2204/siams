@@ -2,6 +2,7 @@ import { type Pool } from "pg";
 import { IRepository, IPaginated } from "@shared/interfaces";
 import { NotFoundError } from "@shared/errors";
 import { GroupByDateType } from "@domain/interfaces/group-by-date";
+import { IBucketOf } from "@shared/interfaces/bucket";
 
 export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
   protected readonly jsonColumns: Set<string> = new Set();
@@ -189,11 +190,108 @@ export abstract class PostgresRepositoryBase<T> implements IRepository<T> {
   }
 
   /** Add geometry column projections as GeoJSON */
-  protected geometrySelectSql(): string {
+  protected geometrySelectSql(prefix: string = ''): string {
+    if (prefix.length > 0) {
+      prefix = prefix + "."
+    }
     if (this.geometryColumns.size === 0) return '';
     return ", " + Array.from(this.geometryColumns)
-      .map(col => `ST_AsGeoJSON(${col}) as ${col}_geojson`)
+      .map(col => `ST_AsGeoJSON(${prefix}${col}) as ${prefix}${col}_geojson`)
       .join(", ");
+  }
+
+  async groupByDateBuckets(params: {
+    tsColumn: keyof T | string;
+    granularity: GroupByDateType;
+    filters?: Partial<T>;
+    limitPerBucket?: number;
+    order?: "ASC" | "DESC";
+  }) {
+    const {
+      tsColumn,
+      granularity,
+      filters = {},
+      limitPerBucket = undefined,
+      order = "DESC"
+    } = params;
+
+    // map key entity -> DB column
+    const colTs = typeof tsColumn === "string" ? tsColumn : this.getColumn(tsColumn);
+
+    // Build group expression
+    const groupExpr = this.buildGroupByDateExpression(granularity, colTs);
+
+    // WHERE
+    const { whereClause, values } = this.buildWhere(filters);
+
+    // Query raw rows (bucket + data)
+    const sql = `
+    SELECT 
+      ${groupExpr} AS bucket,
+      *,
+      ${colTs} AS ts_original
+    FROM ${this.tableName}
+    ${whereClause}
+    ORDER BY bucket ${order}, ${colTs} ${order}
+  `;
+
+    const res = await this.pool.query(sql, values);
+
+    // Convert to buckets
+    return this.bucketMapper(res.rows, {
+      bucketField: "bucket",
+      metaField: null,
+      limitPerBucket,
+      entityMapper: (row) => {
+        // Remove helper columns
+        delete row.bucket;
+        delete row.ts_original;
+        return this.toEntity(this.postProcessGeometry(row));
+      }
+    });
+  }
+
+  protected bucketMapper<TEntity = T>(rows: any[], opts: {
+    bucketField: string;
+    metaField?: string | null;
+    limitPerBucket?: number;
+    entityMapper: (row: any) => TEntity;
+  }): IBucketOf<TEntity>[] {
+
+    const {
+      bucketField,
+      metaField = null,
+      limitPerBucket = undefined,
+      entityMapper
+    } = opts;
+
+    const map = new Map<string, IBucketOf<TEntity>>();
+
+    for (const row of rows) {
+      let bucketName = row[bucketField];
+      if (!bucketName) continue;
+
+      const bucketKey = typeof bucketName !== 'string' ? JSON.stringify(bucketName) : bucketName
+      let bucket = map.get(bucketKey);
+      if (!bucket) {
+        bucket = {
+          bucket_name: bucketName,
+          meta: metaField ? row[metaField] : undefined,
+          data: []
+        };
+        map.set(bucketKey, bucket);
+      }
+
+      if (!limitPerBucket || bucket.data.length < limitPerBucket) {
+        const cloned = { ...row };
+        delete cloned[bucketField];
+        if (metaField) delete cloned[metaField];
+
+        bucket.data.push(entityMapper(cloned));
+      }
+    }
+
+    return Array.from(map.values());
   }
 
   static createRowMapper<T>(mapping: Record<keyof T, string>): (row: any) => T {

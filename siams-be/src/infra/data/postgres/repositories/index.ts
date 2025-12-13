@@ -8,6 +8,7 @@ import { DeviceStatusRepositoryPg } from "./device-status-repo-pg";
 import { DeviceTelemetryRepositoryPg } from "./device-telemetry-repo-pg";
 import { OrganizationRepositoryPg } from "./organization-repo-pg";
 import { UserRepositoryPg } from "./user-repo-pg";
+import { AnchorRepositoryPg } from "./anchor-repo-pg";
 
 export {
   OrganizationRepositoryPg,
@@ -20,4 +21,5 @@ export {
   DeviceStatusRepositoryPg,
   DeviceTelemetryRepositoryPg,
   DeviceCommandRepositoryPg,
+  AnchorRepositoryPg,
 }

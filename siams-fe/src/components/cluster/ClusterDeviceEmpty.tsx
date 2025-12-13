@@ -42,17 +42,25 @@ export default function ClusterDeviceEmpty({
             </Badge>
           </div>
         </div>
-        <Button variant="outline" className="mt-4" disabled={refreshing} onClick={() => {
-          onRefresh && onRefresh();
-          new Promise(() => {
-            setRefreshing(true)
-            setTimeout(() => {
-              setRefreshing(false)
-            }, 1000)
-          })
-        }}>
-          {refreshing ? <><Spinner />Refreshing ...</> : <><IconRefresh />Refresh</>}
-        </Button>
+        <div className="flex flex-row items-center gap-3 mt-4">
+          <Button variant="outline" disabled={refreshing} onClick={() => {
+            onRefresh && onRefresh();
+            new Promise(() => {
+              setRefreshing(true)
+              setTimeout(() => {
+                setRefreshing(false)
+              }, 1000)
+            })
+          }}>
+            {refreshing ? <><Spinner />Refreshing ...</> : <><IconRefresh />Refresh</>}
+          </Button>
+          <span className="text-muted-foreground">or</span>
+          <Button variant="default" disabled={refreshing} onClick={() => {
+            onRefresh && onRefresh();
+          }}>
+            Assign device
+          </Button>
+        </div>
       </EmptyContent>
 
       <Button

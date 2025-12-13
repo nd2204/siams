@@ -1,10 +1,12 @@
 import { apiClient } from "@/services/api/client";
 import { ENDPOINTS } from "@/services/api/endpoints";
 
-import type { UserLoginRequest } from "./dtos/auth/user-login-request";
-import type { UserRegisterRequest } from "./dtos/auth/user-register-request";
-import type { UserData } from "./dtos/auth/user-data";
-import type { AuthResponse } from "./dtos/auth/auth-response";
+import type {
+  UserLoginRequest,
+  UserRegisterRequest,
+  AuthResponse,
+  UserData
+} from "@/types/user";
 
 // Set token in API client
 function setAuthToken(token: string) {

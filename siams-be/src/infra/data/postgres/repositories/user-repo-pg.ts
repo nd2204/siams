@@ -2,7 +2,6 @@ import { User } from "@domain/entities";
 import { IUserRepository } from "@domain/repositories";
 import { type Pool } from "pg";
 import { PostgresRepositoryBase } from "@infra/data/postgres/postgres-repo-base";
-import { NotFoundError } from "@shared/errors";
 
 export class UserRepositoryPg
   extends PostgresRepositoryBase<User>
@@ -16,7 +15,9 @@ export class UserRepositoryPg
       name: "name",
       email: "email",
       password: "password",
-      salt: "salt"
+      salt: "salt",
+      created_at: "created_at",
+      is_active: "is_active"
     }
 
     super(pool, "users", mapping, (row: any) =>
@@ -25,7 +26,9 @@ export class UserRepositoryPg
         name: row[mapping.name],
         email: row[mapping.email],
         password: row[mapping.password],
-        salt: row[mapping.salt]
+        salt: row[mapping.salt],
+        created_at: row[mapping.created_at],
+        is_active: row[mapping.is_active]
       })
     )
   }

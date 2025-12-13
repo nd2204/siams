@@ -3,3 +3,7 @@ export interface IBucketOf<T> {
   meta?: any
   data: T[]
 }
+
+export interface IBucketRequest {
+  perBucket?: number
+}

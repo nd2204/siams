@@ -1,10 +1,10 @@
 import { IOrganizationRepository, IOrganizationUserRepository, IRoleRepository, IUserRepository } from "@domain/repositories";
-import { Organization, OrganizationUser } from "@/domain/entities";
+import { Organization } from "@/domain/entities";
 import { CreateOrganizationRequest, CreateOrganizationResponse } from "./dtos";
 import { ValidationError } from "@shared/errors";
 import { IUseCase, IValidator } from "@shared/interfaces";
-import { v4 as uuidv4 } from "uuid"
 import { UserNotFoundError } from "@domain/errors";
+import { v4 as uuidv4 } from "uuid"
 
 export class CreateOrganizationUC implements IUseCase<CreateOrganizationResponse> {
   constructor(
@@ -35,6 +35,7 @@ export class CreateOrganizationUC implements IUseCase<CreateOrganizationResponse
     }
 
     const name = r.name!.trim();
+    const default_role = "ORG_OWNER"
     const org = new Organization({
       id: uuidv4(),
       name,
@@ -43,27 +44,15 @@ export class CreateOrganizationUC implements IUseCase<CreateOrganizationResponse
     });
 
     const savedOrg = await this.repo.create(org)
-
-    const role = await this.roleRepo.findOneBy({ name: "ORG_OWNER" })
-    if (!role) {
-      throw new Error("Role does not exist")
-    }
-
-    const orgUser: OrganizationUser = {
-      id: uuidv4(),
-      orgId: org.id,
-      userId: existingUser.id,
-      roleId: role!.id,
-    }
-    await this.orgUserRepo.create(orgUser);
-    const map = await this.roleRepo.getRolePermissionMap();
+    await this.orgUserRepo.addUserToOrg(org.id, existingUser.id, { name: default_role });
+    const map = await this.roleRepo.getRoleNamePermissionMap();
 
     return {
       id: savedOrg.id,
       name: savedOrg.name,
       slug: savedOrg.slug,
-      role: role.name,
-      permissions: map[role.name],
+      role: default_role,
+      permissions: map[default_role],
       createdAt: savedOrg.createdAt!
     };
   }

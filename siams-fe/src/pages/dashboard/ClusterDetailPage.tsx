@@ -50,7 +50,7 @@ export default function ClusterDetailPage() {
             </Item>
             <ClusterDetailInfoSection cluster={cluster} />
           </Card>
-          {cluster && <ClusterDeviceView cluster={cluster} />}
+          <ClusterDeviceView cluster={cluster} />
         </div>
       </div>
     </div>

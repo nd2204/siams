@@ -9,6 +9,6 @@ export interface UserClaims {
     name: string,
     slug: string,
     role: string,
-    permissions: PermissionKey[]
+    permissions: Set<PermissionKey>
   }[]
 }

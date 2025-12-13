@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.28;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract IoTAnchoring is AccessControl {
   bytes32 public constant RELAYER_ROLE = keccak256("RELAYER_ROLE");
 
-  event RecordAnchored(
+  event DeviceEventAnchored(
     bytes32 indexed deviceId,
     bytes32 indexed dataHash,
     bytes32 indexed orgId,
@@ -24,18 +24,18 @@ contract IoTAnchoring is AccessControl {
   );
 
   constructor(address admin) {
-    _setupRole(DEFAULT_ADMIN_ROLE, admin);
+    _grantRole(DEFAULT_ADMIN_ROLE, admin);
   }
 
   // anchor a single payload hash (lightweight metadata)
-  function anchorRecord(
+  function anchorDeviceEvent(
     bytes32 deviceId,
     bytes32 dataHash,
     bytes32 orgId,
     string calldata action,
     uint256 timestamp
   ) external onlyRole(RELAYER_ROLE) {
-    emit RecordAnchored(deviceId, dataHash, orgId, action, timestamp, msg.sender);
+    emit DeviceEventAnchored(deviceId, dataHash, orgId, action, timestamp, msg.sender);
   }
 
   // anchor a Merkle root representing a batch of dataHash

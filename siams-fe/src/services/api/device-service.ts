@@ -9,7 +9,9 @@ import type {
   DeviceSendCommandRequest,
   DeviceSendCommandResponse,
   ListTelemtryRequest,
-  ListTelemtryResponse
+  ListTelemtryResponse,
+  ListDeviceEventRequest,
+  ListDeviceEventResponse
 } from "@/types/device/index";
 
 export const deviceService = {
@@ -43,5 +45,9 @@ export const deviceService = {
 
   async getLatestStatus(id: string): Promise<DeviceStatus> {
     return apiClient.get<DeviceStatus>(ENDPOINTS.DEVICE.STATUS(id))
+  },
+
+  async listEvent(req: ListDeviceEventRequest): Promise<ListDeviceEventResponse> {
+    return apiClient.post<ListDeviceEventResponse>(ENDPOINTS.DEVICE.EVENTS(req.device_id), { perBucket: req.perBucket })
   }
 };

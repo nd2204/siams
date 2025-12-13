@@ -22,7 +22,7 @@ export class ListRecentDeviceEventUC implements IUseCase<ListRecentDeviceEventRe
 
     const res = await this.deviceEventRepo.listRecentBy({
       device_id: device.id
-    }, r.page ?? 1, r.perPage ?? 10);
+    }, r.perBucket);
 
     return res;
   }

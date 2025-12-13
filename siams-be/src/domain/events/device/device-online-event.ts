@@ -7,7 +7,7 @@ export interface DeviceOnlineEventPayload
 }
 
 export class DeviceOnlineEvent extends DomainEvent<DeviceOnlineEventPayload> {
-  constructor(public readonly event_payload: DeviceOnlineEventPayload) {
+  constructor(event_payload: DeviceOnlineEventPayload) {
     super(event_payload, DeviceEventTypeConstants.DeviceStatusOnline);
   }
 }

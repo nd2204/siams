@@ -1,8 +1,16 @@
-import { Permission, Role } from "@domain/entities";
-import { PermissionKey } from "@domain/entities/user-permission";
+import { Permission, PermissionKey, Role } from "@domain/entities";
+import { RoleId, RoleName } from "@domain/entities/user-role";
 import { IRepository } from "@shared/interfaces";
+
+export type RoleNamePermissionMap = Record<RoleName, Set<PermissionKey>>
+
+export type RoleIdPermissionMap = Record<RoleId, {
+  role_name: RoleName
+  permissions: Set<PermissionKey>
+}>
 
 export interface IRoleRepository extends IRepository<Role> {
   findPermissionsByRoleId(roleId: string): Promise<Permission[]>;
-  getRolePermissionMap(): Promise<Record<string, PermissionKey[]>>;
+  getRoleIdPermissionMap(): Promise<RoleIdPermissionMap>
+  getRoleNamePermissionMap(): Promise<RoleNamePermissionMap>;
 }

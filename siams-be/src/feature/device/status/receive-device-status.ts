@@ -71,7 +71,7 @@ export class ReceiveDeviceStatusUC implements IUseCase<DeviceStatus> {
       cpu: savedStatus.cpuUsage,
       mem: savedStatus.memUsage,
       wifi: savedStatus.wifiRssi,
-      online: false,
+      online: savedStatus.online,
       ts: savedStatus.timestamp,
       org_id: device.org_id,
       device_id: device.id

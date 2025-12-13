@@ -7,7 +7,7 @@ export interface DeviceOfflineEventPayload
 }
 
 export class DeviceOfflineEvent extends DomainEvent<DeviceOfflineEventPayload> {
-  constructor(public readonly event_payload: DeviceOfflineEventPayload) {
-    super(event_payload, DeviceEventTypeConstants.DeviceStatusOffline);
+  constructor(payload: DeviceOfflineEventPayload) {
+    super(payload, DeviceEventTypeConstants.DeviceStatusOffline);
   }
 }

@@ -9,6 +9,7 @@ import {
 import type { Sensor, SensorType } from '@/types/device/index';
 import { useDeviceTelemetry } from '@/hooks/queries/use-device-telemetry';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '../ui/chart';
+import { MilitaryTimeFromISO } from '@/utils/time-utils';
 
 interface SensorChartProps {
   sensor: Sensor;
@@ -25,8 +26,8 @@ const COLOR_MAP: Record<
   { fill: string; stroke: string }
 > = {
   TEMPERATURE: {
-    fill: "url(#fillOrange)",
-    stroke: "var(--color-accent-orange)",
+    fill: "url(#fillYellow)",
+    stroke: "var(--color-accent-yellow)",
   },
   LIGHT_INTENSITY: {
     fill: "url(#fillYellow)",
@@ -61,7 +62,6 @@ const COLOR_MAP: Record<
 const GradientDefs = memo(() => (
   <defs>
     {[
-      ["fillOrange", "var(--color-accent-orange)"],
       ["fillGreen", "var(--color-accent-green)"],
       ["fillBlue", "var(--color-accent-blue)"],
       ["fillYellow", "var(--color-accent-yellow)"],
@@ -107,35 +107,31 @@ export function SensorChart({
     <ChartContainer config={chartConfig}>
       <AreaChart
         data={chartData}
-        margin={{ top: 5, right: 5, left: -20, bottom: 5 }}
+        margin={{ top: 5, right: -10, left: -10, bottom: 0 }}
       >
-        <CartesianGrid vertical={false} />
+        <CartesianGrid vertical={true} />
         <XAxis
           dataKey="bucket"
+          className="text-secondary"
           tickLine={false}
           axisLine={false}
-          tickMargin={8}
-          tickFormatter={(value) => (new Date(value)).toLocaleTimeString("en")}
+          minTickGap={16}
+          tickMargin={12}
+          tickFormatter={(value) => {
+            return MilitaryTimeFromISO(value)
+          }}
         />
         <YAxis
+          unit={sensor.unit}
+          width={10}
           type='number'
           dataKey="avgValue"
           axisLine={false}
+          tickLine={false}
+          allowDataOverflow={true}
         />
         <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
         <defs>
-          <linearGradient id="fillOrange" x1="0" y1="0" x2="0" y2="1">
-            <stop
-              offset="5%"
-              stopColor={`var(--color-accent-orange)`}
-              stopOpacity={0.8}
-            />
-            <stop
-              offset="95%"
-              stopColor="var(--color-accent-orange)"
-              stopOpacity={0.1}
-            />
-          </linearGradient>
           <linearGradient id="fillGreen" x1="0" y1="0" x2="0" y2="1">
             <stop
               offset="5%"
@@ -205,7 +201,8 @@ export function SensorChart({
           strokeWidth={2}
           stroke={color.stroke}
           stackId="a"
-        />
+        >
+        </Area>
       </AreaChart>
     </ChartContainer>
   );

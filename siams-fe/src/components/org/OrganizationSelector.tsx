@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { roleSanitized } from "@/services/api/dtos/auth/user-data";
 import { Badge } from "../ui/badge";
+import { roleSanitized } from "@/types/organization";
 
 export default function OrganizationSelector() {
   const { user, activeOrg, setOrg } = useAuth()
@@ -32,7 +32,7 @@ export default function OrganizationSelector() {
       </DropdownMenuTrigger>
       {userOrgs && userOrgs.length > 0 &&
         <>
-          <DropdownMenuContent className="w-[--radix-popper-anchor-width] z-[9999]">
+          <DropdownMenuContent className="w-[--radix-popper-anchor-width] z-9999">
             <DropdownMenuLabel className="text-muted-foreground text-xs">Organizations</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {userOrgs.map((org) => (

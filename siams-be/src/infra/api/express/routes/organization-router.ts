@@ -4,9 +4,9 @@ import { OrganizationController } from "@adapters/http/v1/controllers/organizati
 import { NextFunction, Router, Request, Response } from "express";
 import { CreateOrganizationUC } from "@feature/organization/create-org";
 import { GetOrganizationByIdUC } from "@feature/organization/get-org-by-id";
-import { GetClusterByIdUC } from "@feature/cluster/get-by-id";
 import { ListClusterByOrgIdUC } from "@feature/cluster/list-clusters-by-org-id";
 import { ListDeviceByOrgIdUC } from "@feature/device/list-by-org-id";
+import { ListOrgUserUC } from "@feature/organization/list-org-user";
 
 const controller = new OrganizationController(
   new CreateOrganizationUC(
@@ -28,6 +28,11 @@ const controller = new OrganizationController(
     services.device.repositories.base,
     services.organization.validators.listDeviceByOrgIdValidator,
     services.utils.verifyToken
+  ),
+  new ListOrgUserUC(
+    services.organization.repositories.user,
+    services.authService,
+    services.organization.validators.listOrgUserValidator
   )
 )
 
@@ -44,6 +49,24 @@ export function organizationRouter(): Router {
       const result = await controller.create({
         token: token,
         body: req.body
+      })
+      res.send(result)
+    } catch (err) {
+      return next(err)
+    }
+  })
+
+  router.post("/:id/users", async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const token = getAuthToken(req)
+      const result = await controller.listOrgUsers({
+        token: token,
+        body: req.body,
+        params: req.params
       })
       res.send(result)
     } catch (err) {

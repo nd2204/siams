@@ -5,6 +5,6 @@ export interface CreateOrganizationResponse {
   name: string,
   slug: string,
   role: RoleName,
-  permissions: PermissionKey[]
+  permissions: Set<PermissionKey>
   createdAt: Date;
 }

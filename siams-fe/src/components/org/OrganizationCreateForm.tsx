@@ -1,35 +1,36 @@
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
-import { useMutation } from "@tanstack/react-query";
-import { orgServices } from "@/services/api/org-service";
-import type { CreateOrganizationRequest } from "@/services/api/dtos/org/create-from-user-request";
 import { useEffect, useState } from "react";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "../ui/field";
 import { Button } from "../ui/button";
+import { useCreateOrganization } from "@/hooks/mutations/use-create-org";
 
 export default function OrganizationCreateForm() {
   const { user, setOrg } = useAuth();
   const [slug, setSlug] = useState<string>("")
   const [name, setName] = useState<string>("")
-
-  const mutation = useMutation({
-    mutationFn: (req: CreateOrganizationRequest) => {
-      return orgServices.create(req)
-    },
-  })
+  const {
+    mutate: createOrg,
+    data: createdOrg,
+    isPending,
+    isSuccess,
+    isError,
+    reset: resetOrgData,
+    error: createOrgError
+  } = useCreateOrganization()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    mutation.mutate({ slug: slug, name: name, userId: user!.id })
+    createOrg({ slug: slug, name: name, userId: user!.id })
   }
 
   useEffect(() => {
-    if (mutation.isSuccess) {
-      setOrg(mutation.data);
-      mutation.reset();
+    if (isSuccess) {
+      setOrg(createdOrg);
+      resetOrgData()
     }
-  }, [mutation.isSuccess]);
+  }, [isSuccess]);
 
   return (
     <Dialog>
@@ -74,7 +75,7 @@ export default function OrganizationCreateForm() {
                   This will be used in your organization’s URL.
                 </FieldDescription>
 
-                {mutation.isError && <FieldError>{mutation.error.message}</FieldError>}
+                {isError && <FieldError>{createOrgError.message}</FieldError>}
               </Field>
 
             </FieldGroup>
@@ -83,7 +84,9 @@ export default function OrganizationCreateForm() {
               <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
-              <Button type="submit" disabled={mutation.isPending}>{mutation.isPending ? "Creating..." : "Create"}</Button>
+              <Button type="submit" disabled={isPending}>{
+                isPending ? "Creating..." : "Create"
+              }</Button>
             </DialogFooter>
           </FieldSet>
         </form>

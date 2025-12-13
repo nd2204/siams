@@ -16,20 +16,35 @@ import {
 } from 'lucide-react';
 import { useDeviceByOrg } from '@/hooks/queries/use-device-by-org';
 import { useAuth } from '@/hooks/use-auth';
-import { ClusterDeviceDataTable } from '@/components/cluster/ClusterDeviceDataTable';
 import { clusterDeviceColumns } from '@/components/cluster/ClusterDeviceColumn';
 import OrganizationDeviceEmpty from '@/components/org/OrganizationDeviceEmpty';
+import { DataTable } from '@/components/ui/data-table';
+import DeviceMapView from '@/components/device/DeviceMapView';
+import { useCallback, useState } from 'react';
 
 export default function DevicePage() {
   const { activeOrg } = useAuth();
   const { data: devices, refetch } = useDeviceByOrg(activeOrg?.id);
+  const [maximized, setMaximized] = useState(false);
   console.log(devices)
+
+  const handleFullscreenToggle = () => {
+    setMaximized(!maximized)
+  }
+
+  if (maximized && devices) {
+    return (
+      <div className="flex flex-col flex-1">
+        <DeviceMapView devices={devices.data} fullscreen={maximized} onFullscreenToggle={handleFullscreenToggle} />
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col flex-1 px-6 py-6">
       <div className="mb-6">
-        <h2 className="text-foreground">Device Management</h2>
-        <p className="text-muted-foreground mt-1 font-sm">
+        <h2 className="text-foreground font-bold text-xl">Device Management</h2>
+        <p className="text-muted-foreground mt-1">
           Manage MCU devices and their connected sensors in your organization
         </p>
       </div>
@@ -54,11 +69,15 @@ export default function DevicePage() {
       {/*   </Card> */}
       {/* </div> */}
 
+
       {/* Filters and Actions */}
       {/* Device Table */}
       {(devices && devices.pagination.total > 0)
         ? (
           <>
+            <Card className="flex flex-1 p-0 overflow-hidden min-h-100">
+              <DeviceMapView devices={devices.data} fullscreen={maximized} onFullscreenToggle={handleFullscreenToggle} />
+            </Card>
             <div className="py-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
@@ -92,36 +111,21 @@ export default function DevicePage() {
                   <Filter className="w-4 h-4 mr-2" />
                   More Filters
                 </Button>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Device
-                </Button>
               </div>
             </div>
 
             <div className="flex flex-1">
               <div className="@container/card flex-1 overflow-hidden pt-2 pb-0 gap-0">
                 <div className="flex justify-between pb-4">
-                  <div className="font-semibold">Devices in this Cluster</div>
+                  <div className="font-semibold">Available devices in organization</div>
                   <Badge variant="outline">
                     {devices.pagination.total} devices
                   </Badge>
                 </div>
-                <ClusterDeviceDataTable
+                <DataTable
                   columns={clusterDeviceColumns}
                   data={devices.data}
                 />
-              </div>
-            </div>
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-muted-foreground">Showing {devices?.data.length} of {devices?.pagination.total} devices</div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm">
-                  Previous
-                </Button>
-                <Button variant="outline" size="sm">
-                  Next
-                </Button>
               </div>
             </div>
           </>

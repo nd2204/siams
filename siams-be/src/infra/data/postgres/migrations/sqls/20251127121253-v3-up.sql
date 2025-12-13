@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS device_status (
   cpu_usage     NUMERIC, -- TODO: change numerical to DOUBLE PRECISION
   memory_usage  NUMERIC,
   wifi_strength NUMERIC,
-  online        BOLEAN NOT NULL,
+  online        BOOLEAN NOT NULL,
   reported_at   TIMESTAMPTZ NOT NULL
 );
 
@@ -262,18 +262,18 @@ WHERE batch_id IS NOT NULL;
 --------------------------------------------------------------------------------
 -- Invitations (optional flow)
 --------------------------------------------------------------------------------
--- CREATE TABLE IF NOT EXISTS invitations (
---   id               uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
---   organization_id  uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
---   email            TEXT NOT NULL,
---   role_id          uuid NOT NULL REFERENCES roles(id) ON DELETE RESTRICT,
---   token            TEXT NOT NULL UNIQUE,              -- one-time token sent via email
---   invited_by       uuid REFERENCES users(id) ON DELETE SET NULL,
---   expires_at       TIMESTAMPTZ,
---   accepted         BOOLEAN NOT NULL DEFAULT false,
---   created_at       TIMESTAMPTZ NOT NULL DEFAULT now()
--- );
--- CREATE INDEX IF NOT EXISTS idx_invitations_org_email ON invitations (organization_id, email);
+CREATE TABLE IF NOT EXISTS invitations (
+  id               uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  organization_id  uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  email            TEXT NOT NULL,
+  role_id          uuid NOT NULL REFERENCES roles(id) ON DELETE RESTRICT,
+  token            TEXT NOT NULL UNIQUE,              -- one-time token sent via email
+  invited_by       uuid REFERENCES users(id) ON DELETE SET NULL,
+  expires_at       TIMESTAMPTZ,
+  accepted         BOOLEAN NOT NULL DEFAULT false,
+  created_at       TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_invitations_org_email ON invitations (organization_id, email);
 
 -- --------------------------------------------------------------------------------
 -- Insert core roles
